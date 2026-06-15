@@ -1,0 +1,57 @@
+name: Dashboard discussion
+description: Submit an idea, evaluation, change request, risk, or handoff need for the public dashboard.
+title: "[Idea] "
+labels:
+  - dashboard-discussion
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this public issue for asynchronous product discussion. Do not include secrets, private user data, source snippets, object keys, credentials, or private prompts.
+  - type: input
+    id: feature-id
+    attributes:
+      label: Feature ID
+      description: Copy this from the dashboard detail panel when the discussion is about an existing feature.
+      placeholder: public-feature-dashboard
+    validations:
+      required: false
+  - type: dropdown
+    id: discussion-type
+    attributes:
+      label: Discussion type
+      options:
+        - idea
+        - evaluation
+        - change-request
+        - bug
+        - handoff
+    validations:
+      required: true
+  - type: input
+    id: ui-surface
+    attributes:
+      label: Related UI surface
+      placeholder: Display board, Publish requirement form, Admin match audit
+    validations:
+      required: false
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal or evaluation
+      description: Describe what should change, what feels wrong, or what new behavior you want.
+      placeholder: The current flow is missing...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-ai-action
+    attributes:
+      label: Expected AI action
+      description: Tell Coordinator AI what should happen next.
+      value: |
+        - [ ] Summarize this discussion
+        - [ ] Decide whether it changes feature status
+        - [ ] Split into implementation issues if accepted
+        - [ ] Mark older comments obsolete if this supersedes them
+    validations:
+      required: true

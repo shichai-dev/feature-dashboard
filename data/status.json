@@ -1,0 +1,1723 @@
+{
+  "generatedAt": "2026-06-15T13:15:03.607Z",
+  "sourceSummary": "11 features, 24 UI surfaces, 11 operation chains. GitHub items read: 12; private issues read: 6; dashboard discussions read: 1.",
+  "repositories": [
+    "shichai-dev/planning",
+    "shichai-dev/opc-bounty-client",
+    "shichai-dev/opc-bounty-admin",
+    "shichai-dev/opc-bounty-server"
+  ],
+  "dashboardRepository": "shichai-dev/feature-dashboard",
+  "metrics": {
+    "implemented": 10,
+    "inProgress": 1,
+    "planned": 0,
+    "blocked": 0,
+    "needsHandoff": 5,
+    "openDiscussions": 1,
+    "needsAiReview": 0,
+    "staleDiscussions": 0
+  },
+  "operationStudio": {
+    "defaultPageId": "home",
+    "pages": [
+      {
+        "id": "home",
+        "title": "首页",
+        "eyebrow": "ShiChai Platform",
+        "summary": "发布需求、发布项目、查看反馈的入口页。",
+        "featureId": "display-board",
+        "uiSurface": "Client home",
+        "sections": [
+          {
+            "title": "社区工作流",
+            "description": "发布需求、验证项目、沉淀案例。",
+            "variant": "hero",
+            "items": [
+              {
+                "id": "home-publish-requirement",
+                "label": "发布需求",
+                "summary": "AI 整理成合作机会卡",
+                "icon": "doc",
+                "featureId": "requirement-publishing",
+                "stepId": "publish-requirement-start"
+              },
+              {
+                "id": "home-publish-project",
+                "label": "发布项目",
+                "summary": "验证真实市场信号",
+                "icon": "cube",
+                "featureId": "project-publishing",
+                "stepId": "publish-project-start"
+              },
+              {
+                "id": "home-showcase",
+                "label": "展示案例",
+                "summary": "脱敏后建立信任",
+                "icon": "case",
+                "featureId": "display-board",
+                "stepId": "display-open-case"
+              }
+            ]
+          },
+          {
+            "title": "V0 封闭验证",
+            "description": "让一人公司和个体需求方更快对齐。",
+            "variant": "metrics",
+            "items": [
+              {
+                "id": "home-v0-requirement",
+                "label": "我有需求，想找人帮忙",
+                "summary": "AI 整理成合作机会",
+                "featureId": "requirement-publishing",
+                "stepId": "publish-requirement-start"
+              },
+              {
+                "id": "home-v0-project",
+                "label": "我有项目，想找市场反馈",
+                "summary": "验证真实市场信号",
+                "featureId": "project-publishing",
+                "stepId": "publish-project-start"
+              },
+              {
+                "id": "home-v0-feedback",
+                "label": "我有案例，想展示合作成果",
+                "summary": "脱敏审核后建立信任",
+                "featureId": "display-board",
+                "stepId": "display-open-case"
+              }
+            ]
+          }
+        ],
+        "hotspots": [
+          {
+            "id": "nav-home",
+            "label": "首页导航",
+            "kind": "icon",
+            "featureId": "display-board",
+            "stepId": "open-home"
+          },
+          {
+            "id": "nav-display",
+            "label": "展示台导航",
+            "kind": "icon",
+            "featureId": "display-board",
+            "stepId": "open-display"
+          },
+          {
+            "id": "nav-publish",
+            "label": "发布导航",
+            "kind": "icon",
+            "featureId": "requirement-publishing",
+            "stepId": "open-publish"
+          },
+          {
+            "id": "top-search",
+            "label": "搜索图标",
+            "kind": "icon",
+            "featureId": "display-board",
+            "stepId": "open-global-search"
+          },
+          {
+            "id": "top-notification",
+            "label": "通知图标",
+            "kind": "icon",
+            "featureId": "profile-workbench",
+            "stepId": "open-notifications"
+          }
+        ]
+      },
+      {
+        "id": "display",
+        "title": "展示台",
+        "eyebrow": "ShiChai Platform",
+        "summary": "查看需求和项目反馈，按热度、偏好和标签筛选。",
+        "featureId": "display-board",
+        "uiSurface": "Display board",
+        "sections": [
+          {
+            "title": "展示台筛选",
+            "description": "需求 / 项目、热门 / 上升最快、搜索与标签。",
+            "variant": "filters",
+            "items": [
+              {
+                "id": "display-kind-requirement",
+                "label": "需求",
+                "summary": "查看可揭榜需求",
+                "featureId": "display-board",
+                "stepId": "display-filter-requirements"
+              },
+              {
+                "id": "display-kind-project",
+                "label": "项目",
+                "summary": "查看项目反馈",
+                "featureId": "display-board",
+                "stepId": "display-filter-projects"
+              },
+              {
+                "id": "display-rank-hot",
+                "label": "热门",
+                "summary": "按关注度排序",
+                "featureId": "display-board",
+                "stepId": "display-rank-hot"
+              },
+              {
+                "id": "display-rank-rising",
+                "label": "上升最快",
+                "summary": "按增长趋势排序",
+                "featureId": "display-board",
+                "stepId": "display-rank-rising"
+              }
+            ]
+          },
+          {
+            "title": "项目列表",
+            "description": "点击条目进入详情页，查看次级信息和反馈。",
+            "variant": "list",
+            "items": [
+              {
+                "id": "display-item-1",
+                "label": "OPC UA 节点稳定性观察台 771538-2",
+                "summary": "热度 42 · 次级信息",
+                "featureId": "community-detail-comments",
+                "stepId": "open-posting-detail"
+              },
+              {
+                "id": "display-item-2",
+                "label": "OPC UA 节点稳定性观察台 771538-10",
+                "summary": "热度 30 · 次级信息",
+                "featureId": "community-detail-comments",
+                "stepId": "open-posting-detail"
+              }
+            ]
+          }
+        ],
+        "hotspots": [
+          {
+            "id": "display-refresh",
+            "label": "刷新按钮",
+            "kind": "icon",
+            "featureId": "display-board",
+            "stepId": "refresh-display"
+          },
+          {
+            "id": "display-search",
+            "label": "项目搜索框",
+            "kind": "input",
+            "featureId": "display-board",
+            "stepId": "display-search"
+          },
+          {
+            "id": "display-expand-row",
+            "label": "次级信息展开",
+            "kind": "icon",
+            "featureId": "community-detail-comments",
+            "stepId": "expand-secondary-info"
+          }
+        ]
+      },
+      {
+        "id": "publish",
+        "title": "发布",
+        "eyebrow": "ShiChai Platform",
+        "summary": "发布需求或已有项目，AI 辅助整理成可协作的公开卡片。",
+        "featureId": "requirement-publishing",
+        "uiSurface": "Publish requirement form",
+        "sections": [
+          {
+            "title": "发布类型",
+            "description": "选择提需求或发项目。",
+            "variant": "tabs",
+            "items": [
+              {
+                "id": "publish-mode-requirement",
+                "label": "提需求",
+                "summary": "描述真实痛点",
+                "featureId": "requirement-publishing",
+                "stepId": "publish-requirement-start"
+              },
+              {
+                "id": "publish-mode-project",
+                "label": "发项目",
+                "summary": "验证市场反馈",
+                "featureId": "project-publishing",
+                "stepId": "publish-project-start"
+              }
+            ]
+          },
+          {
+            "title": "需求整理",
+            "description": "输入需求、上传材料、AI 初审、回答追问、生成草稿、选择标签并发布。",
+            "variant": "form",
+            "items": [
+              {
+                "id": "publish-raw-input",
+                "label": "需求描述",
+                "summary": "一句话描述真实痛点",
+                "featureId": "requirement-publishing",
+                "stepId": "write-requirement"
+              },
+              {
+                "id": "publish-material",
+                "label": "材料包",
+                "summary": "上传文件或补充材料说明",
+                "featureId": "requirement-publishing",
+                "stepId": "attach-materials"
+              },
+              {
+                "id": "publish-ai-review",
+                "label": "AI 初审",
+                "summary": "生成追问和阻塞信息",
+                "featureId": "ai-requirement-assistant",
+                "stepId": "run-ai-review"
+              },
+              {
+                "id": "publish-generate-draft",
+                "label": "生成草稿",
+                "summary": "形成合作机会卡",
+                "featureId": "ai-requirement-assistant",
+                "stepId": "generate-draft"
+              },
+              {
+                "id": "publish-final",
+                "label": "发布",
+                "summary": "进入展示台",
+                "featureId": "requirement-publishing",
+                "stepId": "publish-final"
+              }
+            ]
+          }
+        ],
+        "hotspots": [
+          {
+            "id": "publish-clear",
+            "label": "清空按钮",
+            "kind": "icon",
+            "featureId": "requirement-publishing",
+            "stepId": "clear-draft"
+          },
+          {
+            "id": "publish-tags",
+            "label": "标签选择",
+            "kind": "panel",
+            "featureId": "requirement-publishing",
+            "stepId": "select-tags"
+          }
+        ]
+      },
+      {
+        "id": "detail",
+        "title": "详情页",
+        "eyebrow": "ShiChai Platform",
+        "summary": "需求 / 项目详情、评论、支持、私聊、作品提交与社区评价。",
+        "featureId": "community-detail-comments",
+        "uiSurface": "Posting detail panel",
+        "sections": [
+          {
+            "title": "详情主体",
+            "description": "展示目标、场景、输入输出、验收标准和状态。",
+            "variant": "detail",
+            "items": [
+              {
+                "id": "detail-brief",
+                "label": "机会卡",
+                "summary": "需求或项目的结构化描述",
+                "featureId": "community-detail-comments",
+                "stepId": "read-detail"
+              },
+              {
+                "id": "detail-comment",
+                "label": "评论",
+                "summary": "楼层评论和嵌套回复",
+                "featureId": "community-detail-comments",
+                "stepId": "comment-on-posting"
+              },
+              {
+                "id": "detail-support",
+                "label": "火柴支持",
+                "summary": "支持、加赏、曝光和支持者讨论",
+                "featureId": "match-support-wallet",
+                "stepId": "support-with-matches"
+              },
+              {
+                "id": "detail-private",
+                "label": "私聊",
+                "summary": "从公开资料进入私聊",
+                "featureId": "private-messages",
+                "stepId": "start-private-thread"
+              },
+              {
+                "id": "detail-submit-work",
+                "label": "提交作品",
+                "summary": "开发者提交方案或作品",
+                "featureId": "profile-workbench",
+                "stepId": "submit-work"
+              }
+            ]
+          }
+        ],
+        "hotspots": [
+          {
+            "id": "detail-report",
+            "label": "举报按钮",
+            "kind": "icon",
+            "featureId": "admin-operations",
+            "stepId": "report-content"
+          },
+          {
+            "id": "detail-reply",
+            "label": "回复评论",
+            "kind": "button",
+            "featureId": "community-detail-comments",
+            "stepId": "reply-comment"
+          }
+        ]
+      },
+      {
+        "id": "profile",
+        "title": "我的",
+        "eyebrow": "ShiChai Platform",
+        "summary": "我的发布、工作台、参与、通知、火柴账户和设置。",
+        "featureId": "profile-workbench",
+        "uiSurface": "Profile dashboard",
+        "sections": [
+          {
+            "title": "个人工作台",
+            "description": "查看自己的发布、参与、待处理和项目管理。",
+            "variant": "profile",
+            "items": [
+              {
+                "id": "profile-drafts",
+                "label": "继续整理",
+                "summary": "回到未发布草稿",
+                "featureId": "profile-workbench",
+                "stepId": "continue-draft"
+              },
+              {
+                "id": "profile-postings",
+                "label": "我的发布",
+                "summary": "需求和项目发布历史",
+                "featureId": "profile-workbench",
+                "stepId": "view-my-postings"
+              },
+              {
+                "id": "profile-wallet",
+                "label": "火柴账户",
+                "summary": "余额、权益、消费记录",
+                "featureId": "match-support-wallet",
+                "stepId": "view-wallet"
+              },
+              {
+                "id": "profile-settings",
+                "label": "账号设置",
+                "summary": "公开资料和联系方式",
+                "featureId": "profile-workbench",
+                "stepId": "open-settings"
+              }
+            ]
+          }
+        ],
+        "hotspots": [
+          {
+            "id": "profile-export",
+            "label": "导出数据",
+            "kind": "button",
+            "featureId": "profile-workbench",
+            "stepId": "export-profile-data"
+          },
+          {
+            "id": "profile-notifications",
+            "label": "待处理通知",
+            "kind": "icon",
+            "featureId": "profile-workbench",
+            "stepId": "open-notifications"
+          }
+        ]
+      }
+    ],
+    "chains": [
+      {
+        "id": "chain-publish-requirement",
+        "title": "发布需求操作链",
+        "featureId": "requirement-publishing",
+        "pageIds": [
+          "home",
+          "publish",
+          "display",
+          "detail"
+        ],
+        "steps": [
+          {
+            "id": "publish-requirement-start",
+            "pageId": "home",
+            "label": "从首页点击发布需求"
+          },
+          {
+            "id": "write-requirement",
+            "pageId": "publish",
+            "label": "填写需求描述和材料"
+          },
+          {
+            "id": "run-ai-review",
+            "pageId": "publish",
+            "label": "AI 初审并提出追问"
+          },
+          {
+            "id": "generate-draft",
+            "pageId": "publish",
+            "label": "生成结构化机会卡"
+          },
+          {
+            "id": "select-tags",
+            "pageId": "publish",
+            "label": "选择标签和展示范围"
+          },
+          {
+            "id": "publish-final",
+            "pageId": "publish",
+            "label": "发布到展示台"
+          },
+          {
+            "id": "open-posting-detail",
+            "pageId": "display",
+            "label": "从展示台进入详情"
+          },
+          {
+            "id": "comment-on-posting",
+            "pageId": "detail",
+            "label": "围绕详情进行评论和回复"
+          }
+        ]
+      },
+      {
+        "id": "chain-publish-project",
+        "title": "发布项目操作链",
+        "featureId": "project-publishing",
+        "pageIds": [
+          "home",
+          "publish",
+          "display",
+          "detail"
+        ],
+        "steps": [
+          {
+            "id": "publish-project-start",
+            "pageId": "home",
+            "label": "从首页点击发布项目"
+          },
+          {
+            "id": "project-fill-info",
+            "pageId": "publish",
+            "label": "填写项目名称、阶段、链接和媒体"
+          },
+          {
+            "id": "project-select-tags",
+            "pageId": "publish",
+            "label": "选择项目标签"
+          },
+          {
+            "id": "publish-final",
+            "pageId": "publish",
+            "label": "发布到展示台"
+          },
+          {
+            "id": "display-filter-projects",
+            "pageId": "display",
+            "label": "在项目区查看反馈"
+          },
+          {
+            "id": "support-with-matches",
+            "pageId": "detail",
+            "label": "支持项目或进入支持者讨论"
+          }
+        ]
+      },
+      {
+        "id": "chain-community-detail",
+        "title": "详情评论与私聊操作链",
+        "featureId": "community-detail-comments",
+        "pageIds": [
+          "display",
+          "detail",
+          "profile"
+        ],
+        "steps": [
+          {
+            "id": "display-search",
+            "pageId": "display",
+            "label": "搜索或筛选条目"
+          },
+          {
+            "id": "open-posting-detail",
+            "pageId": "display",
+            "label": "进入详情页"
+          },
+          {
+            "id": "comment-on-posting",
+            "pageId": "detail",
+            "label": "发表评论"
+          },
+          {
+            "id": "reply-comment",
+            "pageId": "detail",
+            "label": "回复楼层评论"
+          },
+          {
+            "id": "start-private-thread",
+            "pageId": "detail",
+            "label": "从用户资料发起私聊"
+          }
+        ]
+      },
+      {
+        "id": "chain-wallet-support",
+        "title": "火柴支持与账本操作链",
+        "featureId": "match-support-wallet",
+        "pageIds": [
+          "detail",
+          "profile"
+        ],
+        "steps": [
+          {
+            "id": "support-with-matches",
+            "pageId": "detail",
+            "label": "选择火柴数量并支持"
+          },
+          {
+            "id": "open-supporter-discussion",
+            "pageId": "detail",
+            "label": "进入支持者讨论"
+          },
+          {
+            "id": "view-wallet",
+            "pageId": "profile",
+            "label": "查看火柴账户余额和权益"
+          },
+          {
+            "id": "filter-wallet-activity",
+            "pageId": "profile",
+            "label": "筛选消费记录"
+          }
+        ]
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "auth-alpha-login",
+      "title": "Private alpha account login",
+      "summary": "Email, phone, QQ, and WeChat-style alpha login entry with account-password simulation.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "server-auth",
+      "ownerAi": "human",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Client login panel",
+          "repo": "opc-bounty-client",
+          "route": "/"
+        },
+        {
+          "name": "Admin login shell",
+          "repo": "opc-bounty-admin",
+          "route": "/"
+        }
+      ],
+      "operationChain": [
+        "User selects login provider",
+        "Server validates alpha account",
+        "Client stores auth token",
+        "Profile or admin shell renders allowed view"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "Which real OAuth or verification flow should be introduced first without breaking alpha account testing?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: auth-alpha-login",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bauth-alpha-login%5D+Private+alpha+account+login&body=Feature+ID%3A+auth-alpha-login%0AFeature%3A+Private+alpha+account+login%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Client+login+panel+%28opc-bounty-client+%2F%29%0A-+Admin+login+shell+%28opc-bounty-admin+%2F%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Aauth-alpha-login%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "requirement-publishing",
+      "title": "Requirement publishing workflow",
+      "summary": "Requirement posting flow with materials, AI review, follow-up questions, draft generation, tags, save, and publish.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-publish",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Publish requirement form",
+          "repo": "opc-bounty-client",
+          "route": "/#publish"
+        },
+        {
+          "name": "Requirement draft editor",
+          "repo": "opc-bounty-client",
+          "route": "/#publish"
+        }
+      ],
+      "operationChain": [
+        "User submits requirement idea",
+        "AI or mock review returns questions",
+        "User answers and generates draft",
+        "User selects tags and materials",
+        "Server publishes posting to display board"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "Which parts of the publishing funnel need clearer review states before adding payment or external AI usage?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: requirement-publishing",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Brequirement-publishing%5D+Requirement+publishing+workflow&body=Feature+ID%3A+requirement-publishing%0AFeature%3A+Requirement+publishing+workflow%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Publish+requirement+form+%28opc-bounty-client+%2F%23publish%29%0A-+Requirement+draft+editor+%28opc-bounty-client+%2F%23publish%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Arequirement-publishing%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "project-publishing",
+      "title": "Project posting workflow",
+      "summary": "Existing project publication with GitHub/demo/media information, project stage, tags, interest, cooperation, and comments.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-publish",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Publish project form",
+          "repo": "opc-bounty-client",
+          "route": "/#publish-project"
+        },
+        {
+          "name": "Project detail panel",
+          "repo": "opc-bounty-client",
+          "route": "/#postings/:id"
+        }
+      ],
+      "operationChain": [
+        "User enters project information",
+        "Server creates project posting",
+        "Other users signal interest or cooperation",
+        "Comments and support update project detail"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "Should project versions and release notes become a first-class operation chain?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: project-publishing",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bproject-publishing%5D+Project+posting+workflow&body=Feature+ID%3A+project-publishing%0AFeature%3A+Project+posting+workflow%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Publish+project+form+%28opc-bounty-client+%2F%23publish-project%29%0A-+Project+detail+panel+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Aproject-publishing%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "display-board",
+      "title": "Unified display board",
+      "summary": "Unified requirement and project discovery with hot, rising, type, search, and tag filters.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-community",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Display board",
+          "repo": "opc-bounty-client",
+          "route": "/#display"
+        },
+        {
+          "name": "Global search overlay",
+          "repo": "opc-bounty-client",
+          "route": "/#search"
+        }
+      ],
+      "operationChain": [
+        "Client requests display summaries",
+        "Server returns ranking and filters",
+        "User searches or filters",
+        "User opens posting detail"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "Which ranking signals should be made transparent for alpha users?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: display-board",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bdisplay-board%5D+Unified+display+board&body=Feature+ID%3A+display-board%0AFeature%3A+Unified+display+board%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Display+board+%28opc-bounty-client+%2F%23display%29%0A-+Global+search+overlay+%28opc-bounty-client+%2F%23search%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Adisplay-board%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "community-detail-comments",
+      "title": "Posting detail, comments, and participation",
+      "summary": "Requirement/project detail views with comments, nested discussion, user profile entry, participation, and work submission context.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-community",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Posting detail panel",
+          "repo": "opc-bounty-client",
+          "route": "/#postings/:id"
+        },
+        {
+          "name": "Discussion thread",
+          "repo": "opc-bounty-client",
+          "route": "/#postings/:id"
+        }
+      ],
+      "operationChain": [
+        "User opens posting",
+        "Client loads detail DTO",
+        "User comments or replies",
+        "Server records community interaction",
+        "Profile and private message entry points become available"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "Should comments, works, and messages be separated visually for less crowded detail pages?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: community-detail-comments",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bcommunity-detail-comments%5D+Posting+detail%2C+comments%2C+and+participation&body=Feature+ID%3A+community-detail-comments%0AFeature%3A+Posting+detail%2C+comments%2C+and+participation%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Posting+detail+panel+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A-+Discussion+thread+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Acommunity-detail-comments%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "private-messages",
+      "title": "Private message threads",
+      "summary": "Private messages with a first-three-message limit and reply-based unlock model.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-community",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Private message drawer",
+          "repo": "opc-bounty-client",
+          "route": "/#messages"
+        },
+        {
+          "name": "Public profile modal",
+          "repo": "opc-bounty-client",
+          "route": "/#profile/:id"
+        }
+      ],
+      "operationChain": [
+        "User opens another user's profile",
+        "User starts a private thread",
+        "Server enforces first-message limit",
+        "Reply unlocks continued conversation"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "What moderation evidence should be visible to admins without exposing private content publicly?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: private-messages",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bprivate-messages%5D+Private+message+threads&body=Feature+ID%3A+private-messages%0AFeature%3A+Private+message+threads%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Private+message+drawer+%28opc-bounty-client+%2F%23messages%29%0A-+Public+profile+modal+%28opc-bounty-client+%2F%23profile%2F%3Aid%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Aprivate-messages%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "match-support-wallet",
+      "title": "Match support and wallet",
+      "summary": "Test match balance, project support, requirement bounty increase, membership, AI quota, exposure purchases, and support discussion group.",
+      "status": "implemented",
+      "repo": "client/server/admin",
+      "lane": "server-wallet",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Match support panel",
+          "repo": "opc-bounty-client",
+          "route": "/#postings/:id"
+        },
+        {
+          "name": "Wallet summary in profile",
+          "repo": "opc-bounty-client",
+          "route": "/#profile"
+        },
+        {
+          "name": "Admin match audit",
+          "repo": "opc-bounty-admin",
+          "route": "/#match-audit"
+        }
+      ],
+      "operationChain": [
+        "User receives test matches",
+        "User spends matches on support or exposure",
+        "Server records ledger and entitlement",
+        "Client refreshes wallet",
+        "Admin audits order or dispute"
+      ],
+      "linkedIssues": [
+        {
+          "label": "server#1 match spending API",
+          "url": "https://github.com/shichai-dev/opc-bounty-server/issues/1",
+          "state": "OPEN",
+          "needs": "needs-db",
+          "stage": "Ready",
+          "verification": "none"
+        },
+        {
+          "label": "server#2 match ledger query",
+          "url": "https://github.com/shichai-dev/opc-bounty-server/issues/2",
+          "state": "OPEN",
+          "needs": "needs-server",
+          "stage": "Ready",
+          "verification": "none"
+        },
+        {
+          "label": "client#1 profile history UI",
+          "url": "https://github.com/shichai-dev/opc-bounty-client/issues/1",
+          "state": "OPEN",
+          "needs": "needs-api",
+          "stage": "Spec",
+          "verification": "none"
+        },
+        {
+          "label": "admin#1 audit filters",
+          "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1",
+          "state": "OPEN",
+          "needs": "needs-server",
+          "stage": "Spec",
+          "verification": "none"
+        },
+        {
+          "label": "server#3 QA verification",
+          "url": "https://github.com/shichai-dev/opc-bounty-server/issues/3",
+          "state": "OPEN",
+          "needs": "needs-review",
+          "stage": "Ready",
+          "verification": "none"
+        }
+      ],
+      "discussionPrompt": "The next expansion point is spending history: finish API, DB query, client history UI, admin filters, and QA.",
+      "openNeeds": [
+        "needs-db",
+        "needs-server",
+        "needs-api",
+        "needs-server",
+        "needs-review"
+      ],
+      "discussion": {
+        "issueTerm": "Feature discussion: match-support-wallet",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bmatch-support-wallet%5D+Match+support+and+wallet&body=Feature+ID%3A+match-support-wallet%0AFeature%3A+Match+support+and+wallet%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Match+support+panel+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A-+Wallet+summary+in+profile+%28opc-bounty-client+%2F%23profile%29%0A-+Admin+match+audit+%28opc-bounty-admin+%2F%23match-audit%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Amatch-support-wallet%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "profile-workbench",
+      "title": "Profile, workbench, and notifications",
+      "summary": "User profile area with my posts, participation, pending work, notifications, public profile, settings, and export actions.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-wallet-profile",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Profile dashboard",
+          "repo": "opc-bounty-client",
+          "route": "/#profile"
+        },
+        {
+          "name": "Settings panel",
+          "repo": "opc-bounty-client",
+          "route": "/#settings"
+        }
+      ],
+      "operationChain": [
+        "User opens profile",
+        "Client loads my posts, participation, notifications, and wallet",
+        "User enters workbench or settings",
+        "Server returns current user scoped data"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "Should pending tasks become a richer cross-feature inbox before public alpha?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: profile-workbench",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bprofile-workbench%5D+Profile%2C+workbench%2C+and+notifications&body=Feature+ID%3A+profile-workbench%0AFeature%3A+Profile%2C+workbench%2C+and+notifications%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Profile+dashboard+%28opc-bounty-client+%2F%23profile%29%0A-+Settings+panel+%28opc-bounty-client+%2F%23settings%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Aprofile-workbench%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "admin-operations",
+      "title": "Alpha admin operations",
+      "summary": "Admin dashboard, users, postings, AI usage, match support, content review, file review, and production readiness views.",
+      "status": "implemented",
+      "repo": "admin/server",
+      "lane": "admin-ops",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Admin dashboard",
+          "repo": "opc-bounty-admin",
+          "route": "/"
+        },
+        {
+          "name": "Content review page",
+          "repo": "opc-bounty-admin",
+          "route": "/#content-review"
+        },
+        {
+          "name": "File review page",
+          "repo": "opc-bounty-admin",
+          "route": "/#file-review"
+        },
+        {
+          "name": "Production readiness page",
+          "repo": "opc-bounty-admin",
+          "route": "/#production-readiness"
+        }
+      ],
+      "operationChain": [
+        "Admin logs in",
+        "Server verifies admin permission",
+        "Admin reviews users, content, files, wallet, or readiness",
+        "Server returns redacted operational evidence"
+      ],
+      "linkedIssues": [
+        {
+          "label": "admin#1 match audit filters",
+          "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1",
+          "state": "OPEN",
+          "needs": "needs-server",
+          "stage": "Spec",
+          "verification": "none"
+        }
+      ],
+      "discussionPrompt": "Which admin decisions need audit-log evidence before inviting more testers?",
+      "openNeeds": [
+        "needs-server"
+      ],
+      "discussion": {
+        "issueTerm": "Feature discussion: admin-operations",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Badmin-operations%5D+Alpha+admin+operations&body=Feature+ID%3A+admin-operations%0AFeature%3A+Alpha+admin+operations%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Admin+dashboard+%28opc-bounty-admin+%2F%29%0A-+Content+review+page+%28opc-bounty-admin+%2F%23content-review%29%0A-+File+review+page+%28opc-bounty-admin+%2F%23file-review%29%0A-+Production+readiness+page+%28opc-bounty-admin+%2F%23production-readiness%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Aadmin-operations%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "ai-requirement-assistant",
+      "title": "AI requirement assistant",
+      "summary": "Mock or DeepSeek requirement review, question generation, draft generation, tags, usage limits, and production AI evidence.",
+      "status": "implemented",
+      "repo": "server",
+      "lane": "server-posting",
+      "ownerAi": "codex",
+      "verification": "local-pass",
+      "uiSurfaces": [
+        {
+          "name": "Requirement AI review state",
+          "repo": "opc-bounty-client",
+          "route": "/#publish"
+        },
+        {
+          "name": "Admin AI operations",
+          "repo": "opc-bounty-admin",
+          "route": "/#production-readiness"
+        }
+      ],
+      "operationChain": [
+        "User submits requirement",
+        "Server runs mock or DeepSeek review",
+        "Server records usage and limits",
+        "Client renders questions and draft",
+        "Admin sees AI readiness evidence"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "What evidence should be required before switching from mock AI to real AI in broader alpha?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: ai-requirement-assistant",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bai-requirement-assistant%5D+AI+requirement+assistant&body=Feature+ID%3A+ai-requirement-assistant%0AFeature%3A+AI+requirement+assistant%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Requirement+AI+review+state+%28opc-bounty-client+%2F%23publish%29%0A-+Admin+AI+operations+%28opc-bounty-admin+%2F%23production-readiness%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Aai-requirement-assistant%2Cdiscussion%3Aidea",
+        "count": 0,
+        "counts": {
+          "open": 0,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": null,
+        "latestTitle": null,
+        "signals": []
+      }
+    },
+    {
+      "id": "public-feature-dashboard",
+      "title": "Public async feature dashboard",
+      "summary": "Public dashboard for implemented features, missing work, UI surfaces, operation chains, handoffs, async comments, and AI review queues.",
+      "status": "in-progress",
+      "repo": "feature-dashboard/planning",
+      "lane": "qa-release",
+      "ownerAi": "codex",
+      "verification": "none",
+      "uiSurfaces": [
+        {
+          "name": "Public feature dashboard",
+          "repo": "feature-dashboard",
+          "route": "/"
+        }
+      ],
+      "operationChain": [
+        "Feature registry maps product capabilities",
+        "Team members submit ideas, evaluations, and handoff requests from the dashboard",
+        "Discussion entries are stored as public GitHub Issues or comments",
+        "Collector reads GitHub Project, private issues, dashboard issues, and comments when token is available",
+        "Generated status JSON is published",
+        "Static dashboard renders feature map, discussion signals, and AI review queue"
+      ],
+      "linkedIssues": [],
+      "discussionPrompt": "Which discussion signals should become implementation tasks, and which older comments should be marked stale?",
+      "openNeeds": [],
+      "discussion": {
+        "issueTerm": "Feature discussion: public-feature-dashboard",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5BIdea%5D%5Bpublic-feature-dashboard%5D+Public+async+feature+dashboard&body=Feature+ID%3A+public-feature-dashboard%0AFeature%3A+Public+async+feature+dashboard%0ADiscussion+type%3A+idea%0A%0ATarget+UI+surfaces%3A%0A-+Public+feature+dashboard+%28feature-dashboard+%2F%29%0A%0AProposal+%2F+evaluation%3A%0A%0AExpected+AI+action%3A%0A-+%5B+%5D+Summarize+this+discussion%0A-+%5B+%5D+Decide+whether+it+changes+feature+status%0A-+%5B+%5D+Split+into+implementation+issues+if+accepted%0A-+%5B+%5D+Mark+older+comments+obsolete+if+this+supersedes+them&labels=dashboard-discussion%2Cfeature%3Apublic-feature-dashboard%2Cdiscussion%3Aidea",
+        "count": 1,
+        "counts": {
+          "open": 1,
+          "needsAiReview": 0,
+          "implemented": 0,
+          "stale": 0,
+          "blocked": 0
+        },
+        "latestUpdatedAt": "2026-06-15T13:14:44Z",
+        "latestTitle": "[Change request][public-feature-dashboard] Dashboard async discussion workflow",
+        "signals": [
+          {
+            "id": "dashboard-1",
+            "number": 1,
+            "title": "[Change request][public-feature-dashboard] Dashboard async discussion workflow",
+            "url": "https://github.com/shichai-dev/feature-dashboard/issues/1",
+            "state": "OPEN",
+            "featureId": "public-feature-dashboard",
+            "uiSurface": null,
+            "operationStepId": null,
+            "hotspotId": null,
+            "type": "change-request",
+            "lifecycle": "accepted",
+            "needsAiReview": false,
+            "commentCount": 1,
+            "labels": [
+              "dashboard-discussion",
+              "discussion:change-request",
+              "status:accepted",
+              "feature:public-feature-dashboard"
+            ],
+            "createdAt": "2026-06-15T12:59:40Z",
+            "updatedAt": "2026-06-15T13:14:44Z",
+            "closedAt": null,
+            "preview": "Feature ID: public-feature-dashboard Feature: Public async feature dashboard Discussion type: change-request Target UI surfaces: - Public feature dashboard (feature-dashboard /)..."
+          }
+        ]
+      }
+    }
+  ],
+  "uiSurfaces": [
+    {
+      "name": "Public feature dashboard",
+      "repo": "feature-dashboard",
+      "route": "/",
+      "description": "Used by Public async feature dashboard",
+      "featureCount": 1,
+      "features": [
+        "Public async feature dashboard"
+      ]
+    },
+    {
+      "name": "Admin AI operations",
+      "repo": "opc-bounty-admin",
+      "route": "/#production-readiness",
+      "description": "Used by AI requirement assistant",
+      "featureCount": 1,
+      "features": [
+        "AI requirement assistant"
+      ]
+    },
+    {
+      "name": "Admin dashboard",
+      "repo": "opc-bounty-admin",
+      "route": "/",
+      "description": "Used by Alpha admin operations",
+      "featureCount": 1,
+      "features": [
+        "Alpha admin operations"
+      ]
+    },
+    {
+      "name": "Admin login shell",
+      "repo": "opc-bounty-admin",
+      "route": "/",
+      "description": "Used by Private alpha account login",
+      "featureCount": 1,
+      "features": [
+        "Private alpha account login"
+      ]
+    },
+    {
+      "name": "Admin match audit",
+      "repo": "opc-bounty-admin",
+      "route": "/#match-audit",
+      "description": "Used by Match support and wallet",
+      "featureCount": 1,
+      "features": [
+        "Match support and wallet"
+      ]
+    },
+    {
+      "name": "Content review page",
+      "repo": "opc-bounty-admin",
+      "route": "/#content-review",
+      "description": "Used by Alpha admin operations",
+      "featureCount": 1,
+      "features": [
+        "Alpha admin operations"
+      ]
+    },
+    {
+      "name": "File review page",
+      "repo": "opc-bounty-admin",
+      "route": "/#file-review",
+      "description": "Used by Alpha admin operations",
+      "featureCount": 1,
+      "features": [
+        "Alpha admin operations"
+      ]
+    },
+    {
+      "name": "Production readiness page",
+      "repo": "opc-bounty-admin",
+      "route": "/#production-readiness",
+      "description": "Used by Alpha admin operations",
+      "featureCount": 1,
+      "features": [
+        "Alpha admin operations"
+      ]
+    },
+    {
+      "name": "Client login panel",
+      "repo": "opc-bounty-client",
+      "route": "/",
+      "description": "Used by Private alpha account login",
+      "featureCount": 1,
+      "features": [
+        "Private alpha account login"
+      ]
+    },
+    {
+      "name": "Discussion thread",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
+      "description": "Used by Posting detail, comments, and participation",
+      "featureCount": 1,
+      "features": [
+        "Posting detail, comments, and participation"
+      ]
+    },
+    {
+      "name": "Display board",
+      "repo": "opc-bounty-client",
+      "route": "/#display",
+      "description": "Used by Unified display board",
+      "featureCount": 1,
+      "features": [
+        "Unified display board"
+      ]
+    },
+    {
+      "name": "Global search overlay",
+      "repo": "opc-bounty-client",
+      "route": "/#search",
+      "description": "Used by Unified display board",
+      "featureCount": 1,
+      "features": [
+        "Unified display board"
+      ]
+    },
+    {
+      "name": "Match support panel",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
+      "description": "Used by Match support and wallet",
+      "featureCount": 1,
+      "features": [
+        "Match support and wallet"
+      ]
+    },
+    {
+      "name": "Posting detail panel",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
+      "description": "Used by Posting detail, comments, and participation",
+      "featureCount": 1,
+      "features": [
+        "Posting detail, comments, and participation"
+      ]
+    },
+    {
+      "name": "Private message drawer",
+      "repo": "opc-bounty-client",
+      "route": "/#messages",
+      "description": "Used by Private message threads",
+      "featureCount": 1,
+      "features": [
+        "Private message threads"
+      ]
+    },
+    {
+      "name": "Profile dashboard",
+      "repo": "opc-bounty-client",
+      "route": "/#profile",
+      "description": "Used by Profile, workbench, and notifications",
+      "featureCount": 1,
+      "features": [
+        "Profile, workbench, and notifications"
+      ]
+    },
+    {
+      "name": "Project detail panel",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
+      "description": "Used by Project posting workflow",
+      "featureCount": 1,
+      "features": [
+        "Project posting workflow"
+      ]
+    },
+    {
+      "name": "Public profile modal",
+      "repo": "opc-bounty-client",
+      "route": "/#profile/:id",
+      "description": "Used by Private message threads",
+      "featureCount": 1,
+      "features": [
+        "Private message threads"
+      ]
+    },
+    {
+      "name": "Publish project form",
+      "repo": "opc-bounty-client",
+      "route": "/#publish-project",
+      "description": "Used by Project posting workflow",
+      "featureCount": 1,
+      "features": [
+        "Project posting workflow"
+      ]
+    },
+    {
+      "name": "Publish requirement form",
+      "repo": "opc-bounty-client",
+      "route": "/#publish",
+      "description": "Used by Requirement publishing workflow",
+      "featureCount": 1,
+      "features": [
+        "Requirement publishing workflow"
+      ]
+    },
+    {
+      "name": "Requirement AI review state",
+      "repo": "opc-bounty-client",
+      "route": "/#publish",
+      "description": "Used by AI requirement assistant",
+      "featureCount": 1,
+      "features": [
+        "AI requirement assistant"
+      ]
+    },
+    {
+      "name": "Requirement draft editor",
+      "repo": "opc-bounty-client",
+      "route": "/#publish",
+      "description": "Used by Requirement publishing workflow",
+      "featureCount": 1,
+      "features": [
+        "Requirement publishing workflow"
+      ]
+    },
+    {
+      "name": "Settings panel",
+      "repo": "opc-bounty-client",
+      "route": "/#settings",
+      "description": "Used by Profile, workbench, and notifications",
+      "featureCount": 1,
+      "features": [
+        "Profile, workbench, and notifications"
+      ]
+    },
+    {
+      "name": "Wallet summary in profile",
+      "repo": "opc-bounty-client",
+      "route": "/#profile",
+      "description": "Used by Match support and wallet",
+      "featureCount": 1,
+      "features": [
+        "Match support and wallet"
+      ]
+    }
+  ],
+  "operationChains": [
+    {
+      "id": "auth-alpha-login",
+      "name": "Private alpha account login",
+      "description": "Email, phone, QQ, and WeChat-style alpha login entry with account-password simulation.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "server-auth",
+      "steps": [
+        "User selects login provider",
+        "Server validates alpha account",
+        "Client stores auth token",
+        "Profile or admin shell renders allowed view"
+      ]
+    },
+    {
+      "id": "requirement-publishing",
+      "name": "Requirement publishing workflow",
+      "description": "Requirement posting flow with materials, AI review, follow-up questions, draft generation, tags, save, and publish.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-publish",
+      "steps": [
+        "User submits requirement idea",
+        "AI or mock review returns questions",
+        "User answers and generates draft",
+        "User selects tags and materials",
+        "Server publishes posting to display board"
+      ]
+    },
+    {
+      "id": "project-publishing",
+      "name": "Project posting workflow",
+      "description": "Existing project publication with GitHub/demo/media information, project stage, tags, interest, cooperation, and comments.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-publish",
+      "steps": [
+        "User enters project information",
+        "Server creates project posting",
+        "Other users signal interest or cooperation",
+        "Comments and support update project detail"
+      ]
+    },
+    {
+      "id": "display-board",
+      "name": "Unified display board",
+      "description": "Unified requirement and project discovery with hot, rising, type, search, and tag filters.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-community",
+      "steps": [
+        "Client requests display summaries",
+        "Server returns ranking and filters",
+        "User searches or filters",
+        "User opens posting detail"
+      ]
+    },
+    {
+      "id": "community-detail-comments",
+      "name": "Posting detail, comments, and participation",
+      "description": "Requirement/project detail views with comments, nested discussion, user profile entry, participation, and work submission context.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-community",
+      "steps": [
+        "User opens posting",
+        "Client loads detail DTO",
+        "User comments or replies",
+        "Server records community interaction",
+        "Profile and private message entry points become available"
+      ]
+    },
+    {
+      "id": "private-messages",
+      "name": "Private message threads",
+      "description": "Private messages with a first-three-message limit and reply-based unlock model.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-community",
+      "steps": [
+        "User opens another user's profile",
+        "User starts a private thread",
+        "Server enforces first-message limit",
+        "Reply unlocks continued conversation"
+      ]
+    },
+    {
+      "id": "match-support-wallet",
+      "name": "Match support and wallet",
+      "description": "Test match balance, project support, requirement bounty increase, membership, AI quota, exposure purchases, and support discussion group.",
+      "status": "implemented",
+      "repo": "client/server/admin",
+      "lane": "server-wallet",
+      "steps": [
+        "User receives test matches",
+        "User spends matches on support or exposure",
+        "Server records ledger and entitlement",
+        "Client refreshes wallet",
+        "Admin audits order or dispute"
+      ]
+    },
+    {
+      "id": "profile-workbench",
+      "name": "Profile, workbench, and notifications",
+      "description": "User profile area with my posts, participation, pending work, notifications, public profile, settings, and export actions.",
+      "status": "implemented",
+      "repo": "client/server",
+      "lane": "client-wallet-profile",
+      "steps": [
+        "User opens profile",
+        "Client loads my posts, participation, notifications, and wallet",
+        "User enters workbench or settings",
+        "Server returns current user scoped data"
+      ]
+    },
+    {
+      "id": "admin-operations",
+      "name": "Alpha admin operations",
+      "description": "Admin dashboard, users, postings, AI usage, match support, content review, file review, and production readiness views.",
+      "status": "implemented",
+      "repo": "admin/server",
+      "lane": "admin-ops",
+      "steps": [
+        "Admin logs in",
+        "Server verifies admin permission",
+        "Admin reviews users, content, files, wallet, or readiness",
+        "Server returns redacted operational evidence"
+      ]
+    },
+    {
+      "id": "ai-requirement-assistant",
+      "name": "AI requirement assistant",
+      "description": "Mock or DeepSeek requirement review, question generation, draft generation, tags, usage limits, and production AI evidence.",
+      "status": "implemented",
+      "repo": "server",
+      "lane": "server-posting",
+      "steps": [
+        "User submits requirement",
+        "Server runs mock or DeepSeek review",
+        "Server records usage and limits",
+        "Client renders questions and draft",
+        "Admin sees AI readiness evidence"
+      ]
+    },
+    {
+      "id": "public-feature-dashboard",
+      "name": "Public async feature dashboard",
+      "description": "Public dashboard for implemented features, missing work, UI surfaces, operation chains, handoffs, async comments, and AI review queues.",
+      "status": "in-progress",
+      "repo": "feature-dashboard/planning",
+      "lane": "qa-release",
+      "steps": [
+        "Feature registry maps product capabilities",
+        "Team members submit ideas, evaluations, and handoff requests from the dashboard",
+        "Discussion entries are stored as public GitHub Issues or comments",
+        "Collector reads GitHub Project, private issues, dashboard issues, and comments when token is available",
+        "Generated status JSON is published",
+        "Static dashboard renders feature map, discussion signals, and AI review queue"
+      ]
+    }
+  ],
+  "handoffs": [
+    {
+      "title": "Match support and wallet",
+      "summary": "Feature is waiting on needs-db.",
+      "needs": "needs-db",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "Match support and wallet",
+      "summary": "Feature is waiting on needs-server.",
+      "needs": "needs-server",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "Match support and wallet",
+      "summary": "Feature is waiting on needs-api.",
+      "needs": "needs-api",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "Match support and wallet",
+      "summary": "Feature is waiting on needs-review.",
+      "needs": "needs-review",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "Alpha admin operations",
+      "summary": "Feature is waiting on needs-server.",
+      "needs": "needs-server",
+      "lane": "admin-ops",
+      "repo": "admin/server"
+    }
+  ],
+  "discussions": [
+    {
+      "id": "dashboard-1",
+      "number": 1,
+      "title": "[Change request][public-feature-dashboard] Dashboard async discussion workflow",
+      "url": "https://github.com/shichai-dev/feature-dashboard/issues/1",
+      "state": "OPEN",
+      "featureId": "public-feature-dashboard",
+      "uiSurface": null,
+      "operationStepId": null,
+      "hotspotId": null,
+      "type": "change-request",
+      "lifecycle": "accepted",
+      "needsAiReview": false,
+      "commentCount": 1,
+      "labels": [
+        "dashboard-discussion",
+        "discussion:change-request",
+        "status:accepted",
+        "feature:public-feature-dashboard"
+      ],
+      "createdAt": "2026-06-15T12:59:40Z",
+      "updatedAt": "2026-06-15T13:14:44Z",
+      "closedAt": null,
+      "preview": "Feature ID: public-feature-dashboard Feature: Public async feature dashboard Discussion type: change-request Target UI surfaces: - Public feature dashboard (feature-dashboard /)..."
+    }
+  ],
+  "aiReviewQueue": [
+    {
+      "type": "handoff",
+      "title": "Match support and wallet",
+      "featureId": "match-support-wallet",
+      "reason": "needs-db",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "Match support and wallet",
+      "featureId": "match-support-wallet",
+      "reason": "needs-server",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "Match support and wallet",
+      "featureId": "match-support-wallet",
+      "reason": "needs-api",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "Match support and wallet",
+      "featureId": "match-support-wallet",
+      "reason": "needs-review",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "Alpha admin operations",
+      "featureId": "admin-operations",
+      "reason": "needs-server",
+      "repo": "admin/server",
+      "lane": "admin-ops"
+    }
+  ]
+}
