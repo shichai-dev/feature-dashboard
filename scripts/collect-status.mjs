@@ -134,6 +134,10 @@ function discussionText(issue) {
 function inferDiscussionType(issue) {
   const labels = labelNames(issue);
   const text = discussionText(issue).toLowerCase();
+  if (text.includes("讨论类型: evaluation") || text.includes("讨论类型: 评价")) return "evaluation";
+  if (text.includes("讨论类型: change-request") || text.includes("讨论类型: 修改请求")) return "change-request";
+  if (text.includes("讨论类型: handoff") || text.includes("讨论类型: 协作交接")) return "handoff";
+  if (text.includes("讨论类型: bug") || text.includes("讨论类型: 问题")) return "bug";
   if (labels.includes("discussion:evaluation") || text.includes("discussion type: evaluation")) return "evaluation";
   if (labels.includes("discussion:change-request") || text.includes("discussion type: change-request")) return "change-request";
   if (labels.includes("discussion:handoff") || text.includes("discussion type: handoff")) return "handoff";
@@ -144,6 +148,7 @@ function inferDiscussionType(issue) {
 function inferDiscussionFeatureId(issue, featureIds) {
   const text = discussionText(issue);
   const patterns = [
+    /功能编号:\s*([a-z0-9-]+)/i,
     /Feature ID:\s*([a-z0-9-]+)/i,
     /\[feature:([a-z0-9-]+)\]/i,
     /\[Discussion\]\[([a-z0-9-]+)\]/i,
@@ -198,22 +203,22 @@ function summarizeText(value) {
 }
 
 function buildNewDiscussionUrl(feature) {
-  const title = `[Idea][${feature.id}] ${feature.title}`;
+  const title = `[想法][${feature.id}] ${feature.title}`;
   const body = [
-    `Feature ID: ${feature.id}`,
-    `Feature: ${feature.title}`,
-    "Discussion type: idea",
+    `功能编号: ${feature.id}`,
+    `功能: ${feature.title}`,
+    "讨论类型: idea",
     "",
-    "Target UI surfaces:",
-    (feature.uiSurfaces || []).map((surface) => `- ${surface.name} (${surface.repo}${surface.route ? ` ${surface.route}` : ""})`).join("\n") || "- TBD",
+    "目标界面页面:",
+    (feature.uiSurfaces || []).map((surface) => `- ${surface.name} (${surface.repo}${surface.route ? ` ${surface.route}` : ""})`).join("\n") || "- 待定",
     "",
-    "Proposal / evaluation:",
+    "建议或评价:",
     "",
-    "Expected AI action:",
-    "- [ ] Summarize this discussion",
-    "- [ ] Decide whether it changes feature status",
-    "- [ ] Split into implementation issues if accepted",
-    "- [ ] Mark older comments obsolete if this supersedes them"
+    "希望智能助手处理:",
+    "- [ ] 汇总这条讨论",
+    "- [ ] 判断是否影响功能状态",
+    "- [ ] 若已采纳则拆成实现议题",
+    "- [ ] 若替代旧讨论则标记旧评论过期"
   ].join("\n");
   const labels = ["dashboard-discussion", `feature:${feature.id}`, "discussion:idea"];
   const params = new URLSearchParams({
@@ -238,9 +243,9 @@ function buildDiscussionSignals(issues, registryFeatures) {
         url: issue.url,
         state: issue.state,
         featureId,
-        uiSurface: inferDiscussionField(issue, "UI Surface"),
-        operationStepId: inferDiscussionField(issue, "Operation Step"),
-        hotspotId: inferDiscussionField(issue, "Hotspot ID"),
+        uiSurface: inferDiscussionField(issue, "界面页面") || inferDiscussionField(issue, "UI Surface"),
+        operationStepId: inferDiscussionField(issue, "操作步骤") || inferDiscussionField(issue, "Operation Step"),
+        hotspotId: inferDiscussionField(issue, "热点编号") || inferDiscussionField(issue, "Hotspot ID"),
         type,
         lifecycle,
         needsAiReview: lifecycle === "needs-ai-review" || !featureId,
@@ -295,7 +300,7 @@ function attachDiscussions(features, discussionSignals) {
     return {
       ...feature,
       discussion: {
-        issueTerm: `Feature discussion: ${feature.id}`,
+        issueTerm: `功能讨论：${feature.id}`,
         newIssueUrl: buildNewDiscussionUrl(feature),
         count: discussions.length,
         counts,
@@ -365,7 +370,7 @@ function buildSurfaces(features) {
       };
       existing.featureCount += 1;
       existing.features.push(feature.title);
-      existing.description = existing.description || `Used by ${existing.features.join(", ")}`;
+      existing.description = existing.description || `用于 ${existing.features.join("、")}`;
       surfaceMap.set(key, existing);
     }
   }
@@ -391,7 +396,7 @@ function buildHandoffs(features) {
     const needs = new Set(feature.openNeeds || []);
     return [...needs].map((need) => ({
       title: feature.title,
-      summary: `Feature is waiting on ${need}.`,
+      summary: `该功能正在等待 ${need}。`,
       needs: need,
       lane: feature.lane,
       repo: feature.repo
@@ -459,7 +464,7 @@ function main() {
 
   const output = {
     generatedAt: new Date().toISOString(),
-    sourceSummary: `${features.length} features, ${uiSurfaces.length} UI surfaces, ${operationChains.length} operation chains. GitHub items read: ${projectItems.length}; private issues read: ${issues.length}; dashboard discussions read: ${discussionSignals.length}.`,
+    sourceSummary: `${features.length} 个功能，${uiSurfaces.length} 个界面页面，${operationChains.length} 条操作链。已读取 ${projectItems.length} 个项目项、${issues.length} 个私有议题、${discussionSignals.length} 条看板讨论。`,
     repositories,
     dashboardRepository,
     metrics,

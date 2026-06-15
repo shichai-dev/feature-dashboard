@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
-  - name: Internal planning issue
+  - name: 内部规划议题
     url: https://github.com/shichai-dev/planning/issues/new/choose
-    about: Use the private planning repo for implementation-ready decisions and team task splitting.
+    about: 已经可以拆分实现任务时，请使用私有规划仓库。

@@ -3,261 +3,261 @@
   "features": [
     {
       "id": "auth-alpha-login",
-      "title": "Private alpha account login",
-      "summary": "Email, phone, QQ, and WeChat-style alpha login entry with account-password simulation.",
+      "title": "内测账号登录",
+      "summary": "邮箱、手机、QQ、微信风格的内测登录入口，以及账号密码模拟登录。",
       "status": "implemented",
       "repo": "client/server",
       "lane": "server-auth",
       "ownerAi": "human",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Client login panel", "repo": "opc-bounty-client", "route": "/" },
-        { "name": "Admin login shell", "repo": "opc-bounty-admin", "route": "/" }
+        { "name": "用户端登录面板", "repo": "opc-bounty-client", "route": "/" },
+        { "name": "管理端登录外壳", "repo": "opc-bounty-admin", "route": "/" }
       ],
       "operationChain": [
-        "User selects login provider",
-        "Server validates alpha account",
-        "Client stores auth token",
-        "Profile or admin shell renders allowed view"
+        "用户选择登录方式",
+        "服务端校验内测账号",
+        "客户端保存登录令牌",
+        "个人页或管理端展示可访问页面"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "Which real OAuth or verification flow should be introduced first without breaking alpha account testing?"
+      "discussionPrompt": "在不破坏内测账号测试的前提下，应该优先接入哪种真实登录或验证方式？"
     },
     {
       "id": "requirement-publishing",
-      "title": "Requirement publishing workflow",
-      "summary": "Requirement posting flow with materials, AI review, follow-up questions, draft generation, tags, save, and publish.",
+      "title": "需求发布流程",
+      "summary": "包含材料、智能初审、追问、草稿生成、标签、保存和发布的需求发布流程。",
       "status": "implemented",
       "repo": "client/server",
       "lane": "client-publish",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Publish requirement form", "repo": "opc-bounty-client", "route": "/#publish" },
-        { "name": "Requirement draft editor", "repo": "opc-bounty-client", "route": "/#publish" }
+        { "name": "发布需求表单", "repo": "opc-bounty-client", "route": "/#publish" },
+        { "name": "需求草稿编辑器", "repo": "opc-bounty-client", "route": "/#publish" }
       ],
       "operationChain": [
-        "User submits requirement idea",
-        "AI or mock review returns questions",
-        "User answers and generates draft",
-        "User selects tags and materials",
-        "Server publishes posting to display board"
+        "用户提交需求想法",
+        "智能助手或模拟初审返回追问",
+        "用户回答追问并生成草稿",
+        "用户选择标签和材料",
+        "服务端发布到展示台"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "Which parts of the publishing funnel need clearer review states before adding payment or external AI usage?"
+      "discussionPrompt": "在加入支付或外部智能服务前，发布漏斗里的哪些状态需要更清楚？"
     },
     {
       "id": "project-publishing",
-      "title": "Project posting workflow",
-      "summary": "Existing project publication with GitHub/demo/media information, project stage, tags, interest, cooperation, and comments.",
+      "title": "项目发布流程",
+      "summary": "已有项目发布流程，包含代码仓、演示、媒体、项目阶段、标签、关注、合作和评论。",
       "status": "implemented",
       "repo": "client/server",
       "lane": "client-publish",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Publish project form", "repo": "opc-bounty-client", "route": "/#publish-project" },
-        { "name": "Project detail panel", "repo": "opc-bounty-client", "route": "/#postings/:id" }
+        { "name": "发布项目表单", "repo": "opc-bounty-client", "route": "/#publish-project" },
+        { "name": "项目详情面板", "repo": "opc-bounty-client", "route": "/#postings/:id" }
       ],
       "operationChain": [
-        "User enters project information",
-        "Server creates project posting",
-        "Other users signal interest or cooperation",
-        "Comments and support update project detail"
+        "用户填写项目信息",
+        "服务端创建项目发布",
+        "其他用户表达关注或合作意向",
+        "评论和支持更新项目详情"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "Should project versions and release notes become a first-class operation chain?"
+      "discussionPrompt": "项目版本和发布说明是否应该成为一条独立操作链？"
     },
     {
       "id": "display-board",
-      "title": "Unified display board",
-      "summary": "Unified requirement and project discovery with hot, rising, type, search, and tag filters.",
+      "title": "统一展示台",
+      "summary": "统一展示需求和项目，支持热门、上升最快、类型、搜索和标签筛选。",
       "status": "implemented",
       "repo": "client/server",
       "lane": "client-community",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Display board", "repo": "opc-bounty-client", "route": "/#display" },
-        { "name": "Global search overlay", "repo": "opc-bounty-client", "route": "/#search" }
+        { "name": "展示台", "repo": "opc-bounty-client", "route": "/#display" },
+        { "name": "全局搜索浮层", "repo": "opc-bounty-client", "route": "/#search" }
       ],
       "operationChain": [
-        "Client requests display summaries",
-        "Server returns ranking and filters",
-        "User searches or filters",
-        "User opens posting detail"
+        "客户端请求展示摘要",
+        "服务端返回排序和筛选结果",
+        "用户搜索或筛选",
+        "用户打开发布详情"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "Which ranking signals should be made transparent for alpha users?"
+      "discussionPrompt": "哪些排序信号应该向内测用户透明展示？"
     },
     {
       "id": "community-detail-comments",
-      "title": "Posting detail, comments, and participation",
-      "summary": "Requirement/project detail views with comments, nested discussion, user profile entry, participation, and work submission context.",
+      "title": "发布详情、评论和参与",
+      "summary": "需求和项目详情页，包含评论、嵌套讨论、用户资料入口、参与和作品提交上下文。",
       "status": "implemented",
       "repo": "client/server",
       "lane": "client-community",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Posting detail panel", "repo": "opc-bounty-client", "route": "/#postings/:id" },
-        { "name": "Discussion thread", "repo": "opc-bounty-client", "route": "/#postings/:id" }
+        { "name": "发布详情面板", "repo": "opc-bounty-client", "route": "/#postings/:id" },
+        { "name": "讨论楼层", "repo": "opc-bounty-client", "route": "/#postings/:id" }
       ],
       "operationChain": [
-        "User opens posting",
-        "Client loads detail DTO",
-        "User comments or replies",
-        "Server records community interaction",
-        "Profile and private message entry points become available"
+        "用户打开发布内容",
+        "客户端加载详情数据",
+        "用户评论或回复",
+        "服务端记录社区互动",
+        "资料页和私聊入口变为可用"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "Should comments, works, and messages be separated visually for less crowded detail pages?"
+      "discussionPrompt": "评论、作品和私聊入口是否应该在视觉上分开，减少详情页拥挤感？"
     },
     {
       "id": "private-messages",
-      "title": "Private message threads",
-      "summary": "Private messages with a first-three-message limit and reply-based unlock model.",
+      "title": "私聊会话",
+      "summary": "私聊支持主动连续三句限制，以及通过回复解锁后续交流的模型。",
       "status": "implemented",
       "repo": "client/server",
       "lane": "client-community",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Private message drawer", "repo": "opc-bounty-client", "route": "/#messages" },
-        { "name": "Public profile modal", "repo": "opc-bounty-client", "route": "/#profile/:id" }
+        { "name": "私聊抽屉", "repo": "opc-bounty-client", "route": "/#messages" },
+        { "name": "公开资料弹窗", "repo": "opc-bounty-client", "route": "/#profile/:id" }
       ],
       "operationChain": [
-        "User opens another user's profile",
-        "User starts a private thread",
-        "Server enforces first-message limit",
-        "Reply unlocks continued conversation"
+        "用户打开他人资料",
+        "用户发起私聊会话",
+        "服务端限制主动连续消息数量",
+        "对方回复后解锁持续对话"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "What moderation evidence should be visible to admins without exposing private content publicly?"
+      "discussionPrompt": "在不公开私聊内容的前提下，管理员应该看到哪些审核证据？"
     },
     {
       "id": "match-support-wallet",
-      "title": "Match support and wallet",
-      "summary": "Test match balance, project support, requirement bounty increase, membership, AI quota, exposure purchases, and support discussion group.",
+      "title": "火柴支持和钱包",
+      "summary": "测试火柴余额、项目支持、需求加赏、会员、智能额度、曝光购买和支持者讨论组。",
       "status": "implemented",
       "repo": "client/server/admin",
       "lane": "server-wallet",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Match support panel", "repo": "opc-bounty-client", "route": "/#postings/:id" },
-        { "name": "Wallet summary in profile", "repo": "opc-bounty-client", "route": "/#profile" },
-        { "name": "Admin match audit", "repo": "opc-bounty-admin", "route": "/#match-audit" }
+        { "name": "火柴支持面板", "repo": "opc-bounty-client", "route": "/#postings/:id" },
+        { "name": "个人页钱包摘要", "repo": "opc-bounty-client", "route": "/#profile" },
+        { "name": "管理端火柴审计", "repo": "opc-bounty-admin", "route": "/#match-audit" }
       ],
       "operationChain": [
-        "User receives test matches",
-        "User spends matches on support or exposure",
-        "Server records ledger and entitlement",
-        "Client refreshes wallet",
-        "Admin audits order or dispute"
+        "用户获得测试火柴",
+        "用户把火柴用于支持或曝光",
+        "服务端记录账本和权益",
+        "客户端刷新钱包",
+        "管理员审计订单或争议"
       ],
       "linkedIssues": [
-        { "label": "server#1 match spending API", "url": "https://github.com/shichai-dev/opc-bounty-server/issues/1" },
-        { "label": "server#2 match ledger query", "url": "https://github.com/shichai-dev/opc-bounty-server/issues/2" },
-        { "label": "client#1 profile history UI", "url": "https://github.com/shichai-dev/opc-bounty-client/issues/1" },
-        { "label": "admin#1 audit filters", "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1" },
-        { "label": "server#3 QA verification", "url": "https://github.com/shichai-dev/opc-bounty-server/issues/3" }
+        { "label": "服务端#1 火柴消费接口", "url": "https://github.com/shichai-dev/opc-bounty-server/issues/1" },
+        { "label": "服务端#2 火柴账本查询", "url": "https://github.com/shichai-dev/opc-bounty-server/issues/2" },
+        { "label": "用户端#1 个人页历史界面", "url": "https://github.com/shichai-dev/opc-bounty-client/issues/1" },
+        { "label": "管理端#1 审计筛选", "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1" },
+        { "label": "服务端#3 质量验证", "url": "https://github.com/shichai-dev/opc-bounty-server/issues/3" }
       ],
-      "discussionPrompt": "The next expansion point is spending history: finish API, DB query, client history UI, admin filters, and QA."
+      "discussionPrompt": "下一个扩展点是消费历史：完成接口、数据库查询、用户端历史界面、管理端筛选和质量验证。"
     },
     {
       "id": "profile-workbench",
-      "title": "Profile, workbench, and notifications",
-      "summary": "User profile area with my posts, participation, pending work, notifications, public profile, settings, and export actions.",
+      "title": "个人页、工作台和通知",
+      "summary": "用户个人区域，包含我的发布、我的参与、待处理、通知、公开资料、设置和导出操作。",
       "status": "implemented",
       "repo": "client/server",
       "lane": "client-wallet-profile",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Profile dashboard", "repo": "opc-bounty-client", "route": "/#profile" },
-        { "name": "Settings panel", "repo": "opc-bounty-client", "route": "/#settings" }
+        { "name": "个人页仪表盘", "repo": "opc-bounty-client", "route": "/#profile" },
+        { "name": "设置面板", "repo": "opc-bounty-client", "route": "/#settings" }
       ],
       "operationChain": [
-        "User opens profile",
-        "Client loads my posts, participation, notifications, and wallet",
-        "User enters workbench or settings",
-        "Server returns current user scoped data"
+        "用户打开个人页",
+        "客户端加载我的发布、参与、通知和钱包",
+        "用户进入工作台或设置",
+        "服务端返回当前用户范围内的数据"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "Should pending tasks become a richer cross-feature inbox before public alpha?"
+      "discussionPrompt": "公开内测前，待处理任务是否应该升级为跨功能收件箱？"
     },
     {
       "id": "admin-operations",
-      "title": "Alpha admin operations",
-      "summary": "Admin dashboard, users, postings, AI usage, match support, content review, file review, and production readiness views.",
+      "title": "内测管理端运营",
+      "summary": "管理端仪表盘、用户、发布内容、智能服务使用、火柴支持、内容审核、文件审核和生产就绪页面。",
       "status": "implemented",
       "repo": "admin/server",
       "lane": "admin-ops",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Admin dashboard", "repo": "opc-bounty-admin", "route": "/" },
-        { "name": "Content review page", "repo": "opc-bounty-admin", "route": "/#content-review" },
-        { "name": "File review page", "repo": "opc-bounty-admin", "route": "/#file-review" },
-        { "name": "Production readiness page", "repo": "opc-bounty-admin", "route": "/#production-readiness" }
+        { "name": "管理端仪表盘", "repo": "opc-bounty-admin", "route": "/" },
+        { "name": "内容审核页", "repo": "opc-bounty-admin", "route": "/#content-review" },
+        { "name": "文件审核页", "repo": "opc-bounty-admin", "route": "/#file-review" },
+        { "name": "生产就绪页", "repo": "opc-bounty-admin", "route": "/#production-readiness" }
       ],
       "operationChain": [
-        "Admin logs in",
-        "Server verifies admin permission",
-        "Admin reviews users, content, files, wallet, or readiness",
-        "Server returns redacted operational evidence"
+        "管理员登录",
+        "服务端校验管理员权限",
+        "管理员审核用户、内容、文件、钱包或就绪状态",
+        "服务端返回脱敏运营证据"
       ],
       "linkedIssues": [
-        { "label": "admin#1 match audit filters", "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1" }
+        { "label": "管理端#1 火柴审计筛选", "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1" }
       ],
-      "discussionPrompt": "Which admin decisions need audit-log evidence before inviting more testers?"
+      "discussionPrompt": "邀请更多测试用户前，哪些管理端决策必须有审计日志证据？"
     },
     {
       "id": "ai-requirement-assistant",
-      "title": "AI requirement assistant",
-      "summary": "Mock or DeepSeek requirement review, question generation, draft generation, tags, usage limits, and production AI evidence.",
+      "title": "智能需求助手",
+      "summary": "模拟或真实模型需求初审、追问生成、草稿生成、标签、使用限制和生产智能服务证据。",
       "status": "implemented",
       "repo": "server",
       "lane": "server-posting",
       "ownerAi": "codex",
       "verification": "local-pass",
       "uiSurfaces": [
-        { "name": "Requirement AI review state", "repo": "opc-bounty-client", "route": "/#publish" },
-        { "name": "Admin AI operations", "repo": "opc-bounty-admin", "route": "/#production-readiness" }
+        { "name": "需求智能初审状态", "repo": "opc-bounty-client", "route": "/#publish" },
+        { "name": "管理端智能服务运营", "repo": "opc-bounty-admin", "route": "/#production-readiness" }
       ],
       "operationChain": [
-        "User submits requirement",
-        "Server runs mock or DeepSeek review",
-        "Server records usage and limits",
-        "Client renders questions and draft",
-        "Admin sees AI readiness evidence"
+        "用户提交需求",
+        "服务端运行模拟或 DeepSeek 初审",
+        "服务端记录用量和限制",
+        "客户端展示追问和草稿",
+        "管理员查看智能服务就绪证据"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "What evidence should be required before switching from mock AI to real AI in broader alpha?"
+      "discussionPrompt": "从模拟智能服务切换到真实智能服务前，应该要求哪些证据？"
     },
     {
       "id": "public-feature-dashboard",
-      "title": "Public async feature dashboard",
-      "summary": "Public dashboard for implemented features, missing work, UI surfaces, operation chains, handoffs, async comments, and AI review queues.",
+      "title": "公开异步功能讨论看板",
+      "summary": "公开看板，用于展示已实现功能、未完成工作、界面页面、操作链、协作交接、异步评论和智能待处理队列。",
       "status": "in-progress",
       "repo": "feature-dashboard/planning",
       "lane": "qa-release",
       "ownerAi": "codex",
       "verification": "none",
       "uiSurfaces": [
-        { "name": "Public feature dashboard", "repo": "feature-dashboard", "route": "/" }
+        { "name": "公开功能讨论看板", "repo": "feature-dashboard", "route": "/" }
       ],
       "operationChain": [
-        "Feature registry maps product capabilities",
-        "Team members submit ideas, evaluations, and handoff requests from the dashboard",
-        "Discussion entries are stored as public GitHub Issues or comments",
-        "Collector reads GitHub Project, private issues, dashboard issues, and comments when token is available",
-        "Generated status JSON is published",
-        "Static dashboard renders feature map, discussion signals, and AI review queue"
+        "功能登记表映射产品能力",
+        "团队成员从看板提交想法、评价和协作请求",
+        "讨论内容保存为公开代码托管议题或评论",
+        "采集脚本在有令牌时读取代码托管项目、私有议题、看板议题和评论",
+        "生成的状态 JSON 发布到公开页面",
+        "静态看板展示仿真界面、讨论信号和智能待处理队列"
       ],
       "linkedIssues": [],
-      "discussionPrompt": "Which discussion signals should become implementation tasks, and which older comments should be marked stale?"
+      "discussionPrompt": "哪些讨论信号应该变成实现任务？哪些旧评论应该标记为过期？"
     }
   ],
   "operationStudio": {
@@ -266,17 +266,17 @@
       {
         "id": "home",
         "title": "首页",
-        "eyebrow": "ShiChai Platform",
+        "eyebrow": "拾柴平台",
         "summary": "发布需求、发布项目、查看反馈的入口页。",
         "featureId": "display-board",
-        "uiSurface": "Client home",
+        "uiSurface": "用户端首页",
         "sections": [
           {
             "title": "社区工作流",
             "description": "发布需求、验证项目、沉淀案例。",
             "variant": "hero",
             "items": [
-              { "id": "home-publish-requirement", "label": "发布需求", "summary": "AI 整理成合作机会卡", "icon": "doc", "featureId": "requirement-publishing", "stepId": "publish-requirement-start" },
+              { "id": "home-publish-requirement", "label": "发布需求", "summary": "智能助手整理成合作机会卡", "icon": "doc", "featureId": "requirement-publishing", "stepId": "publish-requirement-start" },
               { "id": "home-publish-project", "label": "发布项目", "summary": "验证真实市场信号", "icon": "cube", "featureId": "project-publishing", "stepId": "publish-project-start" },
               { "id": "home-showcase", "label": "展示案例", "summary": "脱敏后建立信任", "icon": "case", "featureId": "display-board", "stepId": "display-open-case" }
             ]
@@ -286,7 +286,7 @@
             "description": "让一人公司和个体需求方更快对齐。",
             "variant": "metrics",
             "items": [
-              { "id": "home-v0-requirement", "label": "我有需求，想找人帮忙", "summary": "AI 整理成合作机会", "featureId": "requirement-publishing", "stepId": "publish-requirement-start" },
+              { "id": "home-v0-requirement", "label": "我有需求，想找人帮忙", "summary": "智能助手整理成合作机会", "featureId": "requirement-publishing", "stepId": "publish-requirement-start" },
               { "id": "home-v0-project", "label": "我有项目，想找市场反馈", "summary": "验证真实市场信号", "featureId": "project-publishing", "stepId": "publish-project-start" },
               { "id": "home-v0-feedback", "label": "我有案例，想展示合作成果", "summary": "脱敏审核后建立信任", "featureId": "display-board", "stepId": "display-open-case" }
             ]
@@ -303,10 +303,10 @@
       {
         "id": "display",
         "title": "展示台",
-        "eyebrow": "ShiChai Platform",
+        "eyebrow": "拾柴平台",
         "summary": "查看需求和项目反馈，按热度、偏好和标签筛选。",
         "featureId": "display-board",
-        "uiSurface": "Display board",
+        "uiSurface": "展示台",
         "sections": [
           {
             "title": "展示台筛选",
@@ -338,10 +338,10 @@
       {
         "id": "publish",
         "title": "发布",
-        "eyebrow": "ShiChai Platform",
-        "summary": "发布需求或已有项目，AI 辅助整理成可协作的公开卡片。",
+        "eyebrow": "拾柴平台",
+        "summary": "发布需求或已有项目，智能助手辅助整理成可协作的公开卡片。",
         "featureId": "requirement-publishing",
-        "uiSurface": "Publish requirement form",
+        "uiSurface": "发布需求表单",
         "sections": [
           {
             "title": "发布类型",
@@ -354,12 +354,12 @@
           },
           {
             "title": "需求整理",
-            "description": "输入需求、上传材料、AI 初审、回答追问、生成草稿、选择标签并发布。",
+            "description": "输入需求、上传材料、智能初审、回答追问、生成草稿、选择标签并发布。",
             "variant": "form",
             "items": [
               { "id": "publish-raw-input", "label": "需求描述", "summary": "一句话描述真实痛点", "featureId": "requirement-publishing", "stepId": "write-requirement" },
               { "id": "publish-material", "label": "材料包", "summary": "上传文件或补充材料说明", "featureId": "requirement-publishing", "stepId": "attach-materials" },
-              { "id": "publish-ai-review", "label": "AI 初审", "summary": "生成追问和阻塞信息", "featureId": "ai-requirement-assistant", "stepId": "run-ai-review" },
+              { "id": "publish-ai-review", "label": "智能初审", "summary": "生成追问和阻塞信息", "featureId": "ai-requirement-assistant", "stepId": "run-ai-review" },
               { "id": "publish-generate-draft", "label": "生成草稿", "summary": "形成合作机会卡", "featureId": "ai-requirement-assistant", "stepId": "generate-draft" },
               { "id": "publish-final", "label": "发布", "summary": "进入展示台", "featureId": "requirement-publishing", "stepId": "publish-final" }
             ]
@@ -373,10 +373,10 @@
       {
         "id": "detail",
         "title": "详情页",
-        "eyebrow": "ShiChai Platform",
+        "eyebrow": "拾柴平台",
         "summary": "需求 / 项目详情、评论、支持、私聊、作品提交与社区评价。",
         "featureId": "community-detail-comments",
-        "uiSurface": "Posting detail panel",
+        "uiSurface": "发布详情面板",
         "sections": [
           {
             "title": "详情主体",
@@ -399,10 +399,10 @@
       {
         "id": "profile",
         "title": "我的",
-        "eyebrow": "ShiChai Platform",
+        "eyebrow": "拾柴平台",
         "summary": "我的发布、工作台、参与、通知、火柴账户和设置。",
         "featureId": "profile-workbench",
-        "uiSurface": "Profile dashboard",
+        "uiSurface": "个人页仪表盘",
         "sections": [
           {
             "title": "个人工作台",
@@ -431,7 +431,7 @@
         "steps": [
           { "id": "publish-requirement-start", "pageId": "home", "label": "从首页点击发布需求" },
           { "id": "write-requirement", "pageId": "publish", "label": "填写需求描述和材料" },
-          { "id": "run-ai-review", "pageId": "publish", "label": "AI 初审并提出追问" },
+          { "id": "run-ai-review", "pageId": "publish", "label": "智能初审并提出追问" },
           { "id": "generate-draft", "pageId": "publish", "label": "生成结构化机会卡" },
           { "id": "select-tags", "pageId": "publish", "label": "选择标签和展示范围" },
           { "id": "publish-final", "pageId": "publish", "label": "发布到展示台" },

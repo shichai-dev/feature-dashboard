@@ -11,10 +11,10 @@ const state = {
 };
 
 const statusLabels = {
-  implemented: "Implemented",
-  "in-progress": "In progress",
-  planned: "Planned",
-  blocked: "Blocked"
+  implemented: "已实现",
+  "in-progress": "进行中",
+  planned: "计划中",
+  blocked: "受阻"
 };
 
 const statusClass = {
@@ -25,19 +25,19 @@ const statusClass = {
 };
 
 const discussionLabels = {
-  idea: "Idea",
-  evaluation: "Evaluation",
-  "change-request": "Change request",
-  handoff: "Handoff",
-  bug: "Bug"
+  idea: "想法",
+  evaluation: "评价",
+  "change-request": "修改请求",
+  handoff: "协作交接",
+  bug: "问题风险"
 };
 
 const lifecycleLabels = {
-  "needs-ai-review": "Needs AI review",
-  accepted: "Accepted",
-  implemented: "Implemented",
-  stale: "Stale",
-  blocked: "Blocked"
+  "needs-ai-review": "待智能处理",
+  accepted: "已采纳",
+  implemented: "已实现",
+  stale: "已过期",
+  blocked: "受阻"
 };
 
 const byId = (id) => document.getElementById(id);
@@ -152,32 +152,36 @@ function chainsForTarget(target = currentTarget()) {
   );
 }
 
+function pageTitleById(pageId) {
+  return studioPages().find((page) => page.id === pageId)?.title || pageId || "页面";
+}
+
 function buildTargetDiscussionUrl(target, type = "idea", titleInput = "", bodyInput = "") {
   const page = currentPage();
   const feature = featureById(target?.featureId);
-  const typeLabel = discussionLabels[type] || "Idea";
-  const title = `[${typeLabel}][${target?.featureId || "unmapped"}] ${titleInput || target?.label || "Platform UI discussion"}`;
+  const typeLabel = discussionLabels[type] || "想法";
+  const title = `[${typeLabel}][${target?.featureId || "未映射"}] ${titleInput || target?.label || "平台界面讨论"}`;
   const body = [
-    `Feature ID: ${target?.featureId || ""}`,
-    `Feature: ${feature?.title || target?.featureId || ""}`,
-    `UI Surface: ${target?.uiSurface || page?.uiSurface || ""}`,
-    `Operation Step: ${target?.stepId || ""}`,
-    `Hotspot ID: ${target?.id || ""}`,
-    `Discussion type: ${type}`,
+    `功能编号: ${target?.featureId || ""}`,
+    `功能: ${feature?.title || target?.featureId || ""}`,
+    `界面页面: ${target?.uiSurface || page?.uiSurface || ""}`,
+    `操作步骤: ${target?.stepId || ""}`,
+    `热点编号: ${target?.id || ""}`,
+    `讨论类型: ${type}`,
     "",
-    "Selected UI:",
-    `- Page: ${page?.title || ""}`,
-    `- Target: ${target?.label || ""}`,
-    `- Current behavior: ${target?.summary || ""}`,
+    "选中的界面:",
+    `- 页面: ${page?.title || ""}`,
+    `- 操作点: ${target?.label || ""}`,
+    `- 当前行为: ${target?.summary || ""}`,
     "",
-    "Proposal / evaluation:",
+    "建议或评价:",
     bodyInput || "",
     "",
-    "Expected AI action:",
-    "- [ ] Summarize this discussion",
-    "- [ ] Decide whether it changes feature status",
-    "- [ ] Split into implementation issues if accepted",
-    "- [ ] Mark older comments obsolete if this supersedes them"
+    "希望智能助手处理:",
+    "- [ ] 汇总这条讨论",
+    "- [ ] 判断是否影响功能状态",
+    "- [ ] 若已采纳则拆成实现议题",
+    "- [ ] 若替代旧讨论则标记旧评论过期"
   ].join("\n");
   const labels = ["dashboard-discussion", target?.featureId ? `feature:${target.featureId}` : "", `discussion:${type}`]
     .filter(Boolean)
@@ -189,10 +193,10 @@ function buildTargetDiscussionUrl(target, type = "idea", titleInput = "", bodyIn
 function renderMetrics() {
   const metrics = state.data?.metrics || {};
   byId("metrics").innerHTML = [
-    ["Implemented", metrics.implemented || 0],
-    ["In progress", metrics.inProgress || 0],
-    ["Open discussions", metrics.openDiscussions || 0],
-    ["Needs AI review", metrics.needsAiReview || 0]
+    ["已实现", metrics.implemented || 0],
+    ["进行中", metrics.inProgress || 0],
+    ["开放讨论", metrics.openDiscussions || 0],
+    ["待智能处理", metrics.needsAiReview || 0]
   ]
     .map(([label, value]) => `
       <article class="metric">
@@ -367,7 +371,7 @@ function renderStudioTopbar(page) {
       <div class="sim-title">
         <button type="button" class="sim-back" aria-label="返回">&lt;</button>
         <div>
-          <p>${escapeHtml(page.eyebrow || "ShiChai Platform")}</p>
+          <p>${escapeHtml(page.eyebrow || "拾柴平台")}</p>
           <h3>${escapeHtml(page.title)}</h3>
         </div>
       </div>
@@ -405,7 +409,7 @@ function renderStudioChainStrip(page) {
               <ol>
                 ${(chain.steps || []).map((step) => `
                   <li class="${step.pageId === page.id ? "on-page" : ""}">
-                    <span>${escapeHtml(step.pageId)}</span>
+                    <span>${escapeHtml(pageTitleById(step.pageId))}</span>
                     <strong>${escapeHtml(step.label)}</strong>
                     <button type="button" data-step-id="${escapeHtml(step.id)}">评论此步骤</button>
                   </li>
@@ -424,7 +428,7 @@ function renderStudio() {
   const data = studio();
   if (!root) return;
   if (!data) {
-    root.innerHTML = `<div class="empty-state">No platform simulation data is available.</div>`;
+    root.innerHTML = `<div class="empty-state">暂无平台仿真数据。</div>`;
     return;
   }
   const pages = studioPages();
@@ -491,7 +495,7 @@ function renderRows() {
     tbody.innerHTML = `
       <tr>
         <td colspan="6">
-          <div class="empty-state">No features match the current filters.</div>
+          <div class="empty-state">没有符合当前筛选条件的功能。</div>
         </td>
       </tr>
     `;
@@ -510,11 +514,11 @@ function renderRows() {
               <span>${escapeHtml(feature.summary || "")}</span>
             </div>
           </td>
-          <td>${escapeHtml(surfaces || "Not mapped")}</td>
-          <td>${escapeHtml(chain || "Not mapped")}</td>
+          <td>${escapeHtml(surfaces || "未映射")}</td>
+          <td>${escapeHtml(chain || "未映射")}</td>
           <td>${statusPill(feature.status)}</td>
-          <td><span class="cell-muted">${escapeHtml(feature.lane || "unassigned")}</span></td>
-          <td><span class="cell-muted">${escapeHtml(feature.verification || "none")}</span></td>
+          <td><span class="cell-muted">${escapeHtml(feature.lane || "未分配")}</span></td>
+          <td><span class="cell-muted">${escapeHtml(feature.verification || "未验证")}</span></td>
         </tr>
       `;
     })
@@ -537,14 +541,14 @@ function renderSurfaces() {
             <h3>${escapeHtml(surface.name)}</h3>
             <p>${escapeHtml(surface.description || "")}</p>
             <div class="meta-row">
-              <span class="meta-chip">${escapeHtml(surface.repo || "repo")}</span>
-              <span class="meta-chip">${escapeHtml(surface.route || "route TBD")}</span>
-              <span class="meta-chip">${surface.featureCount || 0} features</span>
+              <span class="meta-chip">${escapeHtml(surface.repo || "仓库")}</span>
+              <span class="meta-chip">${escapeHtml(surface.route || "路径待定")}</span>
+              <span class="meta-chip">${surface.featureCount || 0} 个功能</span>
             </div>
           </article>
         `)
         .join("")
-    : `<div class="empty-state">No UI surfaces have been registered yet.</div>`;
+    : `<div class="empty-state">还没有登记界面页面。</div>`;
 }
 
 function renderChains() {
@@ -568,7 +572,7 @@ function renderChains() {
           </article>
         `)
         .join("")
-    : `<div class="empty-state">No operation chains have been registered yet.</div>`;
+    : `<div class="empty-state">还没有登记操作链。</div>`;
 }
 
 function renderHandoffs() {
@@ -580,14 +584,14 @@ function renderHandoffs() {
             <h3>${escapeHtml(handoff.title)}</h3>
             <p>${escapeHtml(handoff.summary || "")}</p>
             <div class="meta-row">
-              <span class="meta-chip">${escapeHtml(handoff.needs || "needs-review")}</span>
-              <span class="meta-chip">${escapeHtml(handoff.lane || "lane TBD")}</span>
-              <span class="meta-chip">${escapeHtml(handoff.repo || "repo TBD")}</span>
+              <span class="meta-chip">${escapeHtml(handoff.needs || "需要复核")}</span>
+              <span class="meta-chip">${escapeHtml(handoff.lane || "分工待定")}</span>
+              <span class="meta-chip">${escapeHtml(handoff.repo || "仓库待定")}</span>
             </div>
           </article>
         `)
         .join("")
-    : `<div class="empty-state">No open handoffs in the current snapshot.</div>`;
+    : `<div class="empty-state">当前快照里没有开放协作交接。</div>`;
 }
 
 function renderDiscussions() {
@@ -598,48 +602,48 @@ function renderDiscussions() {
           <article class="discussion-item">
             <div>
               <h3>${escapeHtml(discussion.title)}</h3>
-              <p>${escapeHtml(discussion.preview || "No public summary yet.")}</p>
+              <p>${escapeHtml(discussion.preview || "暂无公开摘要。")}</p>
             </div>
             <div class="meta-row">
-              <span class="meta-chip">${escapeHtml(discussionLabels[discussion.type] || discussion.type || "Idea")}</span>
-              <span class="meta-chip">${escapeHtml(lifecycleLabels[discussion.lifecycle] || discussion.lifecycle || "Needs review")}</span>
-              <span class="meta-chip">${escapeHtml(discussion.featureId || "unmapped")}</span>
-              <span class="meta-chip">${discussion.commentCount || 0} comments</span>
+              <span class="meta-chip">${escapeHtml(discussionLabels[discussion.type] || discussion.type || "想法")}</span>
+              <span class="meta-chip">${escapeHtml(lifecycleLabels[discussion.lifecycle] || discussion.lifecycle || "待复核")}</span>
+              <span class="meta-chip">${escapeHtml(discussion.featureId || "未映射")}</span>
+              <span class="meta-chip">${discussion.commentCount || 0} 条评论</span>
             </div>
             <div class="detail-links">
-              <a href="${escapeHtml(discussion.url)}">Open discussion</a>
+              <a href="${escapeHtml(discussion.url)}">打开讨论</a>
             </div>
           </article>
         `)
         .join("")
-    : `<div class="empty-state">No dashboard discussions yet. Use the selected feature panel to submit an idea or evaluation.</div>`;
+    : `<div class="empty-state">还没有看板讨论。可以在仿真界面里选中操作点后提交想法或评价。</div>`;
 }
 
 function buildDiscussionUrl(feature) {
   const type = byId("discussion-type")?.value || "idea";
   const titleInput = byId("discussion-title")?.value?.trim();
   const bodyInput = byId("discussion-body")?.value?.trim();
-  const typeLabel = discussionLabels[type] || "Idea";
+  const typeLabel = discussionLabels[type] || "想法";
   const title = `[${typeLabel}][${feature.id}] ${titleInput || feature.title}`;
   const surfaces = (feature.uiSurfaces || [])
     .map((surface) => `- ${surface.name} (${surface.repo}${surface.route ? ` ${surface.route}` : ""})`)
     .join("\n") || "- TBD";
   const body = [
-    `Feature ID: ${feature.id}`,
-    `Feature: ${feature.title}`,
-    `Discussion type: ${type}`,
+    `功能编号: ${feature.id}`,
+    `功能: ${feature.title}`,
+    `讨论类型: ${type}`,
     "",
-    "Target UI surfaces:",
+    "目标界面页面:",
     surfaces,
     "",
-    "Proposal / evaluation:",
+    "建议或评价:",
     bodyInput || "",
     "",
-    "Expected AI action:",
-    "- [ ] Summarize this discussion",
-    "- [ ] Decide whether it changes feature status",
-    "- [ ] Split into implementation issues if accepted",
-    "- [ ] Mark older comments obsolete if this supersedes them"
+    "希望智能助手处理:",
+    "- [ ] 汇总这条讨论",
+    "- [ ] 判断是否影响功能状态",
+    "- [ ] 若已采纳则拆成实现议题",
+    "- [ ] 若替代旧讨论则标记旧评论过期"
   ].join("\n");
   const labels = ["dashboard-discussion", `feature:${feature.id}`, `discussion:${type}`].join(",");
   const params = new URLSearchParams({ title, body, labels });
@@ -662,7 +666,7 @@ function renderCommentWidget(feature) {
   script.src = "https://utteranc.es/client.js";
   script.async = true;
   script.setAttribute("repo", "shichai-dev/feature-dashboard");
-  script.setAttribute("issue-term", feature.discussion?.issueTerm || `Feature discussion: ${feature.id}`);
+  script.setAttribute("issue-term", feature.discussion?.issueTerm || `功能讨论：${feature.id}`);
   script.setAttribute("label", "dashboard-discussion");
   script.setAttribute("theme", "github-light");
   script.setAttribute("crossorigin", "anonymous");
@@ -677,7 +681,7 @@ function renderTargetCommentWidget(target) {
   script.src = "https://utteranc.es/client.js";
   script.async = true;
   script.setAttribute("repo", "shichai-dev/feature-dashboard");
-  script.setAttribute("issue-term", `Feature discussion: ${target.featureId} ${target.stepId || target.id}`);
+  script.setAttribute("issue-term", `功能讨论：${target.featureId} ${target.stepId || target.id}`);
   script.setAttribute("label", "dashboard-discussion");
   script.setAttribute("theme", "github-light");
   script.setAttribute("crossorigin", "anonymous");
@@ -692,7 +696,7 @@ function renderStudioInspector() {
     detail.innerHTML = `
       <div class="empty-detail">
         <h2>选择一个页面操作</h2>
-        <p>点击仿真 UI 里的按钮、图标或区域后，在这里评论、评价或追加操作链。</p>
+        <p>点击仿真界面里的按钮、图标或区域后，在这里评论、评价或追加操作链。</p>
       </div>
     `;
     return;
@@ -717,7 +721,7 @@ function renderStudioInspector() {
       <p>${escapeHtml(target.summary || page.summary || "")}</p>
       <div class="meta-row">
         <span class="meta-chip">${escapeHtml(page.title)}</span>
-        <span class="meta-chip">${escapeHtml(target.uiSurface || page.uiSurface || "UI surface")}</span>
+        <span class="meta-chip">${escapeHtml(target.uiSurface || page.uiSurface || "界面页面")}</span>
         <span class="meta-chip">${escapeHtml(target.stepId || target.id)}</span>
       </div>
     </div>
@@ -743,9 +747,9 @@ function renderStudioInspector() {
     <div class="detail-section">
       <h3>异步讨论</h3>
       <div class="meta-row">
-        <span class="meta-chip">${discussions.filter((discussion) => discussion.state !== "CLOSED").length} open</span>
-        <span class="meta-chip">${discussions.filter((discussion) => discussion.needsAiReview).length} AI review</span>
-        <span class="meta-chip">${discussions.filter((discussion) => discussion.lifecycle === "stale").length} stale</span>
+        <span class="meta-chip">${discussions.filter((discussion) => discussion.state !== "CLOSED").length} 开放</span>
+        <span class="meta-chip">${discussions.filter((discussion) => discussion.needsAiReview).length} 待智能处理</span>
+        <span class="meta-chip">${discussions.filter((discussion) => discussion.lifecycle === "stale").length} 已过期</span>
       </div>
       <ul class="signal-list">${discussionItems}</ul>
     </div>
@@ -800,7 +804,7 @@ function renderStudioInspector() {
   byId("send-evaluation")?.addEventListener("click", () => {
     const rating = byId("evaluation-rating")?.value || "ok";
     const note = byId("evaluation-note")?.value?.trim() || "";
-    window.open(buildTargetDiscussionUrl(target, "evaluation", `评价：${target.label}`, `Evaluation: ${rating}\n\n${note}`), "_blank", "noopener,noreferrer");
+    window.open(buildTargetDiscussionUrl(target, "evaluation", `评价：${target.label}`, `评价结果：${rating}\n\n${note}`), "_blank", "noopener,noreferrer");
   });
   renderTargetCommentWidget(target);
 }
@@ -840,8 +844,8 @@ function renderDetail() {
   if (!feature) {
     detail.innerHTML = `
       <div class="empty-detail">
-        <h2>Select a feature</h2>
-        <p>Choose a row to inspect UI surfaces, operation chain steps, linked issues, and discussion prompts.</p>
+        <h2>选择功能</h2>
+        <p>选择一行后查看界面页面、操作链步骤、关联议题和讨论提示。</p>
       </div>
     `;
     return;
@@ -863,7 +867,7 @@ function renderDetail() {
           </li>
         `)
         .join("")
-    : "<li>No structured discussion signals yet.</li>";
+    : "<li>还没有结构化讨论信号。</li>";
 
   detail.innerHTML = `
     <div>
@@ -871,17 +875,17 @@ function renderDetail() {
       <h2>${escapeHtml(feature.title)}</h2>
       <p>${escapeHtml(feature.summary || "")}</p>
       <div class="meta-row">
-        <span class="meta-chip">${escapeHtml(feature.repo || "repo")}</span>
-        <span class="meta-chip">${escapeHtml(feature.lane || "lane")}</span>
-        <span class="meta-chip">${escapeHtml(feature.ownerAi || "AI owner TBD")}</span>
+        <span class="meta-chip">${escapeHtml(feature.repo || "仓库")}</span>
+        <span class="meta-chip">${escapeHtml(feature.lane || "分工")}</span>
+        <span class="meta-chip">${escapeHtml(feature.ownerAi || "智能负责人待定")}</span>
       </div>
     </div>
     <div class="detail-section">
-      <h3>UI surfaces</h3>
-      <p>${escapeHtml((feature.uiSurfaces || []).map((surface) => surface.name).join(", ") || "No UI surfaces mapped yet.")}</p>
+      <h3>界面页面</h3>
+      <p>${escapeHtml((feature.uiSurfaces || []).map((surface) => surface.name).join(", ") || "还没有映射界面页面。")}</p>
     </div>
     <div class="detail-section">
-      <h3>Operation chain</h3>
+      <h3>操作链</h3>
       <ol class="chain-steps">
         ${(feature.operationChain || [])
           .map((step, index) => `
@@ -890,53 +894,53 @@ function renderDetail() {
               <span>${escapeHtml(step)}</span>
             </li>
           `)
-          .join("") || "<li>No chain mapped yet.</li>"}
+          .join("") || "<li>还没有映射操作链。</li>"}
       </ol>
     </div>
     <div class="detail-section">
-      <h3>Linked discussion</h3>
-      <div class="detail-links">${links || "<p>No linked issues yet.</p>"}</div>
+      <h3>关联讨论</h3>
+      <div class="detail-links">${links || "<p>还没有关联议题。</p>"}</div>
     </div>
     <div class="detail-section">
       <h3>Async signals</h3>
       <div class="meta-row">
-        <span class="meta-chip">${discussionCounts.open || 0} open</span>
-        <span class="meta-chip">${discussionCounts.needsAiReview || 0} AI review</span>
-        <span class="meta-chip">${discussionCounts.implemented || 0} implemented</span>
-        <span class="meta-chip">${discussionCounts.stale || 0} stale</span>
+        <span class="meta-chip">${discussionCounts.open || 0} 开放</span>
+        <span class="meta-chip">${discussionCounts.needsAiReview || 0} 待智能处理</span>
+        <span class="meta-chip">${discussionCounts.implemented || 0} 已实现</span>
+        <span class="meta-chip">${discussionCounts.stale || 0} 已过期</span>
       </div>
       <ul class="signal-list">${signalList}</ul>
     </div>
     <div class="detail-section">
-      <h3>Discussion prompt</h3>
-      <p>${escapeHtml(feature.discussionPrompt || "What should be expanded, verified, or split next?")}</p>
+      <h3>讨论提示</h3>
+      <p>${escapeHtml(feature.discussionPrompt || "下一步应该扩展、验证或拆分什么？")}</p>
     </div>
     <div class="detail-section">
-      <h3>Submit idea or evaluation</h3>
+      <h3>提交想法或评价</h3>
       <div class="discussion-composer">
         <label>
-          <span>Type</span>
+          <span>类型</span>
           <select id="discussion-type">
-            <option value="idea">New feature idea</option>
-            <option value="evaluation">Evaluate current feature</option>
-            <option value="change-request">Change request</option>
-            <option value="bug">Bug or risk</option>
-            <option value="handoff">Needs another lane</option>
+            <option value="idea">新增功能想法</option>
+            <option value="evaluation">评价当前功能</option>
+            <option value="change-request">修改请求</option>
+            <option value="bug">问题或风险</option>
+            <option value="handoff">需要其他分工</option>
           </select>
         </label>
         <label>
-          <span>Title</span>
-          <input id="discussion-title" type="text" placeholder="Short title">
+          <span>标题</span>
+          <input id="discussion-title" type="text" placeholder="简短标题">
         </label>
         <label>
-          <span>Comment</span>
-          <textarea id="discussion-body" rows="5" placeholder="Describe the idea, evaluation, expected behavior, or what should change."></textarea>
+          <span>评论</span>
+          <textarea id="discussion-body" rows="5" placeholder="描述想法、评价、预期行为或需要修改的内容。"></textarea>
         </label>
-        <button class="primary-button" type="button" id="open-discussion-issue">Send to public discussion</button>
+        <button class="primary-button" type="button" id="open-discussion-issue">发送到公开讨论</button>
       </div>
     </div>
     <div class="detail-section">
-      <h3>Quick comments</h3>
+      <h3>快速评论</h3>
       <div id="comment-widget" class="comment-widget" aria-live="polite"></div>
     </div>
   `;
@@ -957,8 +961,8 @@ function renderTabs() {
 function renderSync() {
   const generatedAt = state.data?.generatedAt ? new Date(state.data.generatedAt) : null;
   byId("sync-state").textContent = generatedAt
-    ? `Last generated: ${generatedAt.toLocaleString()}`
-    : "Using bundled snapshot.";
+    ? `最近生成：${generatedAt.toLocaleString()}`
+    : "正在使用内置快照。";
   byId("sync-source").textContent = state.data?.sourceSummary || "";
 }
 
@@ -1005,6 +1009,6 @@ byId("status-filter").addEventListener("change", (event) => {
 });
 
 loadData().catch((error) => {
-  byId("sync-state").textContent = "Dashboard data could not be loaded.";
+  byId("sync-state").textContent = "看板数据加载失败。";
   byId("sync-source").textContent = error.message;
 });

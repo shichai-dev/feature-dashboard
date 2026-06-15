@@ -3,78 +3,78 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ShiChai Feature Dashboard</title>
-    <meta name="description" content="Public ShiChai feature status, UI surface, operation chain, and handoff dashboard.">
+    <title>拾柴功能讨论看板</title>
+    <meta name="description" content="拾柴公开功能状态、仿真界面、操作链和异步讨论看板。">
     <link rel="stylesheet" href="./assets/styles.css">
   </head>
   <body>
     <div class="app-shell">
-      <aside class="sidebar" aria-label="Dashboard navigation">
-        <a class="brand" href="./" aria-label="ShiChai Feature Dashboard home">
-          <span class="brand-mark">SC</span>
+      <aside class="sidebar" aria-label="看板导航">
+        <a class="brand" href="./" aria-label="拾柴功能讨论看板首页">
+          <span class="brand-mark">拾</span>
           <span>
-            <strong>ShiChai</strong>
-            <small>Feature Map</small>
+            <strong>拾柴</strong>
+            <small>功能讨论</small>
           </span>
         </a>
-        <nav class="nav-tabs" aria-label="Dashboard sections">
+        <nav class="nav-tabs" aria-label="看板分区">
           <button class="nav-tab is-active" type="button" data-tab="studio">仿真平台</button>
           <button class="nav-tab" type="button" data-tab="chains">操作链</button>
-          <button class="nav-tab" type="button" data-tab="discussions">Discussions</button>
-          <button class="nav-tab" type="button" data-tab="features">Feature Map</button>
-          <button class="nav-tab" type="button" data-tab="surfaces">UI Surfaces</button>
-          <button class="nav-tab" type="button" data-tab="handoffs">Handoffs</button>
+          <button class="nav-tab" type="button" data-tab="discussions">异步讨论</button>
+          <button class="nav-tab" type="button" data-tab="features">功能地图</button>
+          <button class="nav-tab" type="button" data-tab="surfaces">界面页面</button>
+          <button class="nav-tab" type="button" data-tab="handoffs">协作交接</button>
         </nav>
         <div class="sidebar-note">
-          <span class="note-label">Async input</span>
-          <a href="https://github.com/shichai-dev/feature-dashboard/issues/new?labels=dashboard-discussion,discussion:idea&title=%5BIdea%5D%20">New public idea</a>
-          <a href="https://github.com/shichai-dev/feature-dashboard/issues">Public discussion log</a>
-          <a href="https://github.com/shichai-dev/planning/issues/new/choose">Team planning issue</a>
-          <a href="https://github.com/orgs/shichai-dev/projects/1">Internal project</a>
+          <span class="note-label">异步输入</span>
+          <a href="https://github.com/shichai-dev/feature-dashboard/issues/new?labels=dashboard-discussion,discussion:idea&title=%5B%E6%83%B3%E6%B3%95%5D%20">新建公开想法</a>
+          <a href="https://github.com/shichai-dev/feature-dashboard/issues">公开讨论记录</a>
+          <a href="https://github.com/shichai-dev/planning/issues/new/choose">团队规划议题</a>
+          <a href="https://github.com/orgs/shichai-dev/projects/1">内部项目看板</a>
         </div>
       </aside>
 
       <main class="main">
         <header class="topbar">
           <div>
-            <h1>Platform UI Discussion Studio</h1>
+            <h1>平台界面讨论工作台</h1>
             <p>在仿真实平台页面、图标和操作链上直接评论、评价和追加需求。</p>
           </div>
           <div class="topbar-actions">
-            <a class="ghost-link" href="https://github.com/shichai-dev/feature-dashboard/issues">Discussion log</a>
-            <a class="primary-link" href="https://github.com/shichai-dev/feature-dashboard/issues/new?labels=dashboard-discussion,discussion:idea&title=%5BIdea%5D%20">Propose idea</a>
+            <a class="ghost-link" href="https://github.com/shichai-dev/feature-dashboard/issues">讨论记录</a>
+            <a class="primary-link" href="https://github.com/shichai-dev/feature-dashboard/issues/new?labels=dashboard-discussion,discussion:idea&title=%5B%E6%83%B3%E6%B3%95%5D%20">提出想法</a>
           </div>
         </header>
 
         <section class="sync-strip" aria-live="polite">
-          <span id="sync-state">Loading dashboard data...</span>
+          <span id="sync-state">正在加载看板数据...</span>
           <span id="sync-source"></span>
         </section>
 
-        <section class="metrics-grid" id="metrics" aria-label="Status summary"></section>
+        <section class="metrics-grid" id="metrics" aria-label="状态摘要"></section>
 
         <section class="workspace">
           <div class="content-panel">
             <div class="toolbar">
               <label class="search-box">
-                <span>Search</span>
-                <input id="search-input" type="search" placeholder="Feature, UI, repo, operation chain">
+                <span>搜索</span>
+                <input id="search-input" type="search" placeholder="功能、界面、仓库、操作链">
               </label>
               <label class="filter-box">
-                <span>Status</span>
+                <span>状态</span>
                 <select id="status-filter">
-                  <option value="all">All</option>
-                  <option value="implemented">Implemented</option>
-                  <option value="in-progress">In progress</option>
-                  <option value="planned">Planned</option>
-                  <option value="blocked">Blocked</option>
+                  <option value="all">全部</option>
+                  <option value="implemented">已实现</option>
+                  <option value="in-progress">进行中</option>
+                  <option value="planned">计划中</option>
+                  <option value="blocked">受阻</option>
                 </select>
               </label>
             </div>
 
             <section class="tab-panel is-active studio-panel" data-panel="studio">
               <div class="section-heading">
-                <h2>仿真实平台 UI</h2>
+                <h2>仿真实平台界面</h2>
                 <p>先按当前拾柴平台界面讨论。点击页面里的按钮、图标或区域，在右侧讨论栏添加想法、评价或新的操作链。</p>
               </div>
               <div id="studio-root"></div>
@@ -82,19 +82,19 @@
 
             <section class="tab-panel" data-panel="features">
               <div class="section-heading">
-                <h2>Feature Map</h2>
-                <p>Feature-level status tied to UI surfaces, operation chains, owner lanes, and verification.</p>
+                <h2>功能地图</h2>
+                <p>按功能查看实现状态、界面页面、操作链、负责分工和验证结果。</p>
               </div>
               <div class="table-wrap">
                 <table class="feature-table">
                   <thead>
                     <tr>
-                      <th>Feature</th>
-                      <th>UI Surface</th>
-                      <th>Operation Chain</th>
-                      <th>Status</th>
-                      <th>Lane</th>
-                      <th>Verification</th>
+                      <th>功能</th>
+                      <th>界面页面</th>
+                      <th>操作链</th>
+                      <th>状态</th>
+                      <th>分工</th>
+                      <th>验证</th>
                     </tr>
                   </thead>
                   <tbody id="feature-rows"></tbody>
@@ -104,41 +104,41 @@
 
             <section class="tab-panel" data-panel="surfaces">
               <div class="section-heading">
-                <h2>UI Surfaces</h2>
-                <p>Concrete screens and panels that can anchor product discussion.</p>
+                <h2>界面页面</h2>
+                <p>用于讨论的具体页面、面板和入口。</p>
               </div>
               <div class="surface-grid" id="surface-grid"></div>
             </section>
 
             <section class="tab-panel" data-panel="chains">
               <div class="section-heading">
-                <h2>Operation Chains</h2>
-                <p>End-to-end workflows that connect product behavior across repos.</p>
+                <h2>操作链</h2>
+                <p>连接多个页面和仓库的端到端操作流程。</p>
               </div>
               <div class="chain-list" id="chain-list"></div>
             </section>
 
             <section class="tab-panel" data-panel="discussions">
               <div class="section-heading">
-                <h2>Async Discussions</h2>
-                <p>Public ideas, evaluations, change requests, stale signals, and AI review items collected from the dashboard discussion repo.</p>
+                <h2>异步讨论</h2>
+                <p>从公开讨论仓库汇总的想法、评价、修改请求、过期信号和待智能处理项。</p>
               </div>
               <div class="discussion-list" id="discussion-list"></div>
             </section>
 
             <section class="tab-panel" data-panel="handoffs">
               <div class="section-heading">
-                <h2>Handoffs</h2>
-                <p>Open dependencies where another person or AI lane must continue the work.</p>
+                <h2>协作交接</h2>
+                <p>需要其他成员或智能分工继续处理的开放依赖。</p>
               </div>
               <div class="handoff-list" id="handoff-list"></div>
             </section>
           </div>
 
-          <aside class="detail-panel" id="detail-panel" aria-label="Selected feature detail">
+          <aside class="detail-panel" id="detail-panel" aria-label="选中内容详情">
             <div class="empty-detail">
               <h2>选择一个页面操作</h2>
-              <p>点击仿真 UI 里的按钮、图标或区域后，在这里评论、评价或追加操作链。</p>
+              <p>点击仿真界面里的按钮、图标或区域后，在这里评论、评价或追加操作链。</p>
             </div>
           </aside>
         </section>

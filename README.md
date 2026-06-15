@@ -1,44 +1,45 @@
-# ShiChai Feature Discussion Dashboard
+# 拾柴功能讨论看板
 
-Public, sanitized feature-status and asynchronous discussion dashboard for ShiChai development.
+这是拾柴团队公开可见的功能状态和异步讨论看板。
 
-Live site:
+线上地址：
 
 - https://shichai-dev.github.io/feature-dashboard/
 
-Sources:
+数据来源：
 
-- `registry/feature-registry.json` is the public feature and UI-surface registry.
-- Dashboard issue threads are the public asynchronous discussion store. Team members can submit ideas, evaluations, change requests, bug/risk notes, and handoff needs from the web page.
-- `scripts/collect-status.mjs` merges registry data with GitHub Project state, private implementation issues, dashboard issues, and dashboard comments when a token can read the required sources.
-- `data/status.json` is the generated snapshot used by the dashboard.
+- `registry/feature-registry.json`：公开功能、界面页面、仿真页面、热点和操作链登记表。
+- 公开讨论议题：团队成员可以从网页里提交想法、评价、修改请求、问题风险和协作交接。
+- `scripts/collect-status.mjs`：合并功能登记表、组织项目看板、私有实现议题、公开讨论议题和评论。
+- `data/status.json`：网页实际读取的生成快照。
 
-Private code repositories stay private. This repository should publish only feature names, UI surface names, operation chains, linked issue URLs, and verification status. Do not publish secrets, source snippets, object keys, private user data, prompts, or production credentials.
+私有代码仓库仍然保持私有。这个公开仓库只能发布功能名称、界面页面、操作链、关联议题链接和验证状态。不要发布密钥、源码片段、对象存储键、真实用户数据、私有提示词或生产凭据。
 
-## Discussion flow
+## 讨论流程
 
-1. Open the live dashboard and select a feature.
-2. Use **Submit idea or evaluation** to create a structured public discussion issue, or use the embedded comment area for quick comments.
-3. The refresh workflow reads dashboard discussions and classifies each signal as `needs-ai-review`, `accepted`, `implemented`, `stale`, or `blocked`.
-4. Coordinator AI reads `data/status.json`, especially `discussions` and `aiReviewQueue`, then decides whether to summarize, split work into implementation issues, or mark older comments as obsolete.
-5. After code or issue state changes, the next refresh updates the feature map, UI surfaces, operation chains, handoffs, discussion counts, and AI review queue.
+1. 打开线上看板，进入“仿真平台”。
+2. 在仿真实页面里点击某个按钮、图标、页面区域或操作步骤。
+3. 在右侧讨论栏提交想法、评价、修改请求、问题风险或追加操作链。
+4. 刷新任务会读取公开讨论，并标记为“待智能处理”“已采纳”“已实现”“已过期”或“受阻”。
+5. 协调智能体读取 `data/status.json`，重点查看讨论和待处理队列，再决定是否汇总、拆分实现议题或标记旧评论过期。
+6. 代码、议题或评论变化后，下一次刷新会同步更新功能状态、界面页面、操作链、协作交接和讨论数量。
 
-The embedded quick-comment widget uses GitHub-backed issue comments. Install the `utterances` GitHub App for `shichai-dev/feature-dashboard` before relying on in-page comments. Structured discussion issues work without the widget.
+页面内嵌快速评论使用代码托管平台的议题评论。正式依赖它之前，需要给 `shichai-dev/feature-dashboard` 安装 `utterances` 应用。结构化公开讨论议题不依赖这个组件。
 
-## Refresh
+## 刷新
 
-Run locally:
+本地运行：
 
 ```powershell
 node scripts/collect-status.mjs
 ```
 
-Run in GitHub Actions:
+在自动化流程中运行：
 
-- Configure `SHICHAI_READ_TOKEN` as a repository secret if scheduled refresh should read private repos and the organization Project.
-- The token should be least-privilege: read access to issues/projects in `shichai-dev` and no write access to production systems.
+- 如果定时刷新需要读取私有仓库和组织项目看板，需要给本仓库配置 `SHICHAI_READ_TOKEN` 密钥。
+- 这个令牌应使用最小权限：只读 `shichai-dev` 的议题和项目看板，不允许写入生产系统。
 
-Optional labels for public discussions:
+推荐公开讨论标签：
 
 - `dashboard-discussion`
 - `discussion:idea`
@@ -49,3 +50,4 @@ Optional labels for public discussions:
 - `status:accepted`
 - `status:stale`
 - `status:implemented`
+- `status:blocked`

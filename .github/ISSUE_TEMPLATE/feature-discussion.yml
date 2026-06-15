@@ -1,57 +1,71 @@
-name: Dashboard discussion
-description: Submit an idea, evaluation, change request, risk, or handoff need for the public dashboard.
-title: "[Idea] "
+name: 看板讨论
+description: 在公开看板中提交想法、评价、修改请求、问题风险或协作交接。
+title: "[想法] "
 labels:
   - dashboard-discussion
 body:
   - type: markdown
     attributes:
       value: |
-        Use this public issue for asynchronous product discussion. Do not include secrets, private user data, source snippets, object keys, credentials, or private prompts.
+        这个公开议题用于异步产品讨论。不要填写密钥、真实用户数据、源码片段、对象存储键、生产凭据或私有提示词。
   - type: input
     id: feature-id
     attributes:
-      label: Feature ID
-      description: Copy this from the dashboard detail panel when the discussion is about an existing feature.
+      label: 功能编号
+      description: 如果讨论的是已有功能，请从看板右侧详情栏复制功能编号。
       placeholder: public-feature-dashboard
     validations:
       required: false
   - type: dropdown
     id: discussion-type
     attributes:
-      label: Discussion type
+      label: 讨论类型
       options:
-        - idea
-        - evaluation
-        - change-request
-        - bug
-        - handoff
+        - 想法
+        - 评价
+        - 修改请求
+        - 问题风险
+        - 协作交接
     validations:
       required: true
   - type: input
     id: ui-surface
     attributes:
-      label: Related UI surface
-      placeholder: Display board, Publish requirement form, Admin match audit
+      label: 相关界面页面
+      placeholder: 展示台、发布需求表单、火柴审计页
+    validations:
+      required: false
+  - type: input
+    id: operation-step
+    attributes:
+      label: 相关操作步骤
+      placeholder: run-ai-review
+    validations:
+      required: false
+  - type: input
+    id: hotspot-id
+    attributes:
+      label: 界面热点编号
+      placeholder: publish-ai-review
     validations:
       required: false
   - type: textarea
     id: proposal
     attributes:
-      label: Proposal or evaluation
-      description: Describe what should change, what feels wrong, or what new behavior you want.
-      placeholder: The current flow is missing...
+      label: 建议或评价
+      description: 说明你希望改变什么、哪里不清楚，或想追加哪条后续操作链。
+      placeholder: 当前这个操作点缺少...
     validations:
       required: true
   - type: textarea
     id: expected-ai-action
     attributes:
-      label: Expected AI action
-      description: Tell Coordinator AI what should happen next.
+      label: 希望智能助手处理
+      description: 告诉协调智能体下一步应该做什么。
       value: |
-        - [ ] Summarize this discussion
-        - [ ] Decide whether it changes feature status
-        - [ ] Split into implementation issues if accepted
-        - [ ] Mark older comments obsolete if this supersedes them
+        - [ ] 汇总这条讨论
+        - [ ] 判断是否影响功能状态
+        - [ ] 若已采纳则拆成实现议题
+        - [ ] 若替代旧讨论则标记旧评论过期
     validations:
       required: true
