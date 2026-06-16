@@ -30,6 +30,14 @@ function runGh(args) {
   });
 }
 
+function requireReadTokenForActions() {
+  if (process.env.GITHUB_ACTIONS === "true" && !process.env.SHICHAI_READ_TOKEN) {
+    throw new Error(
+      "SHICHAI_READ_TOKEN is required in GitHub Actions to read planning/client/admin/server issues. Refusing to publish a partial dashboard snapshot."
+    );
+  }
+}
+
 function tryGhJson(args, fallback) {
   try {
     return JSON.parse(runGh(args));
@@ -497,6 +505,16 @@ function buildIssueFeatureMap(features) {
   return map;
 }
 
+function extractFeatureIdFromIssue(issue) {
+  const text = issueText(issue);
+  return (
+    text.match(/功能编号:\s*([a-z0-9-]+)/i)?.[1] ||
+    text.match(/Feature ID:\s*([a-z0-9-]+)/i)?.[1] ||
+    labelNames(issue).find((label) => label.startsWith("feature:"))?.replace("feature:", "") ||
+    null
+  );
+}
+
 function extractClaimTime(issue, claimant) {
   const comments = Array.isArray(issue.comments) ? [...issue.comments] : [];
   const sorted = comments.sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
@@ -554,9 +572,16 @@ function buildClaimCommand(status) {
 
 function buildIssueTasks(issues, features) {
   const featureByIssueUrl = buildIssueFeatureMap(features);
+  const featureById = new Map(features.map((feature) => [feature.id, {
+    id: feature.id,
+    title: feature.title,
+    summary: feature.summary,
+    status: feature.status,
+    lane: feature.lane
+  }]));
   return issues
     .map((issue) => {
-      const feature = featureByIssueUrl.get(issue.url) || null;
+      const feature = featureByIssueUrl.get(issue.url) || featureById.get(extractFeatureIdFromIssue(issue)) || null;
       const status = claimStatus(issue);
       const claimant = firstAssignee(issue);
       const claimedAt = extractClaimTime(issue, claimant);
@@ -638,6 +663,7 @@ function buildAiReviewQueue(features, discussionSignals, handoffs) {
 }
 
 function main() {
+  requireReadTokenForActions();
   const registry = JSON.parse(readFileSync(registryPath, "utf8"));
   const issues = collectIssues();
   const projectItems = collectProjectItems();

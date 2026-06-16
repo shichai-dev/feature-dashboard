@@ -88,6 +88,7 @@ node scripts/collect-status.mjs
 
 - 如果定时刷新需要读取私有仓库和组织项目看板，需要给本仓库配置 `SHICHAI_READ_TOKEN` 密钥。
 - 这个令牌应使用最小权限：只读 `shichai-dev` 的议题和项目看板，不允许写入生产系统。
+- 如果 GitHub Actions 中没有 `SHICHAI_READ_TOKEN`，刷新脚本会拒绝覆盖 `data/status.json`，避免把 Dashboard 误刷新成只包含公开仓库的局部快照。
 
 推荐公开讨论标签：
 
