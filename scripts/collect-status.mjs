@@ -15,6 +15,7 @@ const repositories = [
   "shichai-dev/opc-bounty-admin",
   "shichai-dev/opc-bounty-server"
 ];
+const issueTaskRepositories = [...repositories, dashboardRepository];
 
 function runGh(args) {
   const env = {
@@ -61,7 +62,7 @@ function labelNames(issue) {
 }
 
 function collectIssues() {
-  return repositories.flatMap((repo) => {
+  return issueTaskRepositories.flatMap((repo) => {
     const issues = tryGhJson(
       [
         "issue",
@@ -191,6 +192,31 @@ function inferDiscussionLifecycle(issue) {
   return "needs-ai-review";
 }
 
+function inferDispatchTarget(issue) {
+  const labels = labelNames(issue);
+  const text = discussionText(issue);
+  const targetUrlMatch = text.match(/(?:已分发目标|分发目标|目标 Issue|Dispatched issue)\s*[:：]\s*(https:\/\/github\.com\/[^\s)]+)/i);
+  const repoMatch = text.match(/(?:目标仓库|Target repo)\s*[:：]\s*(shichai-dev\/[A-Za-z0-9_.-]+)/i);
+  const status = labels.includes("dispatch:sent") || targetUrlMatch
+    ? "sent"
+    : labels.includes("dispatch:blocked")
+      ? "blocked"
+      : labels.includes("dispatch:pending")
+        ? "pending"
+        : "untracked";
+  return {
+    status,
+    statusLabel: {
+      sent: "已分发",
+      blocked: "分发受阻",
+      pending: "待分发",
+      untracked: "未进入分发"
+    }[status],
+    targetUrl: targetUrlMatch?.[1] || null,
+    targetRepo: repoMatch?.[1] || null
+  };
+}
+
 function normalizeComment(comment) {
   return {
     author: comment.author?.login || comment.author || "unknown",
@@ -224,7 +250,7 @@ function buildNewDiscussionUrl(feature) {
     "- [ ] 若已采纳则拆成实现议题",
     "- [ ] 若替代旧讨论则标记旧评论过期"
   ].join("\n");
-  const labels = ["dashboard-discussion", `feature:${feature.id}`, "discussion:idea"];
+  const labels = ["dashboard-discussion", "dispatch:pending", `feature:${feature.id}`, "discussion:idea"];
   const params = new URLSearchParams({
     title,
     body,
@@ -240,6 +266,7 @@ function buildDiscussionSignals(issues, registryFeatures) {
       const featureId = inferDiscussionFeatureId(issue, featureIds);
       const type = inferDiscussionType(issue);
       const lifecycle = inferDiscussionLifecycle(issue);
+      const dispatch = inferDispatchTarget(issue);
       return {
         id: `dashboard-${issue.number}`,
         number: issue.number,
@@ -255,6 +282,7 @@ function buildDiscussionSignals(issues, registryFeatures) {
         needsAiReview: lifecycle === "needs-ai-review" || !featureId,
         commentCount: Array.isArray(issue.comments) ? issue.comments.length : 0,
         labels: labelNames(issue),
+        dispatch,
         createdAt: issue.createdAt,
         updatedAt: issue.updatedAt,
         closedAt: issue.closedAt,
@@ -625,9 +653,10 @@ function main() {
 
   const output = {
     generatedAt: new Date().toISOString(),
-    sourceSummary: `${features.length} 个功能，${uiSurfaces.length} 个界面页面，${operationChains.length} 条操作链。已读取 ${projectItems.length} 个项目项、${issues.length} 个私有议题、${discussionSignals.length} 条看板讨论、${issueTasks.length} 个接单任务。`,
+    sourceSummary: `${features.length} 个功能，${uiSurfaces.length} 个界面页面，${operationChains.length} 条操作链。已读取 ${projectItems.length} 个项目项、${issues.length} 个团队议题、${discussionSignals.length} 条看板讨论、${issueTasks.length} 个接单任务。`,
     repositories,
     dashboardRepository,
+    issueTaskRepositories,
     metrics,
     operationStudio: registry.operationStudio || null,
     features,

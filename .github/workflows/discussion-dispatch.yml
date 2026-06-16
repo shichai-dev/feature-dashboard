@@ -1,0 +1,303 @@
+name: Dashboard 讨论分发
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: discussion-dispatch-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    if: github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    steps:
+      - name: 读取看板仓库
+        uses: actions/checkout@v4
+
+      - name: 分发到目标仓库
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.SHICHAI_DISPATCH_TOKEN != '' && secrets.SHICHAI_DISPATCH_TOKEN || github.token }}
+          script: |
+            const fs = require("fs");
+
+            const owner = context.repo.owner;
+            const sourceRepo = context.repo.repo;
+            const issue_number = context.payload.issue.number;
+            const actor = context.actor;
+
+            if (/\[bot\]$/.test(actor)) return;
+
+            const dashboardRepo = `${owner}/${sourceRepo}`;
+            const repoMap = {
+              planning: `${owner}/planning`,
+              client: `${owner}/opc-bounty-client`,
+              admin: `${owner}/opc-bounty-admin`,
+              server: `${owner}/opc-bounty-server`,
+              dashboard: `${owner}/feature-dashboard`
+            };
+            const registry = JSON.parse(fs.readFileSync("registry/feature-registry.json", "utf8"));
+            const features = registry.features || [];
+
+            async function getSourceIssue() {
+              const issue = await github.rest.issues.get({ owner, repo: sourceRepo, issue_number });
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo: sourceRepo,
+                issue_number,
+                per_page: 100
+              });
+              return { ...issue.data, comments };
+            }
+
+            function labelNames(issue) {
+              return (issue.labels || []).map((label) => typeof label === "string" ? label : label.name).filter(Boolean);
+            }
+
+            function discussionText(issue) {
+              return [issue.title, issue.body, ...(issue.comments || []).map((comment) => comment.body || "")]
+                .filter(Boolean)
+                .join("\n");
+            }
+
+            function field(text, label) {
+              const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+              return text.match(new RegExp(`${escaped}\\s*[:：]\\s*([^\\n]+)`, "i"))?.[1]?.trim() || "";
+            }
+
+            function inferFeature(issue, text, labels) {
+              const featureLabel = labels.find((label) => label.startsWith("feature:"))?.replace("feature:", "");
+              const featureId = featureLabel ||
+                field(text, "功能编号") ||
+                text.match(/\[(?:想法|评价|修改请求|协作交接|问题风险|idea|evaluation|change-request|handoff|bug)\]\[([a-z0-9-]+)\]/i)?.[1] ||
+                "";
+              return features.find((feature) => feature.id === featureId) || null;
+            }
+
+            function inferTargetRepo(feature, text) {
+              const lower = text.toLowerCase();
+              if (/dashboard|看板|任务接单|分发|公开讨论/.test(lower) && feature?.id === "public-feature-dashboard") {
+                return repoMap.dashboard;
+              }
+              if (/管理端|后台|管理员|审核|审计|运营台/.test(text)) return repoMap.admin;
+              if (/数据库|数据表|迁移|sql|后端|服务端|接口|api|权限|登录|钱包|账本|支付|智能服务|模型|对象存储|存储/.test(text)) {
+                return repoMap.server;
+              }
+              if (/用户端|前端|界面|页面|按钮|图标|样式|交互|首页|展示台|发布|详情页|个人页|评论|表单/.test(text)) {
+                return repoMap.client;
+              }
+              const lane = feature?.lane || "";
+              const repo = feature?.repo || "";
+              if (lane.startsWith("admin") || repo.includes("admin")) return repoMap.admin;
+              if (lane.startsWith("client") || repo.includes("client")) return repoMap.client;
+              if (lane.includes("db") || lane.includes("server") || repo.includes("server")) return repoMap.server;
+              if (repo.includes("feature-dashboard")) return repoMap.dashboard;
+              return repoMap.planning;
+            }
+
+            function stripMarkdown(value) {
+              return String(value || "")
+                .replace(/<!--[\s\S]*?-->/g, "")
+                .replace(/\r/g, "")
+                .trim();
+            }
+
+            function brief(value, max = 3200) {
+              const text = stripMarkdown(value).replace(/\n{3,}/g, "\n\n");
+              return text.length > max ? `${text.slice(0, max - 20)}\n\n...已截断` : text;
+            }
+
+            function parseIssueUrl(url) {
+              const match = String(url || "").match(/^https:\/\/github\.com\/([^/]+\/[^/]+)\/issues\/(\d+)/);
+              if (!match) return null;
+              return { repo: match[1], number: Number(match[2]) };
+            }
+
+            async function ensureLabel(repoFullName, label) {
+              const [targetOwner, targetRepo] = repoFullName.split("/");
+              try {
+                await github.rest.issues.getLabel({ owner: targetOwner, repo: targetRepo, name: label.name });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.issues.createLabel({
+                  owner: targetOwner,
+                  repo: targetRepo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description
+                });
+              }
+            }
+
+            async function setSourceLabels(add, remove = []) {
+              for (const name of remove) {
+                try {
+                  await github.rest.issues.removeLabel({ owner, repo: sourceRepo, issue_number, name });
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                }
+              }
+              for (const label of add) await ensureLabel(dashboardRepo, label);
+              if (add.length) {
+                await github.rest.issues.addLabels({ owner, repo: sourceRepo, issue_number, labels: add.map((label) => label.name) });
+              }
+            }
+
+            async function commentSource(body) {
+              await github.rest.issues.createComment({ owner, repo: sourceRepo, issue_number, body });
+            }
+
+            async function createOrFindTargetIssue(targetRepo, sourceUrl, title, body, labels) {
+              const existing = await github.rest.search.issuesAndPullRequests({
+                q: `repo:${targetRepo} type:issue "${sourceUrl}" in:body`
+              });
+              const found = existing.data.items.find((item) => item.html_url.includes(`github.com/${targetRepo}/issues/`));
+              if (found) return found.html_url;
+
+              for (const label of labels) await ensureLabel(targetRepo, label);
+              const [targetOwner, targetRepoName] = targetRepo.split("/");
+              const created = await github.rest.issues.create({
+                owner: targetOwner,
+                repo: targetRepoName,
+                title,
+                body,
+                labels: labels.map((label) => label.name)
+              });
+              return created.data.html_url;
+            }
+
+            async function forwardNewCommentIfNeeded(issue, labels) {
+              if (context.eventName !== "issue_comment") return false;
+              const text = discussionText(issue);
+              const targetUrl = text.match(/(?:已分发目标|分发目标|目标 Issue|Dispatched issue)\s*[:：]\s*(https:\/\/github\.com\/[^\s)]+)/i)?.[1];
+              if (!targetUrl || !labels.includes("dispatch:sent")) return false;
+              const target = parseIssueUrl(targetUrl);
+              if (!target) return false;
+              const [targetOwner, targetRepoName] = target.repo.split("/");
+              await github.rest.issues.createComment({
+                owner: targetOwner,
+                repo: targetRepoName,
+                issue_number: target.number,
+                body: [
+                  "Dashboard 源讨论有新的追加评论：",
+                  "",
+                  `评论人: @${actor}`,
+                  `源讨论: ${issue.html_url}`,
+                  "",
+                  brief(context.payload.comment.body || "", 2000)
+                ].join("\n")
+              });
+              return true;
+            }
+
+            const issue = await getSourceIssue();
+            const labels = labelNames(issue);
+            const text = discussionText(issue);
+            const isDashboardDiscussion = labels.includes("dashboard-discussion") ||
+              labels.some((label) => label.startsWith("discussion:")) ||
+              /功能编号\s*[:：]/.test(text) ||
+              /\[(想法|评价|修改请求|协作交接|问题风险|idea|evaluation|change-request|handoff|bug)\]/i.test(issue.title || "");
+
+            if (!isDashboardDiscussion) return;
+
+            if (await forwardNewCommentIfNeeded(issue, labels)) return;
+
+            if (labels.includes("dispatch:sent") || /已分发目标\s*[:：]\s*https:\/\/github\.com\//.test(text)) return;
+
+            const feature = inferFeature(issue, text, labels);
+            const targetRepo = inferTargetRepo(feature, text);
+            const sourceUrl = issue.html_url;
+
+            if (targetRepo === dashboardRepo && feature?.id === "public-feature-dashboard") {
+              await setSourceLabels(
+                [{ name: "dispatch:sent", color: "138a52", description: "Dashboard 讨论已确认留在当前仓库" }],
+                ["dispatch:pending", "dispatch:blocked"]
+              );
+              await commentSource([
+                "这是 Dashboard 自身功能问题，已保留在当前仓库作为目标任务。",
+                "",
+                `目标仓库: ${dashboardRepo}`,
+                `已分发目标: ${sourceUrl}`
+              ].join("\n"));
+              return;
+            }
+
+            const cleanTitle = String(issue.title || "Dashboard 讨论")
+              .replace(/^\[[^\]]+\]\[[^\]]+\]\s*/, "")
+              .slice(0, 180);
+            const targetTitle = `[Dashboard分发] ${feature?.title ? `${feature.title}：` : ""}${cleanTitle}`;
+            const sourceComments = (issue.comments || [])
+              .filter((comment) => !/\[bot\]$/.test(comment.user?.login || ""))
+              .map((comment) => `### @${comment.user?.login || "unknown"} 于 ${comment.created_at}\n${brief(comment.body || "", 1200)}`)
+              .join("\n\n");
+            const targetBody = [
+              "## 来源",
+              `源讨论: ${sourceUrl}`,
+              `目标仓库: ${targetRepo}`,
+              `功能编号: ${feature?.id || "未映射"}`,
+              `功能: ${feature?.title || "未映射"}`,
+              `界面页面: ${field(text, "界面页面") || field(text, "目标界面页面") || "未填写"}`,
+              `操作步骤: ${field(text, "操作步骤") || "未填写"}`,
+              `热点编号: ${field(text, "热点编号") || "未填写"}`,
+              "",
+              "## 自动汇总",
+              brief(issue.body || "", 3000),
+              "",
+              sourceComments ? "## 追加评论汇总" : "",
+              sourceComments,
+              "",
+              "## 接单方式",
+              "在本 Issue 下评论 `/claim` 接单。接单成功后，Dashboard 会在下一次刷新时同步负责人和耗时。",
+              "",
+              "## 验收提示",
+              "- [ ] 明确影响的页面、接口或数据库范围",
+              "- [ ] 实现后提交 PR 并关联本 Issue",
+              "- [ ] PR 中附最终效果、验证方式和剩余风险",
+              "- [ ] 如需要其他仓库配合，在本 Issue 中说明依赖"
+            ].filter(Boolean).join("\n");
+
+            const targetLabels = [
+              { name: "from:dashboard", color: "0a66c2", description: "由公开 Dashboard 讨论自动分发" },
+              { name: "接单:待接单", color: "fff4df", description: "Issue 正在等待成员或 AI 接单" }
+            ];
+            if (feature?.lane) {
+              targetLabels.push({ name: `lane:${feature.lane.replace(/^lane:/, "")}`, color: "0a66c2", description: "自动分发推断的任务分工" });
+            }
+
+            try {
+              const targetUrl = await createOrFindTargetIssue(targetRepo, sourceUrl, targetTitle, targetBody, targetLabels);
+              await setSourceLabels(
+                [{ name: "dispatch:sent", color: "138a52", description: "Dashboard 讨论已分发到目标仓库" }],
+                ["dispatch:pending", "dispatch:blocked"]
+              );
+              await commentSource([
+                "已根据讨论内容自动分发到目标仓库。",
+                "",
+                `目标仓库: ${targetRepo}`,
+                `已分发目标: ${targetUrl}`,
+                "",
+                "后续请在目标 Issue 中 `/claim` 接单；Dashboard 会在下一次刷新时统一汇总源讨论和目标任务。"
+              ].join("\n"));
+            } catch (error) {
+              await setSourceLabels(
+                [{ name: "dispatch:blocked", color: "be2f2f", description: "Dashboard 讨论自动分发失败" }],
+                ["dispatch:sent"]
+              );
+              await commentSource([
+                "自动分发受阻。",
+                "",
+                `目标仓库: ${targetRepo}`,
+                `原因: ${error.status === 403 ? "当前令牌没有跨仓创建 Issue 权限。请配置 SHICHAI_DISPATCH_TOKEN。" : error.message}`,
+                "",
+                "需要的密钥权限：对 `shichai-dev/planning`、`opc-bounty-client`、`opc-bounty-admin`、`opc-bounty-server` 至少具备 Issues 写权限。"
+              ].join("\n"));
+              throw error;
+            }

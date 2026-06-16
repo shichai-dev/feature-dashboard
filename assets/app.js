@@ -261,7 +261,7 @@ function buildTargetDiscussionUrl(target, type = "idea", titleInput = "", bodyIn
     "- [ ] 若已采纳则拆成实现议题",
     "- [ ] 若替代旧讨论则标记旧评论过期"
   ].join("\n");
-  const labels = ["dashboard-discussion", target?.featureId ? `feature:${target.featureId}` : "", `discussion:${type}`]
+  const labels = ["dashboard-discussion", "dispatch:pending", target?.featureId ? `feature:${target.featureId}` : "", `discussion:${type}`]
     .filter(Boolean)
     .join(",");
   const params = new URLSearchParams({ title, body, labels });
@@ -732,11 +732,13 @@ function renderDiscussions() {
             <div class="meta-row">
               <span class="meta-chip">${escapeHtml(discussionLabels[discussion.type] || discussion.type || "想法")}</span>
               <span class="meta-chip">${escapeHtml(lifecycleLabels[discussion.lifecycle] || discussion.lifecycle || "待复核")}</span>
+              <span class="meta-chip">${escapeHtml(discussion.dispatch?.statusLabel || "未进入分发")}</span>
               <span class="meta-chip">${escapeHtml(discussion.featureId || "未映射")}</span>
               <span class="meta-chip">${discussion.commentCount || 0} 条评论</span>
             </div>
             <div class="detail-links">
               <a href="${escapeHtml(discussion.url)}">打开讨论</a>
+              ${discussion.dispatch?.targetUrl ? `<a href="${escapeHtml(discussion.dispatch.targetUrl)}">打开目标任务</a>` : ""}
             </div>
           </article>
         `)
@@ -770,7 +772,7 @@ function buildDiscussionUrl(feature) {
     "- [ ] 若已采纳则拆成实现议题",
     "- [ ] 若替代旧讨论则标记旧评论过期"
   ].join("\n");
-  const labels = ["dashboard-discussion", `feature:${feature.id}`, `discussion:${type}`].join(",");
+  const labels = ["dashboard-discussion", "dispatch:pending", `feature:${feature.id}`, `discussion:${type}`].join(",");
   const params = new URLSearchParams({ title, body, labels });
   return `https://github.com/shichai-dev/feature-dashboard/issues/new?${params.toString()}`;
 }
