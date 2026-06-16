@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T01:12:44.403Z",
+  "generatedAt": "2026-06-16T01:57:20.467Z",
   "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 12 个项目项、9 个团队议题、2 条看板讨论、9 个接单任务。",
   "repositories": [
     "shichai-dev/planning",
@@ -1272,23 +1272,33 @@
       ]
     },
     {
-      "name": "管理端登录外壳",
+      "name": "内容审核页",
       "repo": "opc-bounty-admin",
-      "route": "/",
-      "description": "用于 内测账号登录",
+      "route": "/#content-review",
+      "description": "用于 内测管理端运营",
       "featureCount": 1,
       "features": [
-        "内测账号登录"
+        "内测管理端运营"
       ]
     },
     {
-      "name": "管理端火柴审计",
+      "name": "文件审核页",
       "repo": "opc-bounty-admin",
-      "route": "/#match-audit",
-      "description": "用于 火柴支持和钱包",
+      "route": "/#file-review",
+      "description": "用于 内测管理端运营",
       "featureCount": 1,
       "features": [
-        "火柴支持和钱包"
+        "内测管理端运营"
+      ]
+    },
+    {
+      "name": "生产就绪页",
+      "repo": "opc-bounty-admin",
+      "route": "/#production-readiness",
+      "description": "用于 内测管理端运营",
+      "featureCount": 1,
+      "features": [
+        "内测管理端运营"
       ]
     },
     {
@@ -1312,73 +1322,23 @@
       ]
     },
     {
-      "name": "内容审核页",
+      "name": "管理端火柴审计",
       "repo": "opc-bounty-admin",
-      "route": "/#content-review",
-      "description": "用于 内测管理端运营",
-      "featureCount": 1,
-      "features": [
-        "内测管理端运营"
-      ]
-    },
-    {
-      "name": "生产就绪页",
-      "repo": "opc-bounty-admin",
-      "route": "/#production-readiness",
-      "description": "用于 内测管理端运营",
-      "featureCount": 1,
-      "features": [
-        "内测管理端运营"
-      ]
-    },
-    {
-      "name": "文件审核页",
-      "repo": "opc-bounty-admin",
-      "route": "/#file-review",
-      "description": "用于 内测管理端运营",
-      "featureCount": 1,
-      "features": [
-        "内测管理端运营"
-      ]
-    },
-    {
-      "name": "发布详情面板",
-      "repo": "opc-bounty-client",
-      "route": "/#postings/:id",
-      "description": "用于 发布详情、评论和参与",
-      "featureCount": 1,
-      "features": [
-        "发布详情、评论和参与"
-      ]
-    },
-    {
-      "name": "发布项目表单",
-      "repo": "opc-bounty-client",
-      "route": "/#publish-project",
-      "description": "用于 项目发布流程",
-      "featureCount": 1,
-      "features": [
-        "项目发布流程"
-      ]
-    },
-    {
-      "name": "发布需求表单",
-      "repo": "opc-bounty-client",
-      "route": "/#publish",
-      "description": "用于 需求发布流程",
-      "featureCount": 1,
-      "features": [
-        "需求发布流程"
-      ]
-    },
-    {
-      "name": "个人页钱包摘要",
-      "repo": "opc-bounty-client",
-      "route": "/#profile",
+      "route": "/#match-audit",
       "description": "用于 火柴支持和钱包",
       "featureCount": 1,
       "features": [
         "火柴支持和钱包"
+      ]
+    },
+    {
+      "name": "管理端登录外壳",
+      "repo": "opc-bounty-admin",
+      "route": "/",
+      "description": "用于 内测账号登录",
+      "featureCount": 1,
+      "features": [
+        "内测账号登录"
       ]
     },
     {
@@ -1392,19 +1352,9 @@
       ]
     },
     {
-      "name": "公开资料弹窗",
+      "name": "个人页钱包摘要",
       "repo": "opc-bounty-client",
-      "route": "/#profile/:id",
-      "description": "用于 私聊会话",
-      "featureCount": 1,
-      "features": [
-        "私聊会话"
-      ]
-    },
-    {
-      "name": "火柴支持面板",
-      "repo": "opc-bounty-client",
-      "route": "/#postings/:id",
+      "route": "/#profile",
       "description": "用于 火柴支持和钱包",
       "featureCount": 1,
       "features": [
@@ -1422,13 +1372,73 @@
       ]
     },
     {
-      "name": "设置面板",
+      "name": "公开资料弹窗",
       "repo": "opc-bounty-client",
-      "route": "/#settings",
-      "description": "用于 个人页、工作台和通知",
+      "route": "/#profile/:id",
+      "description": "用于 私聊会话",
       "featureCount": 1,
       "features": [
-        "个人页、工作台和通知"
+        "私聊会话"
+      ]
+    },
+    {
+      "name": "发布详情面板",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
+      "description": "用于 发布详情、评论和参与",
+      "featureCount": 1,
+      "features": [
+        "发布详情、评论和参与"
+      ]
+    },
+    {
+      "name": "发布需求表单",
+      "repo": "opc-bounty-client",
+      "route": "/#publish",
+      "description": "用于 需求发布流程",
+      "featureCount": 1,
+      "features": [
+        "需求发布流程"
+      ]
+    },
+    {
+      "name": "发布项目表单",
+      "repo": "opc-bounty-client",
+      "route": "/#publish-project",
+      "description": "用于 项目发布流程",
+      "featureCount": 1,
+      "features": [
+        "项目发布流程"
+      ]
+    },
+    {
+      "name": "展示台",
+      "repo": "opc-bounty-client",
+      "route": "/#display",
+      "description": "用于 统一展示台",
+      "featureCount": 1,
+      "features": [
+        "统一展示台"
+      ]
+    },
+    {
+      "name": "火柴支持面板",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
+      "description": "用于 火柴支持和钱包",
+      "featureCount": 1,
+      "features": [
+        "火柴支持和钱包"
+      ]
+    },
+    {
+      "name": "用户端登录面板",
+      "repo": "opc-bounty-client",
+      "route": "/",
+      "description": "用于 内测账号登录",
+      "featureCount": 1,
+      "features": [
+        "内测账号登录"
       ]
     },
     {
@@ -1452,23 +1462,13 @@
       ]
     },
     {
-      "name": "项目详情面板",
+      "name": "设置面板",
       "repo": "opc-bounty-client",
-      "route": "/#postings/:id",
-      "description": "用于 项目发布流程",
+      "route": "/#settings",
+      "description": "用于 个人页、工作台和通知",
       "featureCount": 1,
       "features": [
-        "项目发布流程"
-      ]
-    },
-    {
-      "name": "需求草稿编辑器",
-      "repo": "opc-bounty-client",
-      "route": "/#publish",
-      "description": "用于 需求发布流程",
-      "featureCount": 1,
-      "features": [
-        "需求发布流程"
+        "个人页、工作台和通知"
       ]
     },
     {
@@ -1482,23 +1482,23 @@
       ]
     },
     {
-      "name": "用户端登录面板",
+      "name": "需求草稿编辑器",
       "repo": "opc-bounty-client",
-      "route": "/",
-      "description": "用于 内测账号登录",
+      "route": "/#publish",
+      "description": "用于 需求发布流程",
       "featureCount": 1,
       "features": [
-        "内测账号登录"
+        "需求发布流程"
       ]
     },
     {
-      "name": "展示台",
+      "name": "项目详情面板",
       "repo": "opc-bounty-client",
-      "route": "/#display",
-      "description": "用于 统一展示台",
+      "route": "/#postings/:id",
+      "description": "用于 项目发布流程",
       "featureCount": 1,
       "features": [
-        "统一展示台"
+        "项目发布流程"
       ]
     }
   ],
@@ -1721,7 +1721,7 @@
       "statusLabel": "待接单",
       "claimant": null,
       "claimedAt": "2026-06-16T01:06:49.641Z",
-      "elapsedHours": 0.1,
+      "elapsedHours": 0.8,
       "createdAt": "2026-06-15T16:09:26Z",
       "updatedAt": "2026-06-16T01:09:44Z",
       "closedAt": null,
@@ -1996,7 +1996,7 @@
       "statusLabel": "开发中",
       "claimant": "sexymonk",
       "claimedAt": "2026-06-16T01:06:36Z",
-      "elapsedHours": 0.1,
+      "elapsedHours": 0.8,
       "createdAt": "2026-06-16T00:43:58Z",
       "updatedAt": "2026-06-16T01:09:22Z",
       "closedAt": null,
