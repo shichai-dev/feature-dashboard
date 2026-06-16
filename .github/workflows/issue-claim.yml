@@ -79,6 +79,29 @@ jobs:
               return response.data;
             }
 
+            async function getIssueComments() {
+              return await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number,
+                per_page: 100
+              });
+            }
+
+            function labelNames(issue) {
+              return (issue.labels || []).map((label) => typeof label === "string" ? label : label.name).filter(Boolean);
+            }
+
+            async function redirectedTargetUrl(issue) {
+              if (!labelNames(issue).includes("dispatch:sent")) return null;
+              const comments = await getIssueComments();
+              const text = [issue.body || "", ...comments.map((item) => item.body || "")].join("\n");
+              const match = text.match(/(?:已分发目标|分发目标|目标 Issue|Dispatched issue)\s*[:：]\s*(https:\/\/github\.com\/[^\s)]+)/i);
+              if (!match?.[1]) return null;
+              const currentUrl = `https://github.com/${owner}/${repo}/issues/${issue_number}`;
+              return match[1] === currentUrl ? null : match[1];
+            }
+
             const allStateLabels = Object.values(labels).map((label) => label.name);
             const eventName = context.eventName;
 
@@ -123,6 +146,17 @@ jobs:
             const now = new Date().toISOString();
 
             if (action === "claim") {
+              const targetUrl = await redirectedTargetUrl(issue);
+              if (targetUrl) {
+                await comment([
+                  "这条是 Dashboard 源讨论，不是最终实现任务。",
+                  "",
+                  `请到目标 Issue 接单：${targetUrl}`,
+                  "",
+                  "Dashboard 会汇总源讨论和目标任务状态。"
+                ].join("\n"));
+                return;
+              }
               if (currentOwner && currentOwner !== actor) {
                 await comment(`接单失败：这个 Issue 已由 @${currentOwner} 接手。如需转交，请由当前接单人使用 \`/handoff @用户名\`。`);
                 return;

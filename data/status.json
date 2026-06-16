@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T00:49:40.863Z",
+  "generatedAt": "2026-06-16T01:12:44.403Z",
   "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 12 个项目项、9 个团队议题、2 条看板讨论、9 个接单任务。",
   "repositories": [
     "shichai-dev/planning",
@@ -25,8 +25,8 @@
     "needsAiReview": 0,
     "staleDiscussions": 1,
     "issueTasks": 9,
-    "openIssueTasks": 9,
-    "claimedIssueTasks": 0,
+    "openIssueTasks": 8,
+    "claimedIssueTasks": 1,
     "waitingPrIssueTasks": 0,
     "blockedIssueTasks": 0
   },
@@ -703,7 +703,7 @@
           "stale": 1,
           "blocked": 0
         },
-        "latestUpdatedAt": "2026-06-16T00:44:20Z",
+        "latestUpdatedAt": "2026-06-16T01:09:44Z",
         "latestTitle": "[评价][requirement-publishing] 首页内容太杂",
         "signals": [
           {
@@ -719,7 +719,7 @@
             "type": "evaluation",
             "lifecycle": "stale",
             "needsAiReview": false,
-            "commentCount": 1,
+            "commentCount": 6,
             "labels": [
               "dashboard-discussion",
               "discussion:evaluation",
@@ -733,7 +733,7 @@
               "targetRepo": "shichai-dev/opc-bounty-client"
             },
             "createdAt": "2026-06-15T16:09:26Z",
-            "updatedAt": "2026-06-16T00:44:20Z",
+            "updatedAt": "2026-06-16T01:09:44Z",
             "closedAt": null,
             "preview": "功能编号: requirement-publishing 功能: 需求发布流程 界面页面: 用户端首页 操作步骤: publish-requirement-start 热点编号: home-publish-requirement 讨论类型: evaluation 选中的界面: - 页面: 首页 - 操作点: 发布需求 - 当前行为: 智能助手整理成合作..."
           }
@@ -1720,44 +1720,10 @@
       "status": "open",
       "statusLabel": "待接单",
       "claimant": null,
-      "claimedAt": null,
-      "elapsedHours": null,
+      "claimedAt": "2026-06-16T01:06:49.641Z",
+      "elapsedHours": 0.1,
       "createdAt": "2026-06-15T16:09:26Z",
-      "updatedAt": "2026-06-16T00:44:20Z",
-      "closedAt": null,
-      "parentIssue": null,
-      "parentFeature": {
-        "id": "requirement-publishing",
-        "title": "需求发布流程",
-        "summary": "包含材料、智能初审、追问、草稿生成、标签、保存和发布的需求发布流程。",
-        "status": "implemented",
-        "lane": "client-publish"
-      },
-      "totalProblem": "需求发布流程",
-      "claimCommand": "/claim",
-      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
-    },
-    {
-      "id": "shichai-dev/opc-bounty-client#2",
-      "repo": "shichai-dev/opc-bounty-client",
-      "repoName": "opc-bounty-client",
-      "number": 2,
-      "title": "[Dashboard分发] 需求发布流程：首页与展示台入口合并讨论",
-      "url": "https://github.com/shichai-dev/opc-bounty-client/issues/2",
-      "state": "OPEN",
-      "labels": [
-        "from:dashboard",
-        "接单:待接单",
-        "lane:client-publish"
-      ],
-      "lane": "client-publish",
-      "status": "open",
-      "statusLabel": "待接单",
-      "claimant": null,
-      "claimedAt": null,
-      "elapsedHours": null,
-      "createdAt": "2026-06-16T00:43:58Z",
-      "updatedAt": "2026-06-16T00:43:58Z",
+      "updatedAt": "2026-06-16T01:09:44Z",
       "closedAt": null,
       "parentIssue": null,
       "parentFeature": {
@@ -2010,6 +1976,41 @@
       "totalProblem": "火柴支持和钱包",
       "claimCommand": "/claim",
       "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
+      "id": "shichai-dev/opc-bounty-client#2",
+      "repo": "shichai-dev/opc-bounty-client",
+      "repoName": "opc-bounty-client",
+      "number": 2,
+      "title": "[Dashboard分发] 需求发布流程：首页与展示台入口合并讨论",
+      "url": "https://github.com/shichai-dev/opc-bounty-client/issues/2",
+      "state": "OPEN",
+      "labels": [
+        "from:dashboard",
+        "lane:client-publish",
+        "接单:已接单",
+        "接单:开发中"
+      ],
+      "lane": "client-publish",
+      "status": "in-progress",
+      "statusLabel": "开发中",
+      "claimant": "sexymonk",
+      "claimedAt": "2026-06-16T01:06:36Z",
+      "elapsedHours": 0.1,
+      "createdAt": "2026-06-16T00:43:58Z",
+      "updatedAt": "2026-06-16T01:09:22Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": {
+        "id": "requirement-publishing",
+        "title": "需求发布流程",
+        "summary": "包含材料、智能初审、追问、草稿生成、标签、保存和发布的需求发布流程。",
+        "status": "implemented",
+        "lane": "client-publish"
+      },
+      "totalProblem": "需求发布流程",
+      "claimCommand": "/ready-pr 或 /handoff @用户名",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
     }
   ],
   "discussions": [
@@ -2026,7 +2027,7 @@
       "type": "evaluation",
       "lifecycle": "stale",
       "needsAiReview": false,
-      "commentCount": 1,
+      "commentCount": 6,
       "labels": [
         "dashboard-discussion",
         "discussion:evaluation",
@@ -2040,7 +2041,7 @@
         "targetRepo": "shichai-dev/opc-bounty-client"
       },
       "createdAt": "2026-06-15T16:09:26Z",
-      "updatedAt": "2026-06-16T00:44:20Z",
+      "updatedAt": "2026-06-16T01:09:44Z",
       "closedAt": null,
       "preview": "功能编号: requirement-publishing 功能: 需求发布流程 界面页面: 用户端首页 操作步骤: publish-requirement-start 热点编号: home-publish-requirement 讨论类型: evaluation 选中的界面: - 页面: 首页 - 操作点: 发布需求 - 当前行为: 智能助手整理成合作..."
     },
