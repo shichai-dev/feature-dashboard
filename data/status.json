@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-15T23:15:12.413Z",
-  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 0 个项目项、0 个私有议题、2 条看板讨论。",
+  "generatedAt": "2026-06-16T00:15:50.118Z",
+  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 12 个项目项、6 个私有议题、2 条看板讨论、6 个接单任务。",
   "repositories": [
     "shichai-dev/planning",
     "shichai-dev/opc-bounty-client",
@@ -13,10 +13,15 @@
     "inProgress": 1,
     "planned": 0,
     "blocked": 0,
-    "needsHandoff": 0,
+    "needsHandoff": 5,
     "openDiscussions": 2,
     "needsAiReview": 0,
-    "staleDiscussions": 1
+    "staleDiscussions": 1,
+    "issueTasks": 6,
+    "openIssueTasks": 6,
+    "claimedIssueTasks": 0,
+    "waitingPrIssueTasks": 0,
+    "blockedIssueTasks": 0
   },
   "operationStudio": {
     "defaultPageId": "home",
@@ -943,46 +948,52 @@
         {
           "label": "服务端#1 火柴消费接口",
           "url": "https://github.com/shichai-dev/opc-bounty-server/issues/1",
-          "state": "UNKNOWN",
-          "needs": null,
-          "stage": null,
-          "verification": null
+          "state": "OPEN",
+          "needs": "needs-db",
+          "stage": "Ready",
+          "verification": "none"
         },
         {
           "label": "服务端#2 火柴账本查询",
           "url": "https://github.com/shichai-dev/opc-bounty-server/issues/2",
-          "state": "UNKNOWN",
-          "needs": null,
-          "stage": null,
-          "verification": null
+          "state": "OPEN",
+          "needs": "needs-server",
+          "stage": "Ready",
+          "verification": "none"
         },
         {
           "label": "用户端#1 个人页历史界面",
           "url": "https://github.com/shichai-dev/opc-bounty-client/issues/1",
-          "state": "UNKNOWN",
-          "needs": null,
-          "stage": null,
-          "verification": null
+          "state": "OPEN",
+          "needs": "needs-api",
+          "stage": "Spec",
+          "verification": "none"
         },
         {
           "label": "管理端#1 审计筛选",
           "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1",
-          "state": "UNKNOWN",
-          "needs": null,
-          "stage": null,
-          "verification": null
+          "state": "OPEN",
+          "needs": "needs-server",
+          "stage": "Spec",
+          "verification": "none"
         },
         {
           "label": "服务端#3 质量验证",
           "url": "https://github.com/shichai-dev/opc-bounty-server/issues/3",
-          "state": "UNKNOWN",
-          "needs": null,
-          "stage": null,
-          "verification": null
+          "state": "OPEN",
+          "needs": "needs-review",
+          "stage": "Ready",
+          "verification": "none"
         }
       ],
       "discussionPrompt": "下一个扩展点是消费历史：完成接口、数据库查询、用户端历史界面、管理端筛选和质量验证。",
-      "openNeeds": [],
+      "openNeeds": [
+        "needs-db",
+        "needs-server",
+        "needs-api",
+        "needs-server",
+        "needs-review"
+      ],
       "discussion": {
         "issueTerm": "功能讨论：match-support-wallet",
         "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bmatch-support-wallet%5D+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E5%92%8C%E9%92%B1%E5%8C%85&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+match-support-wallet%0A%E5%8A%9F%E8%83%BD%3A+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E5%92%8C%E9%92%B1%E5%8C%85%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A-+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E9%92%B1%E5%8C%85%E6%91%98%E8%A6%81+%28opc-bounty-client+%2F%23profile%29%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E7%81%AB%E6%9F%B4%E5%AE%A1%E8%AE%A1+%28opc-bounty-admin+%2F%23match-audit%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Amatch-support-wallet%2Cdiscussion%3Aidea",
@@ -1086,14 +1097,16 @@
         {
           "label": "管理端#1 火柴审计筛选",
           "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1",
-          "state": "UNKNOWN",
-          "needs": null,
-          "stage": null,
-          "verification": null
+          "state": "OPEN",
+          "needs": "needs-server",
+          "stage": "Spec",
+          "verification": "none"
         }
       ],
       "discussionPrompt": "邀请更多测试用户前，哪些管理端决策必须有审计日志证据？",
-      "openNeeds": [],
+      "openNeeds": [
+        "needs-server"
+      ],
       "discussion": {
         "issueTerm": "功能讨论：admin-operations",
         "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Badmin-operations%5D+%E5%86%85%E6%B5%8B%E7%AE%A1%E7%90%86%E7%AB%AF%E8%BF%90%E8%90%A5&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+admin-operations%0A%E5%8A%9F%E8%83%BD%3A+%E5%86%85%E6%B5%8B%E7%AE%A1%E7%90%86%E7%AB%AF%E8%BF%90%E8%90%A5%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E4%BB%AA%E8%A1%A8%E7%9B%98+%28opc-bounty-admin+%2F%29%0A-+%E5%86%85%E5%AE%B9%E5%AE%A1%E6%A0%B8%E9%A1%B5+%28opc-bounty-admin+%2F%23content-review%29%0A-+%E6%96%87%E4%BB%B6%E5%AE%A1%E6%A0%B8%E9%A1%B5+%28opc-bounty-admin+%2F%23file-review%29%0A-+%E7%94%9F%E4%BA%A7%E5%B0%B1%E7%BB%AA%E9%A1%B5+%28opc-bounty-admin+%2F%23production-readiness%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Aadmin-operations%2Cdiscussion%3Aidea",
@@ -1239,33 +1252,23 @@
       ]
     },
     {
-      "name": "内容审核页",
+      "name": "管理端登录外壳",
       "repo": "opc-bounty-admin",
-      "route": "/#content-review",
-      "description": "用于 内测管理端运营",
+      "route": "/",
+      "description": "用于 内测账号登录",
       "featureCount": 1,
       "features": [
-        "内测管理端运营"
+        "内测账号登录"
       ]
     },
     {
-      "name": "文件审核页",
+      "name": "管理端火柴审计",
       "repo": "opc-bounty-admin",
-      "route": "/#file-review",
-      "description": "用于 内测管理端运营",
+      "route": "/#match-audit",
+      "description": "用于 火柴支持和钱包",
       "featureCount": 1,
       "features": [
-        "内测管理端运营"
-      ]
-    },
-    {
-      "name": "生产就绪页",
-      "repo": "opc-bounty-admin",
-      "route": "/#production-readiness",
-      "description": "用于 内测管理端运营",
-      "featureCount": 1,
-      "features": [
-        "内测管理端运营"
+        "火柴支持和钱包"
       ]
     },
     {
@@ -1289,23 +1292,73 @@
       ]
     },
     {
-      "name": "管理端火柴审计",
+      "name": "内容审核页",
       "repo": "opc-bounty-admin",
-      "route": "/#match-audit",
+      "route": "/#content-review",
+      "description": "用于 内测管理端运营",
+      "featureCount": 1,
+      "features": [
+        "内测管理端运营"
+      ]
+    },
+    {
+      "name": "生产就绪页",
+      "repo": "opc-bounty-admin",
+      "route": "/#production-readiness",
+      "description": "用于 内测管理端运营",
+      "featureCount": 1,
+      "features": [
+        "内测管理端运营"
+      ]
+    },
+    {
+      "name": "文件审核页",
+      "repo": "opc-bounty-admin",
+      "route": "/#file-review",
+      "description": "用于 内测管理端运营",
+      "featureCount": 1,
+      "features": [
+        "内测管理端运营"
+      ]
+    },
+    {
+      "name": "发布详情面板",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
+      "description": "用于 发布详情、评论和参与",
+      "featureCount": 1,
+      "features": [
+        "发布详情、评论和参与"
+      ]
+    },
+    {
+      "name": "发布项目表单",
+      "repo": "opc-bounty-client",
+      "route": "/#publish-project",
+      "description": "用于 项目发布流程",
+      "featureCount": 1,
+      "features": [
+        "项目发布流程"
+      ]
+    },
+    {
+      "name": "发布需求表单",
+      "repo": "opc-bounty-client",
+      "route": "/#publish",
+      "description": "用于 需求发布流程",
+      "featureCount": 1,
+      "features": [
+        "需求发布流程"
+      ]
+    },
+    {
+      "name": "个人页钱包摘要",
+      "repo": "opc-bounty-client",
+      "route": "/#profile",
       "description": "用于 火柴支持和钱包",
       "featureCount": 1,
       "features": [
         "火柴支持和钱包"
-      ]
-    },
-    {
-      "name": "管理端登录外壳",
-      "repo": "opc-bounty-admin",
-      "route": "/",
-      "description": "用于 内测账号登录",
-      "featureCount": 1,
-      "features": [
-        "内测账号登录"
       ]
     },
     {
@@ -1319,9 +1372,19 @@
       ]
     },
     {
-      "name": "个人页钱包摘要",
+      "name": "公开资料弹窗",
       "repo": "opc-bounty-client",
-      "route": "/#profile",
+      "route": "/#profile/:id",
+      "description": "用于 私聊会话",
+      "featureCount": 1,
+      "features": [
+        "私聊会话"
+      ]
+    },
+    {
+      "name": "火柴支持面板",
+      "repo": "opc-bounty-client",
+      "route": "/#postings/:id",
       "description": "用于 火柴支持和钱包",
       "featureCount": 1,
       "features": [
@@ -1339,73 +1402,13 @@
       ]
     },
     {
-      "name": "公开资料弹窗",
+      "name": "设置面板",
       "repo": "opc-bounty-client",
-      "route": "/#profile/:id",
-      "description": "用于 私聊会话",
+      "route": "/#settings",
+      "description": "用于 个人页、工作台和通知",
       "featureCount": 1,
       "features": [
-        "私聊会话"
-      ]
-    },
-    {
-      "name": "发布详情面板",
-      "repo": "opc-bounty-client",
-      "route": "/#postings/:id",
-      "description": "用于 发布详情、评论和参与",
-      "featureCount": 1,
-      "features": [
-        "发布详情、评论和参与"
-      ]
-    },
-    {
-      "name": "发布需求表单",
-      "repo": "opc-bounty-client",
-      "route": "/#publish",
-      "description": "用于 需求发布流程",
-      "featureCount": 1,
-      "features": [
-        "需求发布流程"
-      ]
-    },
-    {
-      "name": "发布项目表单",
-      "repo": "opc-bounty-client",
-      "route": "/#publish-project",
-      "description": "用于 项目发布流程",
-      "featureCount": 1,
-      "features": [
-        "项目发布流程"
-      ]
-    },
-    {
-      "name": "展示台",
-      "repo": "opc-bounty-client",
-      "route": "/#display",
-      "description": "用于 统一展示台",
-      "featureCount": 1,
-      "features": [
-        "统一展示台"
-      ]
-    },
-    {
-      "name": "火柴支持面板",
-      "repo": "opc-bounty-client",
-      "route": "/#postings/:id",
-      "description": "用于 火柴支持和钱包",
-      "featureCount": 1,
-      "features": [
-        "火柴支持和钱包"
-      ]
-    },
-    {
-      "name": "用户端登录面板",
-      "repo": "opc-bounty-client",
-      "route": "/",
-      "description": "用于 内测账号登录",
-      "featureCount": 1,
-      "features": [
-        "内测账号登录"
+        "个人页、工作台和通知"
       ]
     },
     {
@@ -1429,23 +1432,13 @@
       ]
     },
     {
-      "name": "设置面板",
+      "name": "项目详情面板",
       "repo": "opc-bounty-client",
-      "route": "/#settings",
-      "description": "用于 个人页、工作台和通知",
+      "route": "/#postings/:id",
+      "description": "用于 项目发布流程",
       "featureCount": 1,
       "features": [
-        "个人页、工作台和通知"
-      ]
-    },
-    {
-      "name": "需求智能初审状态",
-      "repo": "opc-bounty-client",
-      "route": "/#publish",
-      "description": "用于 智能需求助手",
-      "featureCount": 1,
-      "features": [
-        "智能需求助手"
+        "项目发布流程"
       ]
     },
     {
@@ -1459,13 +1452,33 @@
       ]
     },
     {
-      "name": "项目详情面板",
+      "name": "需求智能初审状态",
       "repo": "opc-bounty-client",
-      "route": "/#postings/:id",
-      "description": "用于 项目发布流程",
+      "route": "/#publish",
+      "description": "用于 智能需求助手",
       "featureCount": 1,
       "features": [
-        "项目发布流程"
+        "智能需求助手"
+      ]
+    },
+    {
+      "name": "用户端登录面板",
+      "repo": "opc-bounty-client",
+      "route": "/",
+      "description": "用于 内测账号登录",
+      "featureCount": 1,
+      "features": [
+        "内测账号登录"
+      ]
+    },
+    {
+      "name": "展示台",
+      "repo": "opc-bounty-client",
+      "route": "/#display",
+      "description": "用于 统一展示台",
+      "featureCount": 1,
+      "features": [
+        "统一展示台"
       ]
     }
   ],
@@ -1631,7 +1644,250 @@
       ]
     }
   ],
-  "handoffs": [],
+  "handoffs": [
+    {
+      "title": "火柴支持和钱包",
+      "summary": "该功能正在等待 needs-db。",
+      "needs": "needs-db",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "火柴支持和钱包",
+      "summary": "该功能正在等待 needs-server。",
+      "needs": "needs-server",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "火柴支持和钱包",
+      "summary": "该功能正在等待 needs-api。",
+      "needs": "needs-api",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "火柴支持和钱包",
+      "summary": "该功能正在等待 needs-review。",
+      "needs": "needs-review",
+      "lane": "server-wallet",
+      "repo": "client/server/admin"
+    },
+    {
+      "title": "内测管理端运营",
+      "summary": "该功能正在等待 needs-server。",
+      "needs": "needs-server",
+      "lane": "admin-ops",
+      "repo": "admin/server"
+    }
+  ],
+  "issueTasks": [
+    {
+      "id": "shichai-dev/planning#1",
+      "repo": "shichai-dev/planning",
+      "repoName": "planning",
+      "number": 1,
+      "title": "[Feature Decision] Bootstrap shared AI collaboration workflow",
+      "url": "https://github.com/shichai-dev/planning/issues/1",
+      "state": "OPEN",
+      "labels": [
+        "type:feature-decision",
+        "needs:review",
+        "ai:codex"
+      ],
+      "lane": null,
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T11:56:10Z",
+      "updatedAt": "2026-06-15T11:56:10Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": null,
+      "totalProblem": "未归属父问题",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
+      "id": "shichai-dev/opc-bounty-server#3",
+      "repo": "shichai-dev/opc-bounty-server",
+      "repoName": "opc-bounty-server",
+      "number": 3,
+      "title": "[QA] Verify match spending history across repos",
+      "url": "https://github.com/shichai-dev/opc-bounty-server/issues/3",
+      "state": "OPEN",
+      "labels": [
+        "type:qa",
+        "needs:client",
+        "needs:admin",
+        "needs:server",
+        "lane:qa"
+      ],
+      "lane": "qa",
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T11:18:31Z",
+      "updatedAt": "2026-06-15T11:18:31Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": {
+        "id": "match-support-wallet",
+        "title": "火柴支持和钱包",
+        "summary": "测试火柴余额、项目支持、需求加赏、会员、智能额度、曝光购买和支持者讨论组。",
+        "status": "implemented",
+        "lane": "server-wallet"
+      },
+      "totalProblem": "火柴支持和钱包",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
+      "id": "shichai-dev/opc-bounty-admin#1",
+      "repo": "shichai-dev/opc-bounty-admin",
+      "repoName": "opc-bounty-admin",
+      "number": 1,
+      "title": "[Feature] Add match order audit filters",
+      "url": "https://github.com/shichai-dev/opc-bounty-admin/issues/1",
+      "state": "OPEN",
+      "labels": [
+        "type:feature",
+        "needs:server",
+        "lane:admin",
+        "ai:codex"
+      ],
+      "lane": "admin",
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T11:18:28Z",
+      "updatedAt": "2026-06-15T11:18:28Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": {
+        "id": "admin-operations",
+        "title": "内测管理端运营",
+        "summary": "管理端仪表盘、用户、发布内容、智能服务使用、火柴支持、内容审核、文件审核和生产就绪页面。",
+        "status": "implemented",
+        "lane": "admin-ops"
+      },
+      "totalProblem": "内测管理端运营",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
+      "id": "shichai-dev/opc-bounty-client#1",
+      "repo": "shichai-dev/opc-bounty-client",
+      "repoName": "opc-bounty-client",
+      "number": 1,
+      "title": "[Feature] Show user match spending history in profile",
+      "url": "https://github.com/shichai-dev/opc-bounty-client/issues/1",
+      "state": "OPEN",
+      "labels": [
+        "type:feature",
+        "needs:api",
+        "lane:client",
+        "ai:codex"
+      ],
+      "lane": "client",
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T11:18:25Z",
+      "updatedAt": "2026-06-15T11:18:25Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": {
+        "id": "match-support-wallet",
+        "title": "火柴支持和钱包",
+        "summary": "测试火柴余额、项目支持、需求加赏、会员、智能额度、曝光购买和支持者讨论组。",
+        "status": "implemented",
+        "lane": "server-wallet"
+      },
+      "totalProblem": "火柴支持和钱包",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
+      "id": "shichai-dev/opc-bounty-server#2",
+      "repo": "shichai-dev/opc-bounty-server",
+      "repoName": "opc-bounty-server",
+      "number": 2,
+      "title": "[DB] Match ledger query and test fixtures",
+      "url": "https://github.com/shichai-dev/opc-bounty-server/issues/2",
+      "state": "OPEN",
+      "labels": [
+        "type:db",
+        "needs:server",
+        "lane:database",
+        "ai:codex"
+      ],
+      "lane": "database",
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T11:18:21Z",
+      "updatedAt": "2026-06-15T11:18:21Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": {
+        "id": "match-support-wallet",
+        "title": "火柴支持和钱包",
+        "summary": "测试火柴余额、项目支持、需求加赏、会员、智能额度、曝光购买和支持者讨论组。",
+        "status": "implemented",
+        "lane": "server-wallet"
+      },
+      "totalProblem": "火柴支持和钱包",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
+      "id": "shichai-dev/opc-bounty-server#1",
+      "repo": "shichai-dev/opc-bounty-server",
+      "repoName": "opc-bounty-server",
+      "number": 1,
+      "title": "[API] User match spending history endpoint",
+      "url": "https://github.com/shichai-dev/opc-bounty-server/issues/1",
+      "state": "OPEN",
+      "labels": [
+        "type:api-contract",
+        "needs:client",
+        "needs:db",
+        "lane:server",
+        "ai:codex"
+      ],
+      "lane": "server",
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T11:18:18Z",
+      "updatedAt": "2026-06-15T11:18:18Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": {
+        "id": "match-support-wallet",
+        "title": "火柴支持和钱包",
+        "summary": "测试火柴余额、项目支持、需求加赏、会员、智能额度、曝光购买和支持者讨论组。",
+        "status": "implemented",
+        "lane": "server-wallet"
+      },
+      "totalProblem": "火柴支持和钱包",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    }
+  ],
   "discussions": [
     {
       "id": "dashboard-2",
@@ -1683,5 +1939,46 @@
       "preview": "功能编号: public-feature-dashboard 功能: 公开异步功能讨论看板 讨论类型: 修改请求 目标界面页面: - 公开功能讨论看板（feature-dashboard /） 建议或评价: 这个看板不应该只是只读状态页。团队成员需要能从看板里直接输入新功能想法、评价已经实现的功能，并在仿真实平台界面上围绕按钮、图标、页面区域和操作链进..."
     }
   ],
-  "aiReviewQueue": []
+  "aiReviewQueue": [
+    {
+      "type": "handoff",
+      "title": "火柴支持和钱包",
+      "featureId": "match-support-wallet",
+      "reason": "needs-db",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "火柴支持和钱包",
+      "featureId": "match-support-wallet",
+      "reason": "needs-server",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "火柴支持和钱包",
+      "featureId": "match-support-wallet",
+      "reason": "needs-api",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "火柴支持和钱包",
+      "featureId": "match-support-wallet",
+      "reason": "needs-review",
+      "repo": "client/server/admin",
+      "lane": "server-wallet"
+    },
+    {
+      "type": "handoff",
+      "title": "内测管理端运营",
+      "featureId": "admin-operations",
+      "reason": "needs-server",
+      "repo": "admin/server",
+      "lane": "admin-ops"
+    }
+  ]
 }

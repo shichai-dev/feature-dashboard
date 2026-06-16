@@ -73,12 +73,16 @@ function collectIssues() {
         "--limit",
         "100",
         "--json",
-        "number,title,url,state,labels,assignees,updatedAt"
+        "number,title,url,state,labels,assignees,updatedAt,createdAt,closedAt,body"
       ],
       []
     );
     return issues.map((issue) => ({
       ...issue,
+      ...tryGhJson(
+        ["issue", "view", String(issue.number), "-R", repo, "--json", "body,comments"],
+        { body: issue.body || "", comments: [] }
+      ),
       repo,
       inferredStatus: inferIssueStatus(issue)
     }));
@@ -411,7 +415,158 @@ function buildHandoffs(features) {
   });
 }
 
-function buildMetrics(features, handoffs) {
+function parseIssueNumberFromUrl(url) {
+  const match = String(url || "").match(/\/issues\/(\d+)$/);
+  return match?.[1] ? Number(match[1]) : null;
+}
+
+function issueRepoSlug(repo) {
+  return String(repo || "").split("/").pop() || repo || "unknown";
+}
+
+function firstAssignee(issue) {
+  return issue.assignees?.[0]?.login || issue.assignees?.[0]?.name || null;
+}
+
+function issueText(issue) {
+  const comments = (Array.isArray(issue.comments) ? issue.comments : []).map((comment) => comment.body || "").join("\n");
+  return `${issue.title || ""}\n${issue.body || ""}\n${comments}`;
+}
+
+function extractParentIssue(issue) {
+  const text = issueText(issue);
+  const urlMatch = text.match(/(?:Parent planning issue|Parent issue|父级议题|父级 Issue|父 Issue|父问题)\s*[:：]\s*(https:\/\/github\.com\/[^\s)]+)/i);
+  if (urlMatch) {
+    return {
+      label: `#${parseIssueNumberFromUrl(urlMatch[1]) || "父级"}`,
+      url: urlMatch[1]
+    };
+  }
+  const refMatch = text.match(/(?:Parent planning issue|Parent issue|父级议题|父级 Issue|父 Issue|父问题)\s*[:：]\s*#(\d+)/i);
+  if (refMatch) {
+    return {
+      label: `#${refMatch[1]}`,
+      url: `https://github.com/${issue.repo}/issues/${refMatch[1]}`
+    };
+  }
+  return null;
+}
+
+function buildIssueFeatureMap(features) {
+  const map = new Map();
+  for (const feature of features) {
+    for (const linkedIssue of feature.linkedIssues || []) {
+      if (!linkedIssue.url) continue;
+      map.set(linkedIssue.url, {
+        id: feature.id,
+        title: feature.title,
+        summary: feature.summary,
+        status: feature.status,
+        lane: feature.lane
+      });
+    }
+  }
+  return map;
+}
+
+function extractClaimTime(issue, claimant) {
+  const comments = Array.isArray(issue.comments) ? [...issue.comments] : [];
+  const sorted = comments.sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+  for (const comment of sorted) {
+    const body = String(comment.body || "");
+    const explicitTime = body.match(/接单时间\s*[:：]\s*([0-9T:.\-Z+]+)/);
+    const explicitUser = body.match(/接单人\s*[:：]\s*@?([A-Za-z0-9-]+)/);
+    if (explicitTime && (!claimant || explicitUser?.[1] === claimant)) return explicitTime[1];
+  }
+  for (const comment of sorted) {
+    const author = comment.author?.login || comment.author || "";
+    const body = String(comment.body || "").trim();
+    if (/^\/claim\b/i.test(body) && (!claimant || author === claimant)) return comment.createdAt || null;
+  }
+  return null;
+}
+
+function claimStatus(issue) {
+  const labels = labelNames(issue);
+  if (issue.state === "CLOSED") return "closed";
+  if (labels.includes("接单:阻塞") || labels.includes("status:blocked")) return "blocked";
+  if (labels.includes("接单:审查中")) return "reviewing";
+  if (labels.includes("接单:等待PR")) return "waiting-pr";
+  if (labels.includes("接单:开发中")) return "in-progress";
+  if (labels.includes("接单:已接单") || firstAssignee(issue)) return "claimed";
+  return "open";
+}
+
+function claimStatusLabel(status) {
+  return {
+    open: "待接单",
+    claimed: "已接单",
+    "in-progress": "开发中",
+    "waiting-pr": "等待 PR",
+    reviewing: "审查中",
+    blocked: "阻塞",
+    closed: "已关闭"
+  }[status] || status;
+}
+
+function elapsedHoursSince(startedAt, endedAt = null) {
+  if (!startedAt) return null;
+  const start = new Date(startedAt).getTime();
+  const end = endedAt ? new Date(endedAt).getTime() : Date.now();
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return null;
+  return Math.round(((end - start) / 36e5) * 10) / 10;
+}
+
+function buildClaimCommand(status) {
+  if (status === "open") return "/claim";
+  if (status === "blocked") return "/claim 或 /handoff @用户名";
+  if (status === "claimed" || status === "in-progress") return "/ready-pr 或 /handoff @用户名";
+  return "/claim";
+}
+
+function buildIssueTasks(issues, features) {
+  const featureByIssueUrl = buildIssueFeatureMap(features);
+  return issues
+    .map((issue) => {
+      const feature = featureByIssueUrl.get(issue.url) || null;
+      const status = claimStatus(issue);
+      const claimant = firstAssignee(issue);
+      const claimedAt = extractClaimTime(issue, claimant);
+      const parentIssue = extractParentIssue(issue);
+      const issueNumber = issue.number || parseIssueNumberFromUrl(issue.url);
+      const labels = labelNames(issue);
+      return {
+        id: `${issue.repo}#${issueNumber}`,
+        repo: issue.repo,
+        repoName: issueRepoSlug(issue.repo),
+        number: issueNumber,
+        title: issue.title,
+        url: issue.url,
+        state: issue.state,
+        labels,
+        lane: labels.find((label) => label.startsWith("lane:"))?.replace("lane:", "") || feature?.lane || null,
+        status,
+        statusLabel: claimStatusLabel(status),
+        claimant,
+        claimedAt,
+        elapsedHours: elapsedHoursSince(claimedAt, issue.closedAt),
+        createdAt: issue.createdAt,
+        updatedAt: issue.updatedAt,
+        closedAt: issue.closedAt || null,
+        parentIssue,
+        parentFeature: feature,
+        totalProblem: parentIssue?.label || feature?.title || "未归属父问题",
+        claimCommand: buildClaimCommand(status),
+        commandHelp: "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+      };
+    })
+    .sort((a, b) => {
+      const rank = { open: 0, blocked: 1, claimed: 2, "in-progress": 3, "waiting-pr": 4, reviewing: 5, closed: 6 };
+      return (rank[a.status] ?? 9) - (rank[b.status] ?? 9) || String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
+    });
+}
+
+function buildMetrics(features, handoffs, issueTasks = []) {
   const discussions = features.flatMap((feature) => feature.discussion?.signals || []);
   return {
     implemented: features.filter((feature) => feature.status === "implemented").length,
@@ -421,7 +576,12 @@ function buildMetrics(features, handoffs) {
     needsHandoff: handoffs.length,
     openDiscussions: discussions.filter((discussion) => discussion.state !== "CLOSED").length,
     needsAiReview: discussions.filter((discussion) => discussion.needsAiReview).length,
-    staleDiscussions: discussions.filter((discussion) => discussion.lifecycle === "stale").length
+    staleDiscussions: discussions.filter((discussion) => discussion.lifecycle === "stale").length,
+    issueTasks: issueTasks.length,
+    openIssueTasks: issueTasks.filter((task) => task.status === "open").length,
+    claimedIssueTasks: issueTasks.filter((task) => ["claimed", "in-progress"].includes(task.status)).length,
+    waitingPrIssueTasks: issueTasks.filter((task) => ["waiting-pr", "reviewing"].includes(task.status)).length,
+    blockedIssueTasks: issueTasks.filter((task) => task.status === "blocked").length
   };
 }
 
@@ -459,12 +619,13 @@ function main() {
   const uiSurfaces = buildSurfaces(features);
   const operationChains = buildChains(features);
   const handoffs = buildHandoffs(features);
-  const metrics = buildMetrics(features, handoffs);
+  const issueTasks = buildIssueTasks(issues, features);
+  const metrics = buildMetrics(features, handoffs, issueTasks);
   const aiReviewQueue = buildAiReviewQueue(features, discussionSignals, handoffs);
 
   const output = {
     generatedAt: new Date().toISOString(),
-    sourceSummary: `${features.length} 个功能，${uiSurfaces.length} 个界面页面，${operationChains.length} 条操作链。已读取 ${projectItems.length} 个项目项、${issues.length} 个私有议题、${discussionSignals.length} 条看板讨论。`,
+    sourceSummary: `${features.length} 个功能，${uiSurfaces.length} 个界面页面，${operationChains.length} 条操作链。已读取 ${projectItems.length} 个项目项、${issues.length} 个私有议题、${discussionSignals.length} 条看板讨论、${issueTasks.length} 个接单任务。`,
     repositories,
     dashboardRepository,
     metrics,
@@ -473,6 +634,7 @@ function main() {
     uiSurfaces,
     operationChains,
     handoffs,
+    issueTasks,
     discussions: discussionSignals.map(publicDiscussionSignal),
     aiReviewQueue
   };
