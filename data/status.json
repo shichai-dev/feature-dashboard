@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-16T00:15:50.118Z",
-  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 12 个项目项、6 个私有议题、2 条看板讨论、6 个接单任务。",
+  "generatedAt": "2026-06-16T00:39:46.825Z",
+  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 12 个项目项、8 个团队议题、2 条看板讨论、8 个接单任务。",
   "repositories": [
     "shichai-dev/planning",
     "shichai-dev/opc-bounty-client",
@@ -8,6 +8,13 @@
     "shichai-dev/opc-bounty-server"
   ],
   "dashboardRepository": "shichai-dev/feature-dashboard",
+  "issueTaskRepositories": [
+    "shichai-dev/planning",
+    "shichai-dev/opc-bounty-client",
+    "shichai-dev/opc-bounty-admin",
+    "shichai-dev/opc-bounty-server",
+    "shichai-dev/feature-dashboard"
+  ],
   "metrics": {
     "implemented": 10,
     "inProgress": 1,
@@ -17,8 +24,8 @@
     "openDiscussions": 2,
     "needsAiReview": 0,
     "staleDiscussions": 1,
-    "issueTasks": 6,
-    "openIssueTasks": 6,
+    "issueTasks": 8,
+    "openIssueTasks": 8,
     "claimedIssueTasks": 0,
     "waitingPrIssueTasks": 0,
     "blockedIssueTasks": 0
@@ -640,7 +647,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：auth-alpha-login",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bauth-alpha-login%5D+%E5%86%85%E6%B5%8B%E8%B4%A6%E5%8F%B7%E7%99%BB%E5%BD%95&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+auth-alpha-login%0A%E5%8A%9F%E8%83%BD%3A+%E5%86%85%E6%B5%8B%E8%B4%A6%E5%8F%B7%E7%99%BB%E5%BD%95%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%94%A8%E6%88%B7%E7%AB%AF%E7%99%BB%E5%BD%95%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%29%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E7%99%BB%E5%BD%95%E5%A4%96%E5%A3%B3+%28opc-bounty-admin+%2F%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Aauth-alpha-login%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bauth-alpha-login%5D+%E5%86%85%E6%B5%8B%E8%B4%A6%E5%8F%B7%E7%99%BB%E5%BD%95&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+auth-alpha-login%0A%E5%8A%9F%E8%83%BD%3A+%E5%86%85%E6%B5%8B%E8%B4%A6%E5%8F%B7%E7%99%BB%E5%BD%95%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%94%A8%E6%88%B7%E7%AB%AF%E7%99%BB%E5%BD%95%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%29%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E7%99%BB%E5%BD%95%E5%A4%96%E5%A3%B3+%28opc-bounty-admin+%2F%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Aauth-alpha-login%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -687,7 +694,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：requirement-publishing",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Brequirement-publishing%5D+%E9%9C%80%E6%B1%82%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+requirement-publishing%0A%E5%8A%9F%E8%83%BD%3A+%E9%9C%80%E6%B1%82%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%8F%91%E5%B8%83%E9%9C%80%E6%B1%82%E8%A1%A8%E5%8D%95+%28opc-bounty-client+%2F%23publish%29%0A-+%E9%9C%80%E6%B1%82%E8%8D%89%E7%A8%BF%E7%BC%96%E8%BE%91%E5%99%A8+%28opc-bounty-client+%2F%23publish%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Arequirement-publishing%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Brequirement-publishing%5D+%E9%9C%80%E6%B1%82%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+requirement-publishing%0A%E5%8A%9F%E8%83%BD%3A+%E9%9C%80%E6%B1%82%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%8F%91%E5%B8%83%E9%9C%80%E6%B1%82%E8%A1%A8%E5%8D%95+%28opc-bounty-client+%2F%23publish%29%0A-+%E9%9C%80%E6%B1%82%E8%8D%89%E7%A8%BF%E7%BC%96%E8%BE%91%E5%99%A8+%28opc-bounty-client+%2F%23publish%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Arequirement-publishing%2Cdiscussion%3Aidea",
         "count": 1,
         "counts": {
           "open": 1,
@@ -718,6 +725,12 @@
               "discussion:evaluation",
               "feature:requirement-publishing"
             ],
+            "dispatch": {
+              "status": "untracked",
+              "statusLabel": "未进入分发",
+              "targetUrl": null,
+              "targetRepo": null
+            },
             "createdAt": "2026-06-15T16:09:26Z",
             "updatedAt": "2026-06-15T16:09:26Z",
             "closedAt": null,
@@ -758,7 +771,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：project-publishing",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bproject-publishing%5D+%E9%A1%B9%E7%9B%AE%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+project-publishing%0A%E5%8A%9F%E8%83%BD%3A+%E9%A1%B9%E7%9B%AE%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%8F%91%E5%B8%83%E9%A1%B9%E7%9B%AE%E8%A1%A8%E5%8D%95+%28opc-bounty-client+%2F%23publish-project%29%0A-+%E9%A1%B9%E7%9B%AE%E8%AF%A6%E6%83%85%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Aproject-publishing%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bproject-publishing%5D+%E9%A1%B9%E7%9B%AE%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+project-publishing%0A%E5%8A%9F%E8%83%BD%3A+%E9%A1%B9%E7%9B%AE%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%8F%91%E5%B8%83%E9%A1%B9%E7%9B%AE%E8%A1%A8%E5%8D%95+%28opc-bounty-client+%2F%23publish-project%29%0A-+%E9%A1%B9%E7%9B%AE%E8%AF%A6%E6%83%85%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Aproject-publishing%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -804,7 +817,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：display-board",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bdisplay-board%5D+%E7%BB%9F%E4%B8%80%E5%B1%95%E7%A4%BA%E5%8F%B0&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+display-board%0A%E5%8A%9F%E8%83%BD%3A+%E7%BB%9F%E4%B8%80%E5%B1%95%E7%A4%BA%E5%8F%B0%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%B1%95%E7%A4%BA%E5%8F%B0+%28opc-bounty-client+%2F%23display%29%0A-+%E5%85%A8%E5%B1%80%E6%90%9C%E7%B4%A2%E6%B5%AE%E5%B1%82+%28opc-bounty-client+%2F%23search%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Adisplay-board%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bdisplay-board%5D+%E7%BB%9F%E4%B8%80%E5%B1%95%E7%A4%BA%E5%8F%B0&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+display-board%0A%E5%8A%9F%E8%83%BD%3A+%E7%BB%9F%E4%B8%80%E5%B1%95%E7%A4%BA%E5%8F%B0%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%B1%95%E7%A4%BA%E5%8F%B0+%28opc-bounty-client+%2F%23display%29%0A-+%E5%85%A8%E5%B1%80%E6%90%9C%E7%B4%A2%E6%B5%AE%E5%B1%82+%28opc-bounty-client+%2F%23search%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Adisplay-board%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -851,7 +864,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：community-detail-comments",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bcommunity-detail-comments%5D+%E5%8F%91%E5%B8%83%E8%AF%A6%E6%83%85%E3%80%81%E8%AF%84%E8%AE%BA%E5%92%8C%E5%8F%82%E4%B8%8E&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+community-detail-comments%0A%E5%8A%9F%E8%83%BD%3A+%E5%8F%91%E5%B8%83%E8%AF%A6%E6%83%85%E3%80%81%E8%AF%84%E8%AE%BA%E5%92%8C%E5%8F%82%E4%B8%8E%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%8F%91%E5%B8%83%E8%AF%A6%E6%83%85%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A-+%E8%AE%A8%E8%AE%BA%E6%A5%BC%E5%B1%82+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Acommunity-detail-comments%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bcommunity-detail-comments%5D+%E5%8F%91%E5%B8%83%E8%AF%A6%E6%83%85%E3%80%81%E8%AF%84%E8%AE%BA%E5%92%8C%E5%8F%82%E4%B8%8E&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+community-detail-comments%0A%E5%8A%9F%E8%83%BD%3A+%E5%8F%91%E5%B8%83%E8%AF%A6%E6%83%85%E3%80%81%E8%AF%84%E8%AE%BA%E5%92%8C%E5%8F%82%E4%B8%8E%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%8F%91%E5%B8%83%E8%AF%A6%E6%83%85%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A-+%E8%AE%A8%E8%AE%BA%E6%A5%BC%E5%B1%82+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Acommunity-detail-comments%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -897,7 +910,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：private-messages",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bprivate-messages%5D+%E7%A7%81%E8%81%8A%E4%BC%9A%E8%AF%9D&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+private-messages%0A%E5%8A%9F%E8%83%BD%3A+%E7%A7%81%E8%81%8A%E4%BC%9A%E8%AF%9D%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%A7%81%E8%81%8A%E6%8A%BD%E5%B1%89+%28opc-bounty-client+%2F%23messages%29%0A-+%E5%85%AC%E5%BC%80%E8%B5%84%E6%96%99%E5%BC%B9%E7%AA%97+%28opc-bounty-client+%2F%23profile%2F%3Aid%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Aprivate-messages%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bprivate-messages%5D+%E7%A7%81%E8%81%8A%E4%BC%9A%E8%AF%9D&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+private-messages%0A%E5%8A%9F%E8%83%BD%3A+%E7%A7%81%E8%81%8A%E4%BC%9A%E8%AF%9D%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%A7%81%E8%81%8A%E6%8A%BD%E5%B1%89+%28opc-bounty-client+%2F%23messages%29%0A-+%E5%85%AC%E5%BC%80%E8%B5%84%E6%96%99%E5%BC%B9%E7%AA%97+%28opc-bounty-client+%2F%23profile%2F%3Aid%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Aprivate-messages%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -996,7 +1009,7 @@
       ],
       "discussion": {
         "issueTerm": "功能讨论：match-support-wallet",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bmatch-support-wallet%5D+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E5%92%8C%E9%92%B1%E5%8C%85&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+match-support-wallet%0A%E5%8A%9F%E8%83%BD%3A+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E5%92%8C%E9%92%B1%E5%8C%85%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A-+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E9%92%B1%E5%8C%85%E6%91%98%E8%A6%81+%28opc-bounty-client+%2F%23profile%29%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E7%81%AB%E6%9F%B4%E5%AE%A1%E8%AE%A1+%28opc-bounty-admin+%2F%23match-audit%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Amatch-support-wallet%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bmatch-support-wallet%5D+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E5%92%8C%E9%92%B1%E5%8C%85&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+match-support-wallet%0A%E5%8A%9F%E8%83%BD%3A+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E5%92%8C%E9%92%B1%E5%8C%85%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%81%AB%E6%9F%B4%E6%94%AF%E6%8C%81%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23postings%2F%3Aid%29%0A-+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E9%92%B1%E5%8C%85%E6%91%98%E8%A6%81+%28opc-bounty-client+%2F%23profile%29%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E7%81%AB%E6%9F%B4%E5%AE%A1%E8%AE%A1+%28opc-bounty-admin+%2F%23match-audit%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Amatch-support-wallet%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -1042,7 +1055,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：profile-workbench",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bprofile-workbench%5D+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E3%80%81%E5%B7%A5%E4%BD%9C%E5%8F%B0%E5%92%8C%E9%80%9A%E7%9F%A5&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+profile-workbench%0A%E5%8A%9F%E8%83%BD%3A+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E3%80%81%E5%B7%A5%E4%BD%9C%E5%8F%B0%E5%92%8C%E9%80%9A%E7%9F%A5%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E4%BB%AA%E8%A1%A8%E7%9B%98+%28opc-bounty-client+%2F%23profile%29%0A-+%E8%AE%BE%E7%BD%AE%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23settings%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Aprofile-workbench%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bprofile-workbench%5D+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E3%80%81%E5%B7%A5%E4%BD%9C%E5%8F%B0%E5%92%8C%E9%80%9A%E7%9F%A5&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+profile-workbench%0A%E5%8A%9F%E8%83%BD%3A+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E3%80%81%E5%B7%A5%E4%BD%9C%E5%8F%B0%E5%92%8C%E9%80%9A%E7%9F%A5%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E4%B8%AA%E4%BA%BA%E9%A1%B5%E4%BB%AA%E8%A1%A8%E7%9B%98+%28opc-bounty-client+%2F%23profile%29%0A-+%E8%AE%BE%E7%BD%AE%E9%9D%A2%E6%9D%BF+%28opc-bounty-client+%2F%23settings%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Aprofile-workbench%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -1109,7 +1122,7 @@
       ],
       "discussion": {
         "issueTerm": "功能讨论：admin-operations",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Badmin-operations%5D+%E5%86%85%E6%B5%8B%E7%AE%A1%E7%90%86%E7%AB%AF%E8%BF%90%E8%90%A5&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+admin-operations%0A%E5%8A%9F%E8%83%BD%3A+%E5%86%85%E6%B5%8B%E7%AE%A1%E7%90%86%E7%AB%AF%E8%BF%90%E8%90%A5%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E4%BB%AA%E8%A1%A8%E7%9B%98+%28opc-bounty-admin+%2F%29%0A-+%E5%86%85%E5%AE%B9%E5%AE%A1%E6%A0%B8%E9%A1%B5+%28opc-bounty-admin+%2F%23content-review%29%0A-+%E6%96%87%E4%BB%B6%E5%AE%A1%E6%A0%B8%E9%A1%B5+%28opc-bounty-admin+%2F%23file-review%29%0A-+%E7%94%9F%E4%BA%A7%E5%B0%B1%E7%BB%AA%E9%A1%B5+%28opc-bounty-admin+%2F%23production-readiness%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Aadmin-operations%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Badmin-operations%5D+%E5%86%85%E6%B5%8B%E7%AE%A1%E7%90%86%E7%AB%AF%E8%BF%90%E8%90%A5&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+admin-operations%0A%E5%8A%9F%E8%83%BD%3A+%E5%86%85%E6%B5%8B%E7%AE%A1%E7%90%86%E7%AB%AF%E8%BF%90%E8%90%A5%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E4%BB%AA%E8%A1%A8%E7%9B%98+%28opc-bounty-admin+%2F%29%0A-+%E5%86%85%E5%AE%B9%E5%AE%A1%E6%A0%B8%E9%A1%B5+%28opc-bounty-admin+%2F%23content-review%29%0A-+%E6%96%87%E4%BB%B6%E5%AE%A1%E6%A0%B8%E9%A1%B5+%28opc-bounty-admin+%2F%23file-review%29%0A-+%E7%94%9F%E4%BA%A7%E5%B0%B1%E7%BB%AA%E9%A1%B5+%28opc-bounty-admin+%2F%23production-readiness%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Aadmin-operations%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -1156,7 +1169,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：ai-requirement-assistant",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bai-requirement-assistant%5D+%E6%99%BA%E8%83%BD%E9%9C%80%E6%B1%82%E5%8A%A9%E6%89%8B&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+ai-requirement-assistant%0A%E5%8A%9F%E8%83%BD%3A+%E6%99%BA%E8%83%BD%E9%9C%80%E6%B1%82%E5%8A%A9%E6%89%8B%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E9%9C%80%E6%B1%82%E6%99%BA%E8%83%BD%E5%88%9D%E5%AE%A1%E7%8A%B6%E6%80%81+%28opc-bounty-client+%2F%23publish%29%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E6%99%BA%E8%83%BD%E6%9C%8D%E5%8A%A1%E8%BF%90%E8%90%A5+%28opc-bounty-admin+%2F%23production-readiness%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Aai-requirement-assistant%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bai-requirement-assistant%5D+%E6%99%BA%E8%83%BD%E9%9C%80%E6%B1%82%E5%8A%A9%E6%89%8B&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+ai-requirement-assistant%0A%E5%8A%9F%E8%83%BD%3A+%E6%99%BA%E8%83%BD%E9%9C%80%E6%B1%82%E5%8A%A9%E6%89%8B%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E9%9C%80%E6%B1%82%E6%99%BA%E8%83%BD%E5%88%9D%E5%AE%A1%E7%8A%B6%E6%80%81+%28opc-bounty-client+%2F%23publish%29%0A-+%E7%AE%A1%E7%90%86%E7%AB%AF%E6%99%BA%E8%83%BD%E6%9C%8D%E5%8A%A1%E8%BF%90%E8%90%A5+%28opc-bounty-admin+%2F%23production-readiness%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Aai-requirement-assistant%2Cdiscussion%3Aidea",
         "count": 0,
         "counts": {
           "open": 0,
@@ -1199,7 +1212,7 @@
       "openNeeds": [],
       "discussion": {
         "issueTerm": "功能讨论：public-feature-dashboard",
-        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bpublic-feature-dashboard%5D+%E5%85%AC%E5%BC%80%E5%BC%82%E6%AD%A5%E5%8A%9F%E8%83%BD%E8%AE%A8%E8%AE%BA%E7%9C%8B%E6%9D%BF&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+public-feature-dashboard%0A%E5%8A%9F%E8%83%BD%3A+%E5%85%AC%E5%BC%80%E5%BC%82%E6%AD%A5%E5%8A%9F%E8%83%BD%E8%AE%A8%E8%AE%BA%E7%9C%8B%E6%9D%BF%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%85%AC%E5%BC%80%E5%8A%9F%E8%83%BD%E8%AE%A8%E8%AE%BA%E7%9C%8B%E6%9D%BF+%28feature-dashboard+%2F%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cfeature%3Apublic-feature-dashboard%2Cdiscussion%3Aidea",
+        "newIssueUrl": "https://github.com/shichai-dev/feature-dashboard/issues/new?title=%5B%E6%83%B3%E6%B3%95%5D%5Bpublic-feature-dashboard%5D+%E5%85%AC%E5%BC%80%E5%BC%82%E6%AD%A5%E5%8A%9F%E8%83%BD%E8%AE%A8%E8%AE%BA%E7%9C%8B%E6%9D%BF&body=%E5%8A%9F%E8%83%BD%E7%BC%96%E5%8F%B7%3A+public-feature-dashboard%0A%E5%8A%9F%E8%83%BD%3A+%E5%85%AC%E5%BC%80%E5%BC%82%E6%AD%A5%E5%8A%9F%E8%83%BD%E8%AE%A8%E8%AE%BA%E7%9C%8B%E6%9D%BF%0A%E8%AE%A8%E8%AE%BA%E7%B1%BB%E5%9E%8B%3A+idea%0A%0A%E7%9B%AE%E6%A0%87%E7%95%8C%E9%9D%A2%E9%A1%B5%E9%9D%A2%3A%0A-+%E5%85%AC%E5%BC%80%E5%8A%9F%E8%83%BD%E8%AE%A8%E8%AE%BA%E7%9C%8B%E6%9D%BF+%28feature-dashboard+%2F%29%0A%0A%E5%BB%BA%E8%AE%AE%E6%88%96%E8%AF%84%E4%BB%B7%3A%0A%0A%E5%B8%8C%E6%9C%9B%E6%99%BA%E8%83%BD%E5%8A%A9%E6%89%8B%E5%A4%84%E7%90%86%3A%0A-+%5B+%5D+%E6%B1%87%E6%80%BB%E8%BF%99%E6%9D%A1%E8%AE%A8%E8%AE%BA%0A-+%5B+%5D+%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%BD%B1%E5%93%8D%E5%8A%9F%E8%83%BD%E7%8A%B6%E6%80%81%0A-+%5B+%5D+%E8%8B%A5%E5%B7%B2%E9%87%87%E7%BA%B3%E5%88%99%E6%8B%86%E6%88%90%E5%AE%9E%E7%8E%B0%E8%AE%AE%E9%A2%98%0A-+%5B+%5D+%E8%8B%A5%E6%9B%BF%E4%BB%A3%E6%97%A7%E8%AE%A8%E8%AE%BA%E5%88%99%E6%A0%87%E8%AE%B0%E6%97%A7%E8%AF%84%E8%AE%BA%E8%BF%87%E6%9C%9F&labels=dashboard-discussion%2Cdispatch%3Apending%2Cfeature%3Apublic-feature-dashboard%2Cdiscussion%3Aidea",
         "count": 1,
         "counts": {
           "open": 1,
@@ -1231,6 +1244,12 @@
               "status:accepted",
               "feature:public-feature-dashboard"
             ],
+            "dispatch": {
+              "status": "untracked",
+              "statusLabel": "未进入分发",
+              "targetUrl": null,
+              "targetRepo": null
+            },
             "createdAt": "2026-06-15T12:59:40Z",
             "updatedAt": "2026-06-15T15:22:36Z",
             "closedAt": null,
@@ -1683,6 +1702,63 @@
   ],
   "issueTasks": [
     {
+      "id": "shichai-dev/feature-dashboard#2",
+      "repo": "shichai-dev/feature-dashboard",
+      "repoName": "feature-dashboard",
+      "number": 2,
+      "title": "[评价][requirement-publishing] 首页内容太杂",
+      "url": "https://github.com/shichai-dev/feature-dashboard/issues/2",
+      "state": "OPEN",
+      "labels": [
+        "dashboard-discussion",
+        "discussion:evaluation",
+        "feature:requirement-publishing"
+      ],
+      "lane": null,
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T16:09:26Z",
+      "updatedAt": "2026-06-15T16:09:26Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": null,
+      "totalProblem": "未归属父问题",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
+      "id": "shichai-dev/feature-dashboard#1",
+      "repo": "shichai-dev/feature-dashboard",
+      "repoName": "feature-dashboard",
+      "number": 1,
+      "title": "[修改请求][public-feature-dashboard] 仿真实平台界面异步讨论流程",
+      "url": "https://github.com/shichai-dev/feature-dashboard/issues/1",
+      "state": "OPEN",
+      "labels": [
+        "dashboard-discussion",
+        "discussion:change-request",
+        "status:accepted",
+        "feature:public-feature-dashboard"
+      ],
+      "lane": null,
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-15T12:59:40Z",
+      "updatedAt": "2026-06-15T15:22:36Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": null,
+      "totalProblem": "未归属父问题",
+      "claimCommand": "/claim",
+      "commandHelp": "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+    },
+    {
       "id": "shichai-dev/planning#1",
       "repo": "shichai-dev/planning",
       "repoName": "planning",
@@ -1908,6 +1984,12 @@
         "discussion:evaluation",
         "feature:requirement-publishing"
       ],
+      "dispatch": {
+        "status": "untracked",
+        "statusLabel": "未进入分发",
+        "targetUrl": null,
+        "targetRepo": null
+      },
       "createdAt": "2026-06-15T16:09:26Z",
       "updatedAt": "2026-06-15T16:09:26Z",
       "closedAt": null,
@@ -1933,6 +2015,12 @@
         "status:accepted",
         "feature:public-feature-dashboard"
       ],
+      "dispatch": {
+        "status": "untracked",
+        "statusLabel": "未进入分发",
+        "targetUrl": null,
+        "targetRepo": null
+      },
       "createdAt": "2026-06-15T12:59:40Z",
       "updatedAt": "2026-06-15T15:22:36Z",
       "closedAt": null,

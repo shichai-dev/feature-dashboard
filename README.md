@@ -20,11 +20,37 @@
 1. 打开线上看板，进入“仿真平台”。
 2. 在仿真实页面里点击某个按钮、图标、页面区域或操作步骤。
 3. 在右侧讨论栏提交想法、评价、修改请求、问题风险或追加操作链。
-4. 刷新任务会读取公开讨论，并标记为“待智能处理”“已采纳”“已实现”“已过期”或“受阻”。
-5. 协调智能体读取 `data/status.json`，重点查看讨论和待处理队列，再决定是否汇总、拆分实现议题或标记旧评论过期。
-6. 代码、议题或评论变化后，下一次刷新会同步更新功能状态、界面页面、操作链、协作交接和讨论数量。
+4. Dashboard 会先生成一个公开源讨论，并带上 `dispatch:pending`。
+5. `discussion-dispatch.yml` 会根据功能编号、界面页面、关键词和分工规则推断目标仓库，并创建目标 Issue。
+6. 分发成功后，源讨论下面会写回“已分发目标”，并标记为 `dispatch:sent`。
+7. 刷新任务会读取源讨论和目标仓 Issue，并标记为“待智能处理”“已采纳”“已实现”“已过期”或“受阻”。
+8. 协调智能体读取 `data/status.json`，重点查看讨论、分发状态和待处理队列，再决定是否进一步拆分实现议题或标记旧评论过期。
+9. 代码、议题或评论变化后，下一次刷新会同步更新功能状态、界面页面、操作链、协作交接、讨论数量和接单状态。
 
 页面内嵌快速评论使用代码托管平台的议题评论。正式依赖它之前，需要给 `shichai-dev/feature-dashboard` 安装 `utterances` 应用。结构化公开讨论议题不依赖这个组件。
+
+## 分发流程
+
+Dashboard 是讨论收集入口，不是所有任务的最终归属仓库。
+
+自动分发规则：
+
+- 用户端界面、按钮、图标、页面、交互、首页、展示台、发布、详情页、个人页：分发到 `opc-bounty-client`。
+- 管理端、后台、管理员、审核、审计、运营台：分发到 `opc-bounty-admin`。
+- 后端、服务端、接口、API、数据库、权限、钱包、账本、支付、智能服务、对象存储：分发到 `opc-bounty-server`。
+- 规划、需求不清、跨仓总问题：分发到 `planning`。
+- Dashboard 自身看板、接单、分发、公开讨论问题：保留在 `feature-dashboard`。
+
+分发成功后，Dashboard 源讨论会保留，目标仓库会出现一个可接单 Issue。后续接单应在目标 Issue 里完成。
+
+跨仓创建 Issue 需要给本仓库配置 `SHICHAI_DISPATCH_TOKEN` 密钥。该令牌至少需要对这些仓库具备 Issues 写权限：
+
+- `shichai-dev/planning`
+- `shichai-dev/opc-bounty-client`
+- `shichai-dev/opc-bounty-admin`
+- `shichai-dev/opc-bounty-server`
+
+如果没有配置该密钥，分发工作流会在源讨论里标记 `dispatch:blocked` 并说明原因。
 
 ## 接单流程
 
@@ -48,7 +74,7 @@
 
 6. 下一次 Dashboard 刷新后，页面会同步显示新的负责人、接单状态和已耗时。
 
-当前仓库已经包含 `.github/workflows/issue-claim.yml`，可处理本仓库 Issue 的 `/claim` 等命令。若要让 `opc-bounty-client`、`opc-bounty-admin`、`opc-bounty-server`、`planning` 的 Issue 也自动执行接单锁，需要在对应仓库安装同一套工作流，或改为统一 GitHub App / Coordinator 服务集中处理。
+当前任务接单面板会汇总 `planning`、`opc-bounty-client`、`opc-bounty-admin`、`opc-bounty-server` 和 `feature-dashboard` 的 Issue。当前仓库已经包含 `.github/workflows/issue-claim.yml`，可处理本仓库 Issue 的 `/claim` 等命令。若要让其他仓库的 Issue 也自动执行接单锁，需要在对应仓库安装同一套工作流，或改为统一 GitHub App / Coordinator 服务集中处理。
 
 ## 刷新
 
@@ -66,6 +92,9 @@ node scripts/collect-status.mjs
 推荐公开讨论标签：
 
 - `dashboard-discussion`
+- `dispatch:pending`
+- `dispatch:sent`
+- `dispatch:blocked`
 - `discussion:idea`
 - `discussion:evaluation`
 - `discussion:change-request`
