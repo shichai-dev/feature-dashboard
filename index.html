@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,6 +19,7 @@
         </a>
         <nav class="nav-tabs" aria-label="看板分区">
           <button class="nav-tab is-active" type="button" data-tab="studio">仿真平台</button>
+          <button class="nav-tab" type="button" data-tab="tasks">任务接单</button>
           <button class="nav-tab" type="button" data-tab="chains">操作链</button>
           <button class="nav-tab" type="button" data-tab="discussions">异步讨论</button>
           <button class="nav-tab" type="button" data-tab="features">功能地图</button>
@@ -38,7 +39,7 @@
         <header class="topbar">
           <div>
             <h1>平台界面讨论工作台</h1>
-            <p>在仿真实平台页面、图标和操作链上直接评论、评价和追加需求。</p>
+            <p>在仿真实平台页面、图标和操作链上直接评论、评价、追加需求，并查看团队 Issue 的接单状态。</p>
           </div>
           <div class="topbar-actions">
             <a class="ghost-link" href="https://github.com/shichai-dev/feature-dashboard/issues">讨论记录</a>
@@ -100,6 +101,14 @@
                   <tbody id="feature-rows"></tbody>
                 </table>
               </div>
+            </section>
+
+            <section class="tab-panel" data-panel="tasks">
+              <div class="section-heading">
+                <h2>任务接单</h2>
+                <p>从团队仓库读取 Issue，按待接单、已接单、开发中、等待 PR、阻塞和已关闭展示。点击某个问题后，在右侧查看父级归属、接单人、接单时间和已耗时。</p>
+              </div>
+              <div class="issue-task-board" id="issue-task-board"></div>
             </section>
 
             <section class="tab-panel" data-panel="surfaces">

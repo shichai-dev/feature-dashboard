@@ -4,6 +4,7 @@ const state = {
   query: "",
   status: "all",
   selectedId: null,
+  selectedIssueId: null,
   selectedPageId: null,
   selectedTargetId: null,
   chainDrawerOpen: false,
@@ -38,6 +39,16 @@ const lifecycleLabels = {
   implemented: "已实现",
   stale: "已过期",
   blocked: "受阻"
+};
+
+const claimLabels = {
+  open: "待接单",
+  claimed: "已接单",
+  "in-progress": "开发中",
+  "waiting-pr": "等待 PR",
+  reviewing: "审查中",
+  blocked: "阻塞",
+  closed: "已关闭"
 };
 
 const byId = (id) => document.getElementById(id);
@@ -79,6 +90,73 @@ function filteredFeatures() {
 function statusPill(status) {
   const safeStatus = status || "planned";
   return `<span class="status-pill ${statusClass[safeStatus] || statusClass.planned}">${statusLabels[safeStatus] || safeStatus}</span>`;
+}
+
+function claimPill(status) {
+  const safeStatus = status || "open";
+  return `<span class="claim-pill claim-${escapeHtml(safeStatus)}">${escapeHtml(claimLabels[safeStatus] || safeStatus)}</span>`;
+}
+
+function formatDateTime(value) {
+  if (!value) return "未记录";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "未记录";
+  return date.toLocaleString();
+}
+
+function formatElapsedHours(hours, startedAt, endedAt = null) {
+  if (!startedAt) return "未开始";
+  let value = Number(hours);
+  if (!Number.isFinite(value) && startedAt) {
+    const start = new Date(startedAt).getTime();
+    const end = endedAt ? new Date(endedAt).getTime() : Date.now();
+    if (Number.isFinite(start) && Number.isFinite(end) && end >= start) {
+      value = Math.round(((end - start) / 36e5) * 10) / 10;
+    }
+  }
+  if (!Number.isFinite(value)) return "未开始";
+  if (value < 1) return `${Math.round(value * 60)} 分钟`;
+  if (value < 24) return `${value} 小时`;
+  return `${Math.round((value / 24) * 10) / 10} 天`;
+}
+
+function issueTasks() {
+  return state.data?.issueTasks || [];
+}
+
+function currentIssueTask() {
+  return issueTasks().find((task) => task.id === state.selectedIssueId) || issueTasks()[0] || null;
+}
+
+function issueTasksByStatus() {
+  const groups = [
+    { id: "open", title: "待接单", tasks: [] },
+    { id: "claimed", title: "已接单", tasks: [] },
+    { id: "in-progress", title: "开发中", tasks: [] },
+    { id: "waiting", title: "等待 PR / 审查", tasks: [] },
+    { id: "blocked", title: "阻塞", tasks: [] },
+    { id: "closed", title: "已关闭", tasks: [] }
+  ];
+  const groupById = new Map(groups.map((group) => [group.id, group]));
+  for (const task of issueTasks()) {
+    if (task.status === "waiting-pr" || task.status === "reviewing") {
+      groupById.get("waiting").tasks.push(task);
+    } else if (groupById.has(task.status)) {
+      groupById.get(task.status).tasks.push(task);
+    } else {
+      groupById.get("open").tasks.push(task);
+    }
+  }
+  return groups;
+}
+
+async function copyClaimCommand(command) {
+  try {
+    await navigator.clipboard.writeText(command);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function studio() {
@@ -193,10 +271,10 @@ function buildTargetDiscussionUrl(target, type = "idea", titleInput = "", bodyIn
 function renderMetrics() {
   const metrics = state.data?.metrics || {};
   byId("metrics").innerHTML = [
-    ["已实现", metrics.implemented || 0],
-    ["进行中", metrics.inProgress || 0],
-    ["开放讨论", metrics.openDiscussions || 0],
-    ["待智能处理", metrics.needsAiReview || 0]
+    ["待接单", metrics.openIssueTasks || 0],
+    ["已接单", metrics.claimedIssueTasks || 0],
+    ["等待 PR", metrics.waitingPrIssueTasks || 0],
+    ["开放讨论", metrics.openDiscussions || 0]
   ]
     .map(([label, value]) => `
       <article class="metric">
@@ -485,6 +563,53 @@ function renderStudio() {
   byId("view-page-chains")?.addEventListener("click", () => {
     state.chainDrawerOpen = true;
     renderAll();
+  });
+}
+
+function renderIssueTaskCard(task) {
+  const claimant = task.claimant ? `@${task.claimant}` : "未接单";
+  const parent = task.parentIssue?.url
+    ? `<a href="${escapeHtml(task.parentIssue.url)}">${escapeHtml(task.parentIssue.label || "父级 Issue")}</a>`
+    : escapeHtml(task.parentFeature?.title || "未归属父问题");
+  return `
+    <article class="issue-task-card ${task.id === state.selectedIssueId ? "is-selected" : ""}" data-issue-id="${escapeHtml(task.id)}">
+      <div class="issue-task-head">
+        ${claimPill(task.status)}
+        <span class="repo-chip">${escapeHtml(task.repoName || task.repo)}</span>
+      </div>
+      <h3>#${escapeHtml(task.number)} ${escapeHtml(task.title)}</h3>
+      <div class="issue-task-meta">
+        <span>归属：${parent}</span>
+        <span>负责人：${escapeHtml(claimant)}</span>
+        <span>已耗时：${escapeHtml(formatElapsedHours(task.elapsedHours, task.claimedAt, task.closedAt))}</span>
+      </div>
+    </article>
+  `;
+}
+
+function renderIssueTasks() {
+  const root = byId("issue-task-board");
+  if (!root) return;
+  const groups = issueTasksByStatus();
+  root.innerHTML = groups
+    .map((group) => `
+      <section class="issue-task-column">
+        <div class="issue-task-column-head">
+          <h3>${escapeHtml(group.title)}</h3>
+          <span>${group.tasks.length}</span>
+        </div>
+        <div class="issue-task-stack">
+          ${group.tasks.length ? group.tasks.map(renderIssueTaskCard).join("") : `<div class="mini-empty">暂无任务</div>`}
+        </div>
+      </section>
+    `)
+    .join("");
+
+  root.querySelectorAll("[data-issue-id]").forEach((card) => {
+    card.addEventListener("click", () => {
+      state.selectedIssueId = card.dataset.issueId;
+      renderAll();
+    });
   });
 }
 
@@ -834,7 +959,84 @@ function renderEvaluationModal(target) {
   `;
 }
 
+function renderIssueInspector() {
+  const task = currentIssueTask();
+  const detail = byId("detail-panel");
+  if (!task) {
+    detail.innerHTML = `
+      <div class="empty-detail">
+        <h2>暂无接单任务</h2>
+        <p>刷新后会从团队仓库读取开放 Issue，并按接单状态展示。</p>
+      </div>
+    `;
+    return;
+  }
+
+  state.selectedIssueId = task.id;
+  const parent = task.parentIssue?.url
+    ? `<a href="${escapeHtml(task.parentIssue.url)}">${escapeHtml(task.parentIssue.label || "父级 Issue")}</a>`
+    : escapeHtml(task.parentFeature?.title || "未归属父问题");
+  const labels = (task.labels || []).slice(0, 8).map((label) => `<span class="meta-chip">${escapeHtml(label)}</span>`).join("");
+
+  detail.innerHTML = `
+    <div>
+      ${claimPill(task.status)}
+      <h2>#${escapeHtml(task.number)} ${escapeHtml(task.title)}</h2>
+      <p>${escapeHtml(task.repo)} · ${escapeHtml(task.lane || "分工待定")}</p>
+      <div class="meta-row">
+        <span class="meta-chip">负责人：${escapeHtml(task.claimant ? `@${task.claimant}` : "未接单")}</span>
+        <span class="meta-chip">接单时间：${escapeHtml(formatDateTime(task.claimedAt))}</span>
+        <span class="meta-chip">已耗时：${escapeHtml(formatElapsedHours(task.elapsedHours, task.claimedAt, task.closedAt))}</span>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h3>归属状态</h3>
+      <p>父级：${parent}</p>
+      <p>总问题：${escapeHtml(task.totalProblem || "未归属父问题")}</p>
+    </div>
+    <div class="detail-section">
+      <h3>接单操作</h3>
+      <p>${escapeHtml(task.commandHelp || "在 GitHub Issue 评论区发送接单命令。")}</p>
+      <div class="claim-command-box">
+        <code id="claim-command-text">${escapeHtml(task.claimCommand || "/claim")}</code>
+        <button type="button" id="copy-claim-command">复制命令</button>
+      </div>
+      <div class="inspector-actions claim-actions">
+        <button class="primary-button" type="button" id="open-claim-issue">打开 Issue 接单</button>
+        <a class="ghost-link" href="${escapeHtml(task.url)}">查看问题详情</a>
+      </div>
+      <p class="claim-note">竞发锁以 GitHub assignee 为准。一个 Issue 已有负责人后，后续接单会被拒绝或需要转交。</p>
+    </div>
+    <div class="detail-section">
+      <h3>接单命令</h3>
+      <ul class="signal-list">
+        <li><span>/claim</span><strong>接手这个 Issue</strong></li>
+        <li><span>/unclaim</span><strong>放弃接单，回到待接单</strong></li>
+        <li><span>/handoff @用户名</span><strong>转交给其他成员</strong></li>
+        <li><span>/blocked 原因</span><strong>标记阻塞并说明原因</strong></li>
+        <li><span>/ready-pr</span><strong>标记为等待 PR</strong></li>
+      </ul>
+    </div>
+    <div class="detail-section">
+      <h3>标签</h3>
+      <div class="meta-row">${labels || "<span class=\"meta-chip\">暂无标签</span>"}</div>
+    </div>
+  `;
+
+  byId("open-claim-issue")?.addEventListener("click", () => {
+    window.open(`${task.url}#issuecomment-new`, "_blank", "noopener,noreferrer");
+  });
+  byId("copy-claim-command")?.addEventListener("click", async () => {
+    const ok = await copyClaimCommand(task.claimCommand || "/claim");
+    byId("copy-claim-command").textContent = ok ? "已复制" : "请手动复制";
+  });
+}
+
 function renderDetail() {
+  if (state.activeTab === "tasks") {
+    renderIssueInspector();
+    return;
+  }
   if (state.activeTab === "studio") {
     renderStudioInspector();
     return;
@@ -970,6 +1172,7 @@ function renderAll() {
   renderTabs();
   renderMetrics();
   renderStudio();
+  renderIssueTasks();
   renderRows();
   renderSurfaces();
   renderChains();
@@ -986,6 +1189,7 @@ async function loadData() {
   }
   state.data = await response.json();
   state.selectedId = state.data.features?.[0]?.id || null;
+  state.selectedIssueId = state.data.issueTasks?.[0]?.id || null;
   state.selectedPageId = state.data.operationStudio?.defaultPageId || state.data.operationStudio?.pages?.[0]?.id || null;
   state.selectedTargetId = pageTargets(currentPage())[0]?.id || null;
   renderAll();

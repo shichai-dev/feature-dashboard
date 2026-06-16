@@ -1,0 +1,215 @@
+name: Issue 接单命令
+
+on:
+  issues:
+    types: [opened, reopened, closed]
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+
+concurrency:
+  group: issue-claim-${{ github.repository }}-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  claim:
+    if: github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    steps:
+      - name: 处理接单状态
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue_number = context.payload.issue.number;
+            const actor = context.actor;
+
+            const labels = {
+              open: { name: "接单:待接单", color: "fff4df", description: "Issue 正在等待成员或 AI 接单" },
+              claimed: { name: "接单:已接单", color: "e8f7ef", description: "Issue 已有唯一接单人" },
+              progress: { name: "接单:开发中", color: "0969da", description: "接单人正在实现" },
+              waitingPr: { name: "接单:等待PR", color: "6f42c1", description: "实现完成，等待合并请求" },
+              reviewing: { name: "接单:审查中", color: "4338ca", description: "合并请求正在审查" },
+              blocked: { name: "接单:阻塞", color: "be2f2f", description: "任务被依赖、权限或需求问题阻塞" },
+              closed: { name: "接单:已关闭", color: "138a52", description: "Issue 已关闭" }
+            };
+
+            async function ensureLabel(label) {
+              try {
+                await github.rest.issues.getLabel({ owner, repo, name: label.name });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.issues.createLabel({
+                  owner,
+                  repo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description
+                });
+              }
+            }
+
+            async function addLabels(names) {
+              for (const name of names) {
+                const label = Object.values(labels).find((item) => item.name === name);
+                if (label) await ensureLabel(label);
+              }
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: names });
+            }
+
+            async function removeLabels(names) {
+              for (const name of names) {
+                try {
+                  await github.rest.issues.removeLabel({ owner, repo, issue_number, name });
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                }
+              }
+            }
+
+            async function comment(body) {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+            async function getIssue() {
+              const response = await github.rest.issues.get({ owner, repo, issue_number });
+              return response.data;
+            }
+
+            const allStateLabels = Object.values(labels).map((label) => label.name);
+            const eventName = context.eventName;
+
+            if (eventName === "issues") {
+              if (context.payload.action === "closed") {
+                await removeLabels(allStateLabels.filter((name) => name !== labels.closed.name));
+                await addLabels([labels.closed.name]);
+                return;
+              }
+              const issue = await getIssue();
+              if ((issue.assignees || []).length) {
+                await removeLabels([labels.open.name, labels.closed.name]);
+                await addLabels([labels.claimed.name]);
+              } else {
+                await removeLabels([labels.claimed.name, labels.progress.name, labels.waitingPr.name, labels.reviewing.name, labels.blocked.name, labels.closed.name]);
+                await addLabels([labels.open.name]);
+                await comment([
+                  "这个 Issue 当前待接单。",
+                  "",
+                  "可用命令：",
+                  "- `/claim` 接手这个任务",
+                  "- `/unclaim` 放弃任务",
+                  "- `/handoff @用户名` 转交给其他成员",
+                  "- `/blocked 原因` 标记阻塞",
+                  "- `/ready-pr` 标记为等待 PR",
+                  "",
+                  "竞发规则：同一个 Issue 只允许一个 assignee。谁先成功 `/claim`，谁就是当前接单人。"
+                ].join("\n"));
+              }
+              return;
+            }
+
+            const body = String(context.payload.comment.body || "").trim();
+            const command = body.match(/^\/(claim|unclaim|handoff|blocked|ready-pr)\b([\s\S]*)$/i);
+            if (!command) return;
+
+            const action = command[1].toLowerCase();
+            const argument = String(command[2] || "").trim();
+            const issue = await getIssue();
+            const currentAssignees = (issue.assignees || []).map((assignee) => assignee.login);
+            const currentOwner = currentAssignees[0] || null;
+            const now = new Date().toISOString();
+
+            if (action === "claim") {
+              if (currentOwner && currentOwner !== actor) {
+                await comment(`接单失败：这个 Issue 已由 @${currentOwner} 接手。如需转交，请由当前接单人使用 \`/handoff @用户名\`。`);
+                return;
+              }
+              if (currentOwner === actor) {
+                await comment(`@${actor} 已经是当前接单人，无需重复接单。`);
+                return;
+              }
+              await github.rest.issues.addAssignees({ owner, repo, issue_number, assignees: [actor] });
+              await removeLabels([labels.open.name, labels.blocked.name, labels.closed.name]);
+              await addLabels([labels.claimed.name, labels.progress.name]);
+              await comment([
+                "接单成功。",
+                "",
+                `- 接单人: @${actor}`,
+                `- 接单时间: ${now}`,
+                "- 当前状态: 已接单 / 开发中",
+                "- 已耗时: 0 分钟",
+                "",
+                "后续命令：`/ready-pr`、`/blocked 原因`、`/handoff @用户名`、`/unclaim`。"
+              ].join("\n"));
+              return;
+            }
+
+            if (action === "unclaim") {
+              if (!currentAssignees.includes(actor)) {
+                await comment(`放弃失败：当前接单人是 ${currentOwner ? `@${currentOwner}` : "空"}，只有当前接单人可以放弃。`);
+                return;
+              }
+              await github.rest.issues.removeAssignees({ owner, repo, issue_number, assignees: [actor] });
+              const refreshed = await getIssue();
+              if (!(refreshed.assignees || []).length) {
+                await removeLabels([labels.claimed.name, labels.progress.name, labels.waitingPr.name, labels.reviewing.name, labels.blocked.name]);
+                await addLabels([labels.open.name]);
+              }
+              await comment(`@${actor} 已放弃接单，任务回到待接单状态。`);
+              return;
+            }
+
+            if (action === "handoff") {
+              if (currentOwner && currentOwner !== actor) {
+                await comment(`转交失败：当前接单人是 @${currentOwner}，只有当前接单人可以转交。`);
+                return;
+              }
+              const target = argument.match(/@([A-Za-z0-9-]+)/)?.[1];
+              if (!target) {
+                await comment("转交失败：请使用 `/handoff @用户名`。");
+                return;
+              }
+              if (currentOwner) {
+                await github.rest.issues.removeAssignees({ owner, repo, issue_number, assignees: [currentOwner] });
+              }
+              await github.rest.issues.addAssignees({ owner, repo, issue_number, assignees: [target] });
+              await removeLabels([labels.open.name, labels.blocked.name, labels.closed.name]);
+              await addLabels([labels.claimed.name, labels.progress.name]);
+              await comment([
+                "任务已转交。",
+                "",
+                `- 原接单人: ${currentOwner ? `@${currentOwner}` : "无"}`,
+                `- 新接单人: @${target}`,
+                `- 转交时间: ${now}`
+              ].join("\n"));
+              return;
+            }
+
+            if (action === "blocked") {
+              if (currentOwner && currentOwner !== actor) {
+                await comment(`标记失败：当前接单人是 @${currentOwner}，只有当前接单人可以标记阻塞。`);
+                return;
+              }
+              await removeLabels([labels.open.name, labels.waitingPr.name, labels.reviewing.name, labels.closed.name]);
+              await addLabels([labels.blocked.name]);
+              await comment([
+                `@${actor} 已标记阻塞。`,
+                "",
+                `阻塞原因：${argument || "未填写"}`,
+                `标记时间：${now}`
+              ].join("\n"));
+              return;
+            }
+
+            if (action === "ready-pr") {
+              if (currentOwner && currentOwner !== actor) {
+                await comment(`状态更新失败：当前接单人是 @${currentOwner}，只有当前接单人可以标记等待 PR。`);
+                return;
+              }
+              await removeLabels([labels.open.name, labels.progress.name, labels.blocked.name, labels.closed.name]);
+              await addLabels([labels.claimed.name, labels.waitingPr.name]);
+              await comment(`@${actor} 已将任务标记为等待 PR。`);
+            }
