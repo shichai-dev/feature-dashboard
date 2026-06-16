@@ -176,25 +176,36 @@ jobs:
 
             async function forwardNewCommentIfNeeded(issue, labels) {
               if (context.eventName !== "issue_comment") return false;
+              const commentBody = context.payload.comment.body || "";
+              if (/已分发目标|分发目标|目标仓库|Target repo|Dispatched issue/i.test(commentBody)) return true;
               const text = discussionText(issue);
               const targetUrl = text.match(/(?:已分发目标|分发目标|目标 Issue|Dispatched issue)\s*[:：]\s*(https:\/\/github\.com\/[^\s)]+)/i)?.[1];
               if (!targetUrl || !labels.includes("dispatch:sent")) return false;
               const target = parseIssueUrl(targetUrl);
               if (!target) return false;
               const [targetOwner, targetRepoName] = target.repo.split("/");
-              await github.rest.issues.createComment({
-                owner: targetOwner,
-                repo: targetRepoName,
-                issue_number: target.number,
-                body: [
-                  "Dashboard 源讨论有新的追加评论：",
+              try {
+                await github.rest.issues.createComment({
+                  owner: targetOwner,
+                  repo: targetRepoName,
+                  issue_number: target.number,
+                  body: [
+                    "Dashboard 源讨论有新的追加评论：",
+                    "",
+                    `评论人: @${actor}`,
+                    `源讨论: ${issue.html_url}`,
+                    "",
+                    brief(commentBody, 2000)
+                  ].join("\n")
+                });
+              } catch (error) {
+                await commentSource([
+                  "追加评论未能同步到目标 Issue。",
                   "",
-                  `评论人: @${actor}`,
-                  `源讨论: ${issue.html_url}`,
-                  "",
-                  brief(context.payload.comment.body || "", 2000)
-                ].join("\n")
-              });
+                  `目标 Issue: ${targetUrl}`,
+                  `原因: ${error.status === 403 || error.status === 404 ? "当前令牌没有跨仓评论权限。请配置 SHICHAI_DISPATCH_TOKEN。" : error.message}`
+                ].join("\n"));
+              }
               return true;
             }
 
