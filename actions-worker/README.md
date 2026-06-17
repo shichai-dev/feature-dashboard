@@ -34,7 +34,7 @@ wrangler secret put DEVELOPMENT_AI_KEY
 
 `DEVELOPMENT_AI_KEY` 只用于 Worker 和 `opc-bounty-server` 之间的服务器到服务器调用，不能写进网页、仓库或浏览器本地存储。它必须和共享服务器环境变量同名值一致。
 
-`wrangler.jsonc` 中的 `DEVELOPMENT_AI_BASE_URL` 指向共享服务器，例如 `http://124.220.53.97:4173`。
+`wrangler.jsonc` 中的 `DEVELOPMENT_AI_BASE_URL` 指向共享服务器的标准 HTTP/HTTPS 入口，例如 `http://124.220.53.97`。
 
 ## 部署
 

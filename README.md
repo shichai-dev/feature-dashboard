@@ -142,7 +142,7 @@ wrangler secret put DASHBOARD_ACTION_KEY
 wrangler secret put DEVELOPMENT_AI_KEY
 ```
 
-`DEVELOPMENT_AI_KEY` 必须和 `opc-bounty-server` 上的同名环境变量一致。`DEVELOPMENT_AI_BASE_URL` 在 Worker 配置中指向共享服务器，例如 `http://124.220.53.97:4173`。
+`DEVELOPMENT_AI_KEY` 必须和 `opc-bounty-server` 上的同名环境变量一致。`DEVELOPMENT_AI_BASE_URL` 在 Worker 配置中指向共享服务器的标准 HTTP/HTTPS 入口，例如 `http://124.220.53.97`。
 
 部署后，把 Worker 地址填入 `index.html`：
 
