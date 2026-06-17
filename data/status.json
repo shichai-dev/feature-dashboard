@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-17T10:06:21.757Z",
-  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 22 个项目项、23 个团队议题、2 条看板讨论、23 个接单任务。",
+  "generatedAt": "2026-06-17T10:12:54.065Z",
+  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 22 个项目项、24 个团队议题、2 条看板讨论、24 个接单任务。",
   "repositories": [
     "shichai-dev/planning",
     "shichai-dev/opc-bounty-client",
@@ -24,7 +24,7 @@
     "openDiscussions": 2,
     "needsAiReview": 0,
     "staleDiscussions": 1,
-    "issueTasks": 23,
+    "issueTasks": 24,
     "openIssueTasks": 18,
     "claimedIssueTasks": 1,
     "waitingPrIssueTasks": 0,
@@ -2058,7 +2058,7 @@
       "statusLabel": "待接单",
       "claimant": null,
       "claimedAt": "2026-06-16T01:06:49.641Z",
-      "elapsedHours": 33,
+      "elapsedHours": 33.1,
       "createdAt": "2026-06-15T16:09:26Z",
       "updatedAt": "2026-06-16T01:09:44Z",
       "closedAt": null,
@@ -2333,7 +2333,7 @@
       "statusLabel": "开发中",
       "claimant": "sexymonk",
       "claimedAt": "2026-06-16T01:06:36Z",
-      "elapsedHours": 33,
+      "elapsedHours": 33.1,
       "createdAt": "2026-06-16T00:43:58Z",
       "updatedAt": "2026-06-16T01:09:22Z",
       "closedAt": null,
@@ -2350,6 +2350,33 @@
       "commandHelp": "优先在 Dashboard 面板内接单；Issue 评论命令保留为兼容兜底。系统会以 assignee 作为唯一接单锁。"
     },
     {
+      "id": "shichai-dev/opc-bounty-client#8",
+      "repo": "shichai-dev/opc-bounty-client",
+      "repoName": "opc-bounty-client",
+      "number": 8,
+      "title": "[Smoke][development-ai-middleware] deployed final issue endpoint 2026-06-17T10:12:23.835Z",
+      "url": "https://github.com/shichai-dev/opc-bounty-client/issues/8",
+      "state": "CLOSED",
+      "labels": [
+        "panel:final-implementation",
+        "smoke-test"
+      ],
+      "lane": null,
+      "status": "closed",
+      "statusLabel": "已关闭",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-17T10:12:25Z",
+      "updatedAt": "2026-06-17T10:12:36Z",
+      "closedAt": "2026-06-17T10:12:36Z",
+      "parentIssue": null,
+      "parentFeature": null,
+      "totalProblem": "未归属父问题",
+      "claimCommand": "/claim",
+      "commandHelp": "优先在 Dashboard 面板内接单；Issue 评论命令保留为兼容兜底。系统会以 assignee 作为唯一接单锁。"
+    },
+    {
       "id": "shichai-dev/opc-bounty-client#7",
       "repo": "shichai-dev/opc-bounty-client",
       "repoName": "opc-bounty-client",
@@ -2360,7 +2387,8 @@
       "labels": [
         "from:development-panel",
         "module:client frontend",
-        "topic:idea"
+        "topic:idea",
+        "接单:已关闭"
       ],
       "lane": null,
       "status": "closed",
@@ -2369,7 +2397,7 @@
       "claimedAt": null,
       "elapsedHours": null,
       "createdAt": "2026-06-17T10:05:56Z",
-      "updatedAt": "2026-06-17T10:06:05Z",
+      "updatedAt": "2026-06-17T10:06:31Z",
       "closedAt": "2026-06-17T10:06:05Z",
       "parentIssue": null,
       "parentFeature": null,
