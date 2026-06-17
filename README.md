@@ -125,6 +125,7 @@ Dashboard 是讨论收集入口，不是所有任务的最终归属仓库。
 它提供：
 
 - `POST /api/discussions`：面板内提交想法、评价、修改请求、问题风险、追加操作链。
+- `POST /api/action-check`：无副作用检测动作接口、团队口令和操作者权限。
 - `POST /api/final-issues`：从 Panel Topic 静默创建 Final Implementation Issue。
 - `POST /api/final-issues/bind`：校验并绑定手动发布后的 GitHub Issue URL。
 - `POST /api/issue-command`：面板内接单、放弃、转交、阻塞、等待 PR。

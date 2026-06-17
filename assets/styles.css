@@ -264,7 +264,7 @@ textarea {
 
 .operator-form {
   display: grid;
-  grid-template-columns: minmax(120px, 0.8fr) minmax(130px, 0.9fr) minmax(180px, 1.2fr) auto;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(130px, 0.9fr) minmax(180px, 1.2fr) minmax(120px, auto);
   gap: 8px;
   align-items: end;
 }
@@ -282,6 +282,12 @@ textarea {
   min-height: 38px;
 }
 
+.operator-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
 .operator-form button {
   min-height: 38px;
   border: 1px solid var(--border-strong);
@@ -290,6 +296,51 @@ textarea {
   color: var(--text);
   font-weight: 800;
   cursor: pointer;
+}
+
+.action-health {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  background: #ffffff;
+  font-size: 12px;
+}
+
+.action-health span {
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-weight: 900;
+}
+
+.action-health strong,
+.action-health small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.action-health small {
+  color: var(--muted);
+}
+
+.action-health-ok span {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.action-health-partial span,
+.action-health-checking span {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.action-health-error span {
+  background: var(--red-soft);
+  color: var(--red);
 }
 
 .operator-message {
@@ -1787,6 +1838,8 @@ button:disabled {
   .surface-grid,
   .issue-task-board,
   .operator-form,
+  .operator-actions,
+  .action-health,
   .sim-action-grid,
   .sim-action-grid.compact,
   .sim-segment-grid {

@@ -9,6 +9,7 @@
 ## 接口
 
 - `POST /api/discussions`：在 `shichai-dev/feature-dashboard` 创建源讨论，并打上 `dispatch:pending`。
+- `POST /api/action-check`：无副作用检测动作接口、团队口令和操作者权限。
 - `POST /api/final-issues`：把面板生成的 Panel Topic 草稿发布为目标仓库的 Final Implementation Issue。
 - `POST /api/final-issues/bind`：校验手动发布后的 GitHub Issue URL，确认仓库和标题匹配后返回绑定信息。
 - `POST /api/issue-command`：对目标 Issue 执行接单、放弃、转交、阻塞、等待 PR。

@@ -103,7 +103,8 @@ const state = {
   localBridge: loadLocalBridge(),
   aiMiddleware: loadAiMiddlewareState(),
   actionBusy: false,
-  actionMessage: null
+  actionMessage: null,
+  actionHealth: null
 };
 
 const statusLabels = {
@@ -180,6 +181,77 @@ function saveOperatorIdentity(login, actionKey, apiBase) {
     localStorage.removeItem(actionApiStorageKey);
   }
   setActionMessage("success", "已保存面板操作身份。");
+}
+
+function readOperatorInputs() {
+  return {
+    login: byId("operator-login")?.value || "",
+    actionKey: byId("operator-key")?.value || "",
+    apiBase: byId("operator-api")?.value || ""
+  };
+}
+
+function actionNetworkErrorText(error) {
+  const raw = error?.message || String(error || "");
+  if (/failed to fetch|load failed|networkerror|blocked|cors/i.test(raw)) {
+    return "动作接口不可达。可能是 URL 错误、浏览器或网络拦截 workers.dev、或 CORS 未允许当前面板来源；测试时可临时改用 http://127.0.0.1:8787 本地 Worker。";
+  }
+  return raw || "动作接口检测失败。";
+}
+
+async function checkActionApiHealth() {
+  if (state.actionBusy) return;
+  const current = readOperatorInputs();
+  saveOperatorIdentity(current.login, current.actionKey, current.apiBase);
+  if (!actionApiBase()) {
+    setActionMessage("error", "请先填写动作接口地址。");
+    return;
+  }
+  state.actionBusy = true;
+  state.actionHealth = {
+    status: "checking",
+    endpoint: actionApiBase(),
+    checkedAt: new Date().toISOString()
+  };
+  setActionMessage("pending", "正在检测动作接口...");
+  renderOperatorPanel();
+  try {
+    const healthResponse = await fetch(`${actionApiBase()}/api/health`);
+    const health = await healthResponse.json().catch(() => ({}));
+    if (!healthResponse.ok || !health.ok) {
+      throw new Error(health.message || `健康检查返回 ${healthResponse.status}`);
+    }
+    if (state.operator.login?.trim() && state.operator.actionKey) {
+      const auth = await postDashboardAction("/api/action-check", {});
+      state.actionHealth = {
+        status: "ok",
+        endpoint: actionApiBase(),
+        service: auth.service || health.service || "shichai-dashboard-actions",
+        actor: auth.actor || state.operator.login.trim(),
+        checkedAt: new Date().toISOString()
+      };
+      setActionMessage("success", auth.message || "动作接口、口令和操作者权限检测通过。");
+    } else {
+      state.actionHealth = {
+        status: "partial",
+        endpoint: actionApiBase(),
+        service: health.service || "shichai-dashboard-actions",
+        checkedAt: new Date().toISOString()
+      };
+      setActionMessage("success", "动作接口在线。填写 GitHub 用户名和团队操作口令后，可继续验证权限。");
+    }
+  } catch (error) {
+    state.actionHealth = {
+      status: "error",
+      endpoint: actionApiBase(),
+      error: actionNetworkErrorText(error),
+      checkedAt: new Date().toISOString()
+    };
+    setActionMessage("error", state.actionHealth.error);
+  } finally {
+    state.actionBusy = false;
+    renderAll();
+  }
 }
 
 function requireActionIdentity() {
@@ -941,10 +1013,18 @@ function renderOperatorPanel() {
   const message = state.actionMessage
     ? `<div class="operator-message message-${escapeHtml(state.actionMessage.type)}">${escapeHtml(state.actionMessage.text)}</div>`
     : "";
+  const health = state.actionHealth;
+  const healthHtml = health ? `
+    <div class="action-health action-health-${escapeHtml(health.status)}">
+      <span>${escapeHtml(actionHealthLabel(health.status))}</span>
+      <strong>${escapeHtml(health.actor ? `@${health.actor}` : health.service || "动作接口")}</strong>
+      <small>${escapeHtml(health.error || health.endpoint || "")}</small>
+    </div>
+  ` : "";
   root.innerHTML = `
     <div class="operator-copy">
       <strong>面板内接单和评价</strong>
-      <span>填写一次身份后，评价、接单、转交和状态更新都会直接在面板内提交。</span>
+      <span>填写一次身份后，评价、发布 issue、接单、转交和状态更新都会直接在面板内提交。先检测接口可减少发布时的失败。</span>
     </div>
     <div class="operator-form">
       <label>
@@ -959,17 +1039,26 @@ function renderOperatorPanel() {
         <span>动作接口</span>
         <input id="operator-api" type="url" value="${escapeHtml(state.actionApiBase)}" placeholder="https://...workers.dev">
       </label>
-      <button type="button" id="save-operator">保存</button>
+      <div class="operator-actions">
+        <button type="button" id="save-operator" ${state.actionBusy ? "disabled" : ""}>保存</button>
+        <button type="button" id="check-action-api" ${state.actionBusy ? "disabled" : ""}>检测接口</button>
+      </div>
     </div>
+    ${healthHtml}
     ${message}
   `;
   byId("save-operator")?.addEventListener("click", () => {
-    saveOperatorIdentity(
-      byId("operator-login")?.value || "",
-      byId("operator-key")?.value || "",
-      byId("operator-api")?.value || ""
-    );
+    const current = readOperatorInputs();
+    saveOperatorIdentity(current.login, current.actionKey, current.apiBase);
   });
+  byId("check-action-api")?.addEventListener("click", checkActionApiHealth);
+}
+
+function actionHealthLabel(status) {
+  if (status === "ok") return "动作接口可用";
+  if (status === "partial") return "接口在线";
+  if (status === "checking") return "检测中";
+  return "接口异常";
 }
 
 function renderStudioNav(pages, activePage) {
@@ -1560,7 +1649,7 @@ function renderPanelTopicDetail(topic) {
     `
     : "";
   const published = topic.finalIssue?.url
-    ? `<p class="backend-record">Final Issue：<a href="${escapeHtml(topic.finalIssue.url)}">${escapeHtml(topic.finalIssue.repo)}#${escapeHtml(topic.finalIssue.number)}</a></p>`
+    ? `<p class="backend-record">Final Issue：<a data-final-issue-link href="${escapeHtml(topic.finalIssue.url)}">${escapeHtml(topic.finalIssue.repo)}#${escapeHtml(topic.finalIssue.number)}</a></p>`
     : "";
   const backfillHtml = backfillCandidates.length
     ? `

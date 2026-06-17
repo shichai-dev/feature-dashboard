@@ -488,6 +488,19 @@ async function handleFinalIssueBind(request, env, ctx, origin) {
   }, 200, origin);
 }
 
+async function handleActionCheck(request, env, origin) {
+  assertActionKey(request, env);
+  const body = await readJson(request);
+  const actor = assertActor(env, body.actor);
+  return json({
+    ok: true,
+    service: "shichai-dashboard-actions",
+    actor,
+    allowedRepos: [...allowedRepoNames].map((repo) => `${env.GITHUB_OWNER || "shichai-dev"}/${repo}`),
+    message: "动作接口、团队操作口令和操作者权限已通过检测。"
+  }, 200, origin);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = responseOrigin(request, env);
@@ -498,6 +511,9 @@ export default {
       const url = new URL(request.url);
       if (request.method === "GET" && url.pathname === "/api/health") {
         return json({ ok: true, service: "shichai-dashboard-actions" }, 200, origin);
+      }
+      if (request.method === "POST" && url.pathname === "/api/action-check") {
+        return await handleActionCheck(request, env, origin);
       }
       if (request.method === "POST" && url.pathname === "/api/discussions") {
         return await handleDiscussion(request, env, ctx, origin);
