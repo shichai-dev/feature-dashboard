@@ -87,6 +87,23 @@ test("development-ai health proxies the server runtime snapshot", async () => {
   }
 });
 
+test("development-ai health uses free Worker DeepSeek path when secret is configured", async () => {
+  const directEnv = {
+    ...env,
+    DEVELOPMENT_AI_DEEPSEEK_API_KEY: "test-deepseek-key",
+    DEVELOPMENT_AI_DEEPSEEK_BASE_URL: "https://deepseek.test",
+    DEVELOPMENT_AI_DEEPSEEK_MODEL: "deepseek-test-model"
+  };
+  const response = await worker.fetch(new Request("http://worker.test/api/development-ai/health"), directEnv, {});
+  const body = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(body.ok, true);
+  assert.equal(body.developmentAi.runtime.ready, true);
+  assert.equal(body.developmentAi.runtime.provider, "worker-deepseek");
+  assert.equal(body.developmentAi.runtime.model, "deepseek-test-model");
+});
+
 test("development-ai topic draft validates the dashboard actor and forwards with server key", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (url, options = {}) => {
@@ -124,6 +141,111 @@ test("development-ai topic draft validates the dashboard actor and forwards with
     assert.equal(response.status, 200);
     assert.equal(body.ok, true);
     assert.equal(body.topic.id, "topic-1");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("development-ai topic draft can be generated directly by Worker DeepSeek", async () => {
+  const directEnv = {
+    ...env,
+    DEVELOPMENT_AI_DEEPSEEK_API_KEY: "test-deepseek-key",
+    DEVELOPMENT_AI_DEEPSEEK_BASE_URL: "https://deepseek.test",
+    DEVELOPMENT_AI_DEEPSEEK_MODEL: "deepseek-test-model"
+  };
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, options = {}) => {
+    assert.equal(String(url), "https://deepseek.test/chat/completions");
+    assert.equal(options.method, "POST");
+    assert.equal(options.headers.authorization, "Bearer test-deepseek-key");
+    const payload = JSON.parse(options.body);
+    assert.equal(payload.model, "deepseek-test-model");
+    assert.equal(payload.response_format.type, "json_object");
+    assert.equal(JSON.stringify(payload.messages).includes("发布需求按钮文案不清楚"), true);
+    return new Response(JSON.stringify({
+      id: "deepseek-worker-response",
+      model: "deepseek-test-model",
+      choices: [{
+        message: {
+          content: JSON.stringify({
+            topicType: "change-request",
+            module: "client frontend",
+            recommendedRepo: "shichai-dev/opc-bounty-client",
+            simulatorEvidence: {
+              productSurface: "client",
+              pageId: "client-home",
+              pageTitle: "用户端首页",
+              targetId: "home-publish-requirement",
+              targetLabel: "发布需求",
+              operationStepId: "home-entry",
+              triggerLocation: "用户端首页 / 发布需求",
+              currentBehavior: "发布需求按钮文案不清楚",
+              expectedBehavior: "说明会进入智能助手整理流程",
+              screenshotRef: ""
+            },
+            duplicateCheck: {
+              candidates: [],
+              topScore: 0,
+              summary: "未发现重复。"
+            },
+            riskGate: {
+              decision: "direct-publish",
+              riskLevel: "low",
+              label: "small clear issue",
+              reasons: [],
+              flags: {
+                suspectedDuplicate: false,
+                lowConfidence: false,
+                crossModule: false,
+                largeChange: false
+              }
+            },
+            issueDraft: {
+              title: "发布需求按钮文案不清楚",
+              body: "Worker DeepSeek generated body.",
+              repo: "shichai-dev/opc-bounty-client",
+              labels: ["from:development-panel", "module:client frontend"]
+            },
+            agentHandoffSummary: "检查首页发布需求按钮文案。"
+          })
+        }
+      }],
+      usage: { prompt_tokens: 100, completion_tokens: 40, total_tokens: 140 }
+    }), { status: 200, headers: { "content-type": "application/json" } });
+  };
+  try {
+    const response = await worker.fetch(new Request("http://worker.test/api/development-ai/topic-draft", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-shichai-action-key": env.DASHBOARD_ACTION_KEY,
+        origin: "http://127.0.0.1:4174"
+      },
+      body: JSON.stringify({
+        actor: "sexymonk",
+        note: "发布需求按钮文案不清楚",
+        page: { id: "client-home", title: "用户端首页", uiSurface: "client" },
+        target: {
+          id: "home-publish-requirement",
+          label: "发布需求",
+          summary: "发布需求入口",
+          uiSurface: "client",
+          stepId: "home-entry",
+          featureId: "requirement-publishing"
+        },
+        feature: { id: "requirement-publishing", title: "需求发布", repo: "client/server", lane: "client-publish" },
+        visualContext: { domText: "首页按钮：发布需求", selectedElement: { label: "发布需求", text: "发布需求" } }
+      })
+    }), directEnv, {});
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.ok, true);
+    assert.equal(body.topic.coordinator.source, "worker-deepseek");
+    assert.equal(body.topic.coordinator.provider, "deepseek");
+    assert.equal(body.topic.issueDraft.repo, "shichai-dev/opc-bounty-client");
+    assert.equal(body.topic.riskGate.decision, "direct-publish");
+    assert.equal(body.topic.coordinator.vision.status, "text_only");
   } finally {
     globalThis.fetch = originalFetch;
   }

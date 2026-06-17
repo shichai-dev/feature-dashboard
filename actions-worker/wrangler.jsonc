@@ -11,6 +11,8 @@
     "GITHUB_OWNER": "shichai-dev",
     "DASHBOARD_REPO": "feature-dashboard",
     "DASHBOARD_REF": "main",
+    "DEVELOPMENT_AI_DEEPSEEK_BASE_URL": "https://api.deepseek.com",
+    "DEVELOPMENT_AI_DEEPSEEK_MODEL": "deepseek-v4-flash",
     "DEVELOPMENT_AI_BASE_URL": "http://124.220.53.97"
   },
   "observability": {
