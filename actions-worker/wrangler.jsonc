@@ -10,7 +10,8 @@
     "ALLOWED_ACTORS": "sexymonk,longxi102,Kairan-Peng",
     "GITHUB_OWNER": "shichai-dev",
     "DASHBOARD_REPO": "feature-dashboard",
-    "DASHBOARD_REF": "main"
+    "DASHBOARD_REF": "main",
+    "DEVELOPMENT_AI_BASE_URL": "http://124.220.53.97:4173"
   },
   "observability": {
     "enabled": true,

@@ -102,7 +102,7 @@ Dashboard 是讨论收集入口，不是所有任务的最终归属仓库。
 
 1. 选择一个 UI 模拟器位置。
 2. 只填写一句短说明，生成 `Panel Topic`。
-3. 本地 AI 逻辑补全类型、模块、推荐仓库、模拟器证据、issue 草稿、验收标准、查重候选和风险门槛。
+3. 服务器中台 AI 优先调用可信服务器上的 ChatGPT-managed Codex 生成类型、模块、推荐仓库、模拟器证据、issue 草稿、验收标准、查重候选和风险门槛；不可用时浏览器使用本地兜底逻辑。
 4. `small clear issue` 可直接尝试静默发布；疑似重复、低置信、跨模块或大修改会停在确认发布。
 5. 静默发布失败时生成手动 issue 处理包，不进入任务分发。
 6. 粘贴手动发布后的 GitHub Issue URL 并校验仓库后，才生成 Formal Task。
@@ -114,6 +114,7 @@ Dashboard 是讨论收集入口，不是所有任务的最终归属仓库。
 - 面板不做远程代码执行、测试、PR、合并或部署。
 - 本地 Agent 执行仍发生在开发者自己的 Codex 项目线程中。
 - 中台 AI 只负责判断、生成、查重和草拟；GitHub 写入必须经过受控动作接口执行。
+- 服务器中台 AI 密钥只放在服务器和 Worker secret 中，浏览器只持团队操作口令。
 - “中台恢复”只列发布失败、绑定或包生成这类阻断闭环的恢复事项，不是运维台。
 
 ## 面板动作接口
@@ -126,6 +127,8 @@ Dashboard 是讨论收集入口，不是所有任务的最终归属仓库。
 
 - `POST /api/discussions`：面板内提交想法、评价、修改请求、问题风险、追加操作链。
 - `POST /api/action-check`：无副作用检测动作接口、团队口令和操作者权限。
+- `GET /api/development-ai/health`：代理读取服务器中台 AI 运行状态。
+- `POST /api/development-ai/topic-draft`：代理调用服务器中台 AI 生成 Panel Topic/issue 草稿。
 - `POST /api/final-issues`：从 Panel Topic 静默创建 Final Implementation Issue。
 - `POST /api/final-issues/bind`：校验并绑定手动发布后的 GitHub Issue URL。
 - `POST /api/issue-command`：面板内接单、放弃、转交、阻塞、等待 PR。
@@ -136,7 +139,10 @@ Dashboard 是讨论收集入口，不是所有任务的最终归属仓库。
 ```powershell
 wrangler secret put GITHUB_TOKEN
 wrangler secret put DASHBOARD_ACTION_KEY
+wrangler secret put DEVELOPMENT_AI_KEY
 ```
+
+`DEVELOPMENT_AI_KEY` 必须和 `opc-bounty-server` 上的同名环境变量一致。`DEVELOPMENT_AI_BASE_URL` 在 Worker 配置中指向共享服务器，例如 `http://124.220.53.97:4173`。
 
 部署后，把 Worker 地址填入 `index.html`：
 

@@ -850,26 +850,70 @@ async function submitFeatureDiscussion(feature, type, title, body) {
   await runPanelAction("讨论", async () => postDashboardAction("/api/discussions", buildFeatureDiscussionPayload(feature, type, title, body)));
 }
 
-function createCurrentPanelTopic(target) {
+function buildPanelTopicInput(note, target) {
+  const page = currentPage();
+  const feature = featureById(target?.featureId);
+  return {
+    note,
+    target,
+    page,
+    feature,
+    discussions: state.data?.discussions || [],
+    issueTasks: issueTasks(),
+    now: new Date().toISOString()
+  };
+}
+
+function markBrowserTopicFallback(topic, error = null) {
+  return {
+    ...topic,
+    coordinator: {
+      ...(topic.coordinator || {}),
+      source: "browser-fallback",
+      provider: "local-deterministic",
+      generatedAt: topic.createdAt,
+      error: error?.message || ""
+    }
+  };
+}
+
+async function createCurrentPanelTopic(target) {
+  if (state.aiMiddleware.busy) return;
   const note = byId("panel-topic-note")?.value?.trim() || "";
+  state.aiMiddleware.busy = true;
+  setAiMiddlewareMessage("pending", "正在请求服务器中台 AI 生成 Panel Topic...");
+  renderAll();
   try {
-    const page = currentPage();
-    const feature = featureById(target?.featureId);
-    const topic = createPanelTopic({
-      note,
-      target,
-      page,
-      feature,
-      discussions: state.data?.discussions || [],
-      issueTasks: issueTasks(),
-      now: new Date().toISOString()
-    });
+    const input = buildPanelTopicInput(note, target);
+    let topic = null;
+    let usedServerAi = false;
+    if (actionApiBase() && state.operator.login?.trim() && state.operator.actionKey) {
+      try {
+        const result = await postDashboardAction("/api/development-ai/topic-draft", input);
+        topic = result.topic;
+        if (!topic?.issueDraft?.title || !topic?.riskGate?.decision) {
+          throw new Error("服务器中台 AI 返回内容不完整。");
+        }
+        usedServerAi = true;
+      } catch (error) {
+        topic = markBrowserTopicFallback(createPanelTopic(input), error);
+      }
+    } else {
+      topic = markBrowserTopicFallback(createPanelTopic(input));
+    }
     updatePanelTopic(topic);
-    setAiMiddlewareMessage("success", "Panel Topic 已生成，AI 已补全 issue 草稿和风险门槛。");
+    setAiMiddlewareMessage(
+      usedServerAi ? "success" : "error",
+      usedServerAi
+        ? "服务器中台 AI 已生成 topic、issue 草稿、查重和风险门槛。"
+        : "服务器中台 AI 不可用或未配置权限，已使用本地兜底生成 Topic；发布前请确认。"
+    );
   } catch (error) {
     setAiMiddlewareMessage("error", error.message || "Panel Topic 生成失败。");
+  } finally {
+    state.aiMiddleware.busy = false;
+    renderAll();
   }
-  renderAll();
 }
 
 async function publishPanelTopic(topicId) {
@@ -1590,6 +1634,13 @@ function renderTargetCommentWidget(target) {
   `;
 }
 
+function coordinatorSourceLabel(coordinator = {}) {
+  if (coordinator.source === "server-codex") return "服务器 Codex";
+  if (coordinator.source === "server-mock") return "服务器 mock";
+  if (coordinator.source === "browser-fallback") return "浏览器兜底";
+  return coordinator.source || "未记录";
+}
+
 function renderPanelTopicMiddleware(target) {
   const topics = topicsForTarget(target);
   const selected = selectedTopicForTarget(target);
@@ -1606,7 +1657,7 @@ function renderPanelTopicMiddleware(target) {
   return `
     <div class="detail-section ai-topic-panel">
       <h3>Panel Topic</h3>
-      <p>选择当前位置后只写一句短说明；AI 会补全 issue 草稿、查重和风险门槛。</p>
+      <p>选择当前位置后只写一句短说明；服务器中台 AI 会补全 issue 草稿、查重和风险门槛，失败时本地兜底。</p>
       <div class="topic-create-row">
         <input id="panel-topic-note" type="text" placeholder="例如：首页发布入口文案太像普通按钮，需要更明确">
         <button class="primary-button" type="button" id="create-panel-topic" ${state.aiMiddleware.busy ? "disabled" : ""}>生成 Topic</button>
@@ -1651,6 +1702,9 @@ function renderPanelTopicDetail(topic) {
   const published = topic.finalIssue?.url
     ? `<p class="backend-record">Final Issue：<a data-final-issue-link href="${escapeHtml(topic.finalIssue.url)}">${escapeHtml(topic.finalIssue.repo)}#${escapeHtml(topic.finalIssue.number)}</a></p>`
     : "";
+  const coordinator = topic.coordinator
+    ? `<p class="backend-record">中台 AI：${escapeHtml(coordinatorSourceLabel(topic.coordinator))}${topic.coordinator.threadId ? ` · thread ${escapeHtml(topic.coordinator.threadId)}` : ""}</p>`
+    : "";
   const backfillHtml = backfillCandidates.length
     ? `
       <div class="backfill-candidates">
@@ -1676,6 +1730,7 @@ function renderPanelTopicDetail(topic) {
       </div>
       <strong>${escapeHtml(topic.issueDraft.title)}</strong>
       <p>${escapeHtml(topic.note)}</p>
+      ${coordinator}
       <div class="meta-row">${reasons}</div>
       <ul class="signal-list">${duplicateItems}</ul>
       <div class="topic-actions">

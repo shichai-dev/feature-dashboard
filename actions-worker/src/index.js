@@ -61,7 +61,7 @@ function responseOrigin(request, env) {
 
 async function readJson(request) {
   const size = Number(request.headers.get("content-length") || "0");
-  if (size > 30000) throw new HttpError(413, "提交内容过大，请缩短评论内容。");
+  if (size > 120000) throw new HttpError(413, "提交内容过大，请缩短评论内容。");
   return await request.json().catch(() => {
     throw new HttpError(400, "请求内容不是有效 JSON。");
   });
@@ -254,6 +254,58 @@ async function triggerRefresh(env) {
   } catch (error) {
     console.warn(JSON.stringify({ message: "refresh trigger failed", error: error.message }));
   }
+}
+
+function developmentAiBaseUrl(env) {
+  return cleanText(env.DEVELOPMENT_AI_BASE_URL || "", 300).replace(/\/+$/, "");
+}
+
+async function upstreamJson(response) {
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.ok === false) {
+    throw new HttpError(response.status || 502, data.message || data.error || "中台 AI 服务调用失败。");
+  }
+  return data;
+}
+
+async function handleDevelopmentAiHealth(env, origin) {
+  const baseUrl = developmentAiBaseUrl(env);
+  if (!baseUrl) {
+    throw new HttpError(503, "中台 AI 服务尚未配置 DEVELOPMENT_AI_BASE_URL。");
+  }
+  const response = await fetch(`${baseUrl}/api/development-ai/health`, {
+    headers: { "user-agent": "shichai-dashboard-actions" }
+  });
+  const data = await upstreamJson(response);
+  return json({
+    ok: true,
+    service: "shichai-dashboard-actions",
+    developmentAi: data
+  }, 200, origin);
+}
+
+async function handleDevelopmentAiTopicDraft(request, env, origin) {
+  assertActionKey(request, env);
+  const body = await readJson(request);
+  const actor = assertActor(env, body.actor);
+  const baseUrl = developmentAiBaseUrl(env);
+  const aiKey = env.DEVELOPMENT_AI_KEY || "";
+  if (!baseUrl || !aiKey) {
+    throw new HttpError(503, "中台 AI 服务尚未配置 DEVELOPMENT_AI_BASE_URL 或 DEVELOPMENT_AI_KEY。");
+  }
+  const response = await fetch(`${baseUrl}/api/development-ai/topic-draft`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "user-agent": "shichai-dashboard-actions",
+      "x-development-ai-key": aiKey
+    },
+    body: JSON.stringify({
+      ...body,
+      actor
+    })
+  });
+  return json(await upstreamJson(response), 200, origin);
 }
 
 async function handleDiscussion(request, env, ctx, origin) {
@@ -512,8 +564,14 @@ export default {
       if (request.method === "GET" && url.pathname === "/api/health") {
         return json({ ok: true, service: "shichai-dashboard-actions" }, 200, origin);
       }
+      if (request.method === "GET" && url.pathname === "/api/development-ai/health") {
+        return await handleDevelopmentAiHealth(env, origin);
+      }
       if (request.method === "POST" && url.pathname === "/api/action-check") {
         return await handleActionCheck(request, env, origin);
+      }
+      if (request.method === "POST" && url.pathname === "/api/development-ai/topic-draft") {
+        return await handleDevelopmentAiTopicDraft(request, env, origin);
       }
       if (request.method === "POST" && url.pathname === "/api/discussions") {
         return await handleDiscussion(request, env, ctx, origin);
