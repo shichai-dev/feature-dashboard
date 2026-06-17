@@ -1,3 +1,92 @@
+import {
+  bindManualIssueUrl,
+  buildAgentHandoffPackageFromTopicTask,
+  buildBridgeLaunchPackageFromTopicTask,
+  buildFinalIssueRequest,
+  buildFormalTaskFromTopic,
+  createPanelTopic,
+  claimFormalTaskTopic,
+  findIssueBackfillCandidates,
+  markIssuePublishingFailed,
+  markTopicPublished,
+  releaseFormalTaskTopic
+} from "./ai-middleware.js";
+
+const operatorStorageKey = "shichai-dashboard-operator";
+const actionApiStorageKey = "shichai-dashboard-action-api";
+const localBridgeSettingsStorageKey = "shichai-dashboard-local-bridge";
+const localBridgeTokenStorageKey = "shichai-dashboard-local-bridge-token";
+const localBridgeRunsStorageKey = "shichai-dashboard-local-bridge-runs";
+const aiMiddlewareStorageKey = "shichai-dashboard-ai-middleware";
+const defaultActionApiBase = document.querySelector('meta[name="dashboard-action-api"]')?.content?.trim() || "";
+const defaultBridgeBase = document.querySelector('meta[name="opc-bridge-url"]')?.content?.trim() || "http://127.0.0.1:17653";
+
+function loadOperatorIdentity() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(operatorStorageKey) || "{}");
+    return {
+      login: saved.login || "",
+      actionKey: saved.actionKey || ""
+    };
+  } catch {
+    return { login: "", actionKey: "" };
+  }
+}
+
+function loadActionApiBase() {
+  return localStorage.getItem(actionApiStorageKey) || defaultActionApiBase || "";
+}
+
+function loadLocalBridge() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(localBridgeSettingsStorageKey) || "{}");
+    return {
+      baseUrl: saved.baseUrl || defaultBridgeBase,
+      token: sessionStorage.getItem(localBridgeTokenStorageKey) || "",
+      health: null,
+      busy: false,
+      message: null,
+      runs: loadLocalBridgeRuns()
+    };
+  } catch {
+    return {
+      baseUrl: defaultBridgeBase,
+      token: "",
+      health: null,
+      busy: false,
+      message: null,
+      runs: {}
+    };
+  }
+}
+
+function loadLocalBridgeRuns() {
+  try {
+    return JSON.parse(localStorage.getItem(localBridgeRunsStorageKey) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function loadAiMiddlewareState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(aiMiddlewareStorageKey) || "{}");
+    return {
+      topics: Array.isArray(saved.topics) ? saved.topics : [],
+      selectedTopicId: saved.selectedTopicId || "",
+      message: null,
+      busy: false
+    };
+  } catch {
+    return {
+      topics: [],
+      selectedTopicId: "",
+      message: null,
+      busy: false
+    };
+  }
+}
+
 const state = {
   data: null,
   activeTab: "studio",
@@ -8,7 +97,13 @@ const state = {
   selectedPageId: null,
   selectedTargetId: null,
   chainDrawerOpen: false,
-  evaluationOpen: false
+  evaluationOpen: false,
+  operator: loadOperatorIdentity(),
+  actionApiBase: loadActionApiBase(),
+  localBridge: loadLocalBridge(),
+  aiMiddleware: loadAiMiddlewareState(),
+  actionBusy: false,
+  actionMessage: null
 };
 
 const statusLabels = {
@@ -66,6 +161,421 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function actionApiBase() {
+  return String(state.actionApiBase || "").trim().replace(/\/+$/, "");
+}
+
+function setActionMessage(type, text) {
+  state.actionMessage = text ? { type, text } : null;
+  renderOperatorPanel();
+}
+
+function saveOperatorIdentity(login, actionKey, apiBase) {
+  state.operator = { login: login.trim(), actionKey };
+  state.actionApiBase = apiBase.trim();
+  sessionStorage.setItem(operatorStorageKey, JSON.stringify(state.operator));
+  if (state.actionApiBase) {
+    localStorage.setItem(actionApiStorageKey, state.actionApiBase);
+  } else {
+    localStorage.removeItem(actionApiStorageKey);
+  }
+  setActionMessage("success", "已保存面板操作身份。");
+}
+
+function requireActionIdentity() {
+  if (!actionApiBase()) {
+    throw new Error("请先填写动作接口地址。部署 actions-worker 后，把 Worker 地址填到这里。");
+  }
+  if (!state.operator.login?.trim()) {
+    throw new Error("请先填写你的 GitHub 用户名，用于接单归属。");
+  }
+  if (!state.operator.actionKey) {
+    throw new Error("请先填写团队操作口令。");
+  }
+}
+
+async function postDashboardAction(path, payload) {
+  requireActionIdentity();
+  const response = await fetch(`${actionApiBase()}${path}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-shichai-action-key": state.operator.actionKey
+    },
+    body: JSON.stringify({
+      ...payload,
+      actor: state.operator.login.trim()
+    })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `动作接口返回 ${response.status}`);
+  }
+  return data;
+}
+
+function saveAiMiddlewareState() {
+  localStorage.setItem(aiMiddlewareStorageKey, JSON.stringify({
+    topics: state.aiMiddleware.topics || [],
+    selectedTopicId: state.aiMiddleware.selectedTopicId || ""
+  }));
+}
+
+function setAiMiddlewareMessage(type, text) {
+  state.aiMiddleware.message = text ? { type, text } : null;
+}
+
+function updatePanelTopic(topic) {
+  const topics = state.aiMiddleware.topics || [];
+  const index = topics.findIndex((item) => item.id === topic.id);
+  if (index >= 0) {
+    topics[index] = topic;
+  } else {
+    topics.unshift(topic);
+  }
+  state.aiMiddleware.topics = topics;
+  state.aiMiddleware.selectedTopicId = topic.id;
+  saveAiMiddlewareState();
+}
+
+function removePublishedDuplicates(tasks) {
+  const seen = new Set();
+  return tasks.filter((task) => {
+    const key = task.url || task.id;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function middlewareTasks() {
+  const existingUrls = new Set((state.data?.issueTasks || []).map((task) => task.url));
+  return (state.aiMiddleware.topics || [])
+    .map(buildFormalTaskFromTopic)
+    .filter(Boolean)
+    .filter((task) => !existingUrls.has(task.url));
+}
+
+function topicById(topicId) {
+  return (state.aiMiddleware.topics || []).find((topic) => topic.id === topicId) || null;
+}
+
+function topicsForTarget(target = currentTarget()) {
+  if (!target) return [];
+  return (state.aiMiddleware.topics || [])
+    .filter((topic) => topic.simulatorEvidence?.targetId === target.id)
+    .sort((a, b) => String(b.updatedAt || b.createdAt || "").localeCompare(String(a.updatedAt || a.createdAt || "")));
+}
+
+function selectedTopicForTarget(target = currentTarget()) {
+  const topics = topicsForTarget(target);
+  return topics.find((topic) => topic.id === state.aiMiddleware.selectedTopicId) || topics[0] || null;
+}
+
+function healthItems() {
+  return (state.aiMiddleware.topics || [])
+    .filter((topic) => topic.health)
+    .map((topic) => ({ ...topic.health, topicId: topic.id, title: topic.issueDraft?.title || topic.note }));
+}
+
+async function runPanelAction(actionName, request) {
+  if (state.actionBusy) return;
+  state.actionBusy = true;
+  setActionMessage("pending", `${actionName}提交中...`);
+  try {
+    const data = await request();
+    setActionMessage("success", data.message || `${actionName}已提交，系统会自动同步看板。`);
+    return data;
+  } catch (error) {
+    setActionMessage("error", error.message || `${actionName}失败。`);
+    return null;
+  } finally {
+    state.actionBusy = false;
+    renderAll();
+  }
+}
+
+function bridgeBaseUrl() {
+  return String(state.localBridge.baseUrl || defaultBridgeBase).trim().replace(/\/+$/, "");
+}
+
+function saveLocalBridgeSettings(baseUrl, token) {
+  state.localBridge.baseUrl = (baseUrl || defaultBridgeBase).trim();
+  state.localBridge.token = token || "";
+  localStorage.setItem(localBridgeSettingsStorageKey, JSON.stringify({ baseUrl: state.localBridge.baseUrl }));
+  sessionStorage.setItem(localBridgeTokenStorageKey, state.localBridge.token);
+  setLocalBridgeMessage("success", "本地 Bridge 设置已保存。");
+}
+
+function saveLocalBridgeRuns() {
+  localStorage.setItem(localBridgeRunsStorageKey, JSON.stringify(state.localBridge.runs || {}));
+}
+
+function setLocalBridgeMessage(type, text, taskId = "") {
+  state.localBridge.message = text ? { type, text, taskId } : null;
+}
+
+function localBridgeRun(task) {
+  return state.localBridge.runs?.[task.id] || null;
+}
+
+function updateLocalBridgeRun(task, patch) {
+  state.localBridge.runs = {
+    ...(state.localBridge.runs || {}),
+    [task.id]: {
+      ...(state.localBridge.runs?.[task.id] || {}),
+      ...patch,
+      updatedAt: new Date().toISOString()
+    }
+  };
+  saveLocalBridgeRuns();
+}
+
+function localBridgeHeaders(includeJson = false) {
+  const headers = {};
+  if (includeJson) headers["content-type"] = "application/json";
+  if (state.localBridge.token) headers.authorization = `Bearer ${state.localBridge.token}`;
+  return headers;
+}
+
+async function fetchLocalBridge(path, options = {}) {
+  const response = await fetch(`${bridgeBaseUrl()}${path}`, {
+    ...options,
+    headers: {
+      ...localBridgeHeaders(Boolean(options.body)),
+      ...(options.headers || {})
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = data.error?.message || data.message || `Bridge 返回 ${response.status}`;
+    const error = new Error(message);
+    error.code = data.error?.code || "BRIDGE_REQUEST_FAILED";
+    error.details = data.error?.details || data;
+    throw error;
+  }
+  return data;
+}
+
+async function checkLocalBridgeHealth() {
+  if (state.localBridge.busy) return;
+  state.localBridge.busy = true;
+  setLocalBridgeMessage("pending", "正在检测本地 Bridge...");
+  try {
+    const health = await fetchLocalBridge("/health");
+    state.localBridge.health = {
+      reachable: true,
+      ...health
+    };
+    setLocalBridgeMessage(
+      health.ready ? "success" : "error",
+      health.ready ? "Bridge 已在线，Codex runtime 已就绪。" : bridgeOnboardingText(health.codex)
+    );
+  } catch (error) {
+    state.localBridge.health = {
+      reachable: false,
+      error: error.message
+    };
+    setLocalBridgeMessage("error", "Bridge 未在线。请先启动桌面上的 OPC Codex Bridge。");
+  } finally {
+    state.localBridge.busy = false;
+    renderAll();
+  }
+}
+
+async function launchLocalAgent(task) {
+  if (state.localBridge.busy) return;
+  state.localBridge.busy = true;
+  setLocalBridgeMessage("pending", "正在启动本地 Agent...", task.id);
+  renderAll();
+  try {
+    const launchPackage = buildBridgeLaunchPackage(task);
+    const result = await fetchLocalBridge("/v1/launch", {
+      method: "POST",
+      body: JSON.stringify(launchPackage)
+    });
+    updateLocalBridgeRun(task, {
+      status: "executed",
+      threadId: result.threadId || launchPackage.threadId || "",
+      turnId: result.turnId || "",
+      cwd: result.cwd || "",
+      lastLaunchAt: new Date().toISOString(),
+      lastError: ""
+    });
+    setLocalBridgeMessage("success", "本地 Agent 已执行。停止不会释放任务认领。", task.id);
+  } catch (error) {
+    updateLocalBridgeRun(task, {
+      status: "failed",
+      lastError: bridgeErrorText(error),
+      lastFailureAt: new Date().toISOString()
+    });
+    setLocalBridgeMessage("error", bridgeErrorText(error), task.id);
+  } finally {
+    state.localBridge.busy = false;
+    renderAll();
+  }
+}
+
+async function stopLocalAgent(task) {
+  if (state.localBridge.busy) return;
+  state.localBridge.busy = true;
+  setLocalBridgeMessage("pending", "正在向 Bridge 发送停止指令...", task.id);
+  renderAll();
+  try {
+    const result = await fetchLocalBridge("/v1/stop", {
+      method: "POST",
+      body: JSON.stringify({ taskId: task.id })
+    });
+    updateLocalBridgeRun(task, {
+      status: "executed",
+      stoppedAt: new Date().toISOString(),
+      stopResult: result.status || (result.stopped ? "stopped" : "not_found")
+    });
+    setLocalBridgeMessage(
+      result.stopped ? "success" : "error",
+      result.stopped ? "已发送停止指令。任务认领未释放。" : "Bridge 没找到正在运行的本地 Agent；任务认领未释放。",
+      task.id
+    );
+  } catch (error) {
+    setLocalBridgeMessage("error", bridgeErrorText(error), task.id);
+  } finally {
+    state.localBridge.busy = false;
+    renderAll();
+  }
+}
+
+async function copyBridgeLaunchPackage(task) {
+  const launchPackage = buildBridgeLaunchPackage(task);
+  const text = JSON.stringify(launchPackage, null, 2);
+  try {
+    await navigator.clipboard.writeText(text);
+    setLocalBridgeMessage("success", "Bridge Launch Package 已复制。", task.id);
+  } catch {
+    setLocalBridgeMessage("error", "浏览器不允许写入剪贴板，请使用启动按钮或手动导出。", task.id);
+  }
+  renderAll();
+}
+
+function bridgeErrorText(error) {
+  if (error.code === "CODEX_RUNTIME_NOT_READY") {
+    return bridgeOnboardingText(error.details?.codex) || error.message;
+  }
+  if (error.code === "WORKSPACE_NOT_FOUND") {
+    return "本地未找到对应仓库。请先确认项目已拉取，或后续使用仓库准备流程。";
+  }
+  if (error.code === "UNAUTHORIZED") {
+    return "Bridge token 不正确。请打开本地 Bridge 目录的 .env 核对 OPC_BRIDGE_TOKEN。";
+  }
+  return error.message || "本地 Bridge 启动失败。";
+}
+
+function bridgeOnboardingText(codex) {
+  const action = codex?.onboarding?.[0];
+  if (action?.description) return action.description;
+  if (codex?.runtime?.status === "missing") return "Codex runtime 未安装或不可调用。请安装 Codex 并完成 App 登录。";
+  if (codex?.auth?.status === "login_required") return "Codex 尚未登录。请打开 Codex App 完成 ChatGPT 登录后重试。";
+  return "Codex runtime 尚未就绪。";
+}
+
+function buildBridgeLaunchPackage(task) {
+  const topic = task.panelTopicId ? topicById(task.panelTopicId) : null;
+  if (topic) {
+    const run = localBridgeRun(task);
+    return buildBridgeLaunchPackageFromTopicTask(task, topic, {
+      claimant: task.claimant || state.operator.login.trim(),
+      threadId: run?.threadId || undefined
+    });
+  }
+  const run = localBridgeRun(task);
+  const module = inferTaskModule(task);
+  return {
+    taskId: task.id,
+    issueUrl: task.url,
+    title: task.title,
+    goal: buildTaskGoal(task),
+    claimant: task.claimant || state.operator.login.trim(),
+    module,
+    recommendedRepo: task.repo,
+    threadId: run?.threadId || undefined,
+    handoffPackage: buildAgentHandoffPackage(task, module),
+    permissionEnvelope: buildPermissionEnvelope(task, module)
+  };
+}
+
+function buildTaskGoal(task) {
+  return [
+    `处理已认领的 Final Implementation Issue：${task.title}`,
+    `仓库：${task.repo}`,
+    `Issue：${task.url}`,
+    `总问题：${task.totalProblem || "未归属父问题"}`,
+    "完成后提供修改摘要、验证证据和后续风险。"
+  ].join("\n");
+}
+
+function buildAgentHandoffPackage(task, module) {
+  return {
+    source: "feature-dashboard",
+    generatedAt: new Date().toISOString(),
+    task: {
+      id: task.id,
+      issueUrl: task.url,
+      repo: task.repo,
+      number: task.number,
+      title: task.title,
+      labels: task.labels || [],
+      lane: task.lane || "",
+      status: task.status,
+      claimant: task.claimant || "",
+      claimedAt: task.claimedAt || ""
+    },
+    module,
+    parentFeature: task.parentFeature || null,
+    parentIssue: task.parentIssue || null,
+    totalProblem: task.totalProblem || "",
+    acceptance: [
+      "只处理这个已认领 Issue 的具体目标。",
+      "保留 GitHub Issue/PR/Project 作为事实源。",
+      "不要自动合并、部署或发布生产变更。",
+      "如果发现任务跨出当前模块边界，在 Codex 线程里明确说明并等待开发者判断。"
+    ],
+    verification: [
+      "优先运行仓库已有的最小相关测试或语法检查。",
+      "如涉及前端界面，提供可复现页面/流程和截图或手动验证说明。",
+      "在最终回复中说明改动文件、验证命令、未覆盖风险。"
+    ]
+  };
+}
+
+function buildPermissionEnvelope(task, module) {
+  return {
+    codex: {
+      developerInstructions: [
+        `Bound OPC task: ${task.id}`,
+        `Module scope: ${module}`,
+        "Do not merge, deploy, release, or change production credentials.",
+        "Use the checked-out repository bound by the bridge. Do not work in unrelated local projects.",
+        "If the task needs broader permissions, explain that in the Codex thread and wait for the developer to steer."
+      ].join("\n")
+    }
+  };
+}
+
+function inferTaskModule(task) {
+  const repo = String(task.repoName || task.repo || "").toLowerCase();
+  const lane = String(task.lane || "").toLowerCase();
+  if (repo.includes("opc-bounty-client") || lane.includes("client")) return "client frontend";
+  if (repo.includes("opc-bounty-admin") || lane.includes("admin")) return "admin frontend";
+  if (repo.includes("opc-bounty-server") || lane.includes("server") || lane.includes("database")) return "backend";
+  if (repo.includes("feature-dashboard") || lane.includes("dashboard")) return "dashboard";
+  if (lane.includes("qa")) return "qa-release";
+  return "architecture";
+}
+
+function isTaskClaimedByOperator(task) {
+  const operator = state.operator.login?.trim().toLowerCase();
+  return Boolean(operator && task.claimant?.toLowerCase() === operator);
+}
+
 function matchesFeature(feature) {
   const query = normalize(state.query);
   const statusOk = state.status === "all" || feature.status === state.status;
@@ -121,7 +631,7 @@ function formatElapsedHours(hours, startedAt, endedAt = null) {
 }
 
 function issueTasks() {
-  return state.data?.issueTasks || [];
+  return removePublishedDuplicates([...(state.data?.issueTasks || []), ...middlewareTasks()]);
 }
 
 function currentIssueTask() {
@@ -148,15 +658,6 @@ function issueTasksByStatus() {
     }
   }
   return groups;
-}
-
-async function copyClaimCommand(command) {
-  try {
-    await navigator.clipboard.writeText(command);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function studio() {
@@ -234,47 +735,196 @@ function pageTitleById(pageId) {
   return studioPages().find((page) => page.id === pageId)?.title || pageId || "页面";
 }
 
-function buildTargetDiscussionUrl(target, type = "idea", titleInput = "", bodyInput = "") {
+function buildTargetDiscussionPayload(target, type = "idea", titleInput = "", bodyInput = "") {
   const page = currentPage();
   const feature = featureById(target?.featureId);
   const typeLabel = discussionLabels[type] || "想法";
-  const title = `[${typeLabel}][${target?.featureId || "未映射"}] ${titleInput || target?.label || "平台界面讨论"}`;
-  const body = [
-    `功能编号: ${target?.featureId || ""}`,
-    `功能: ${feature?.title || target?.featureId || ""}`,
-    `界面页面: ${target?.uiSurface || page?.uiSurface || ""}`,
-    `操作步骤: ${target?.stepId || ""}`,
-    `热点编号: ${target?.id || ""}`,
-    `讨论类型: ${type}`,
-    "",
-    "选中的界面:",
-    `- 页面: ${page?.title || ""}`,
-    `- 操作点: ${target?.label || ""}`,
-    `- 当前行为: ${target?.summary || ""}`,
-    "",
-    "建议或评价:",
-    bodyInput || "",
-    "",
-    "希望智能助手处理:",
-    "- [ ] 汇总这条讨论",
-    "- [ ] 判断是否影响功能状态",
-    "- [ ] 若已采纳则拆成实现议题",
-    "- [ ] 若替代旧讨论则标记旧评论过期"
-  ].join("\n");
-  const labels = ["dashboard-discussion", "dispatch:pending", target?.featureId ? `feature:${target.featureId}` : "", `discussion:${type}`]
-    .filter(Boolean)
-    .join(",");
-  const params = new URLSearchParams({ title, body, labels });
-  return `https://github.com/shichai-dev/feature-dashboard/issues/new?${params.toString()}`;
+  return {
+    type,
+    title: `[${typeLabel}][${target?.featureId || "未映射"}] ${titleInput || target?.label || "平台界面讨论"}`,
+    body: bodyInput || "",
+    featureId: target?.featureId || "",
+    featureTitle: feature?.title || target?.featureId || "",
+    uiSurface: target?.uiSurface || page?.uiSurface || "",
+    operationStepId: target?.stepId || "",
+    hotspotId: target?.id || "",
+    pageTitle: page?.title || "",
+    targetLabel: target?.label || "",
+    targetSummary: target?.summary || page?.summary || ""
+  };
+}
+
+function buildFeatureDiscussionPayload(feature, type = "idea", titleInput = "", bodyInput = "") {
+  return {
+    type,
+    title: `[${discussionLabels[type] || "想法"}][${feature.id}] ${titleInput || feature.title}`,
+    body: bodyInput || "",
+    featureId: feature.id,
+    featureTitle: feature.title,
+    uiSurface: (feature.uiSurfaces || []).map((surface) => surface.name).join("、"),
+    operationStepId: "",
+    hotspotId: "",
+    pageTitle: "功能地图",
+    targetLabel: feature.title,
+    targetSummary: feature.summary || ""
+  };
+}
+
+async function submitTargetDiscussion(target, type, title, body) {
+  await runPanelAction("讨论", async () => postDashboardAction("/api/discussions", buildTargetDiscussionPayload(target, type, title, body)));
+}
+
+async function submitFeatureDiscussion(feature, type, title, body) {
+  await runPanelAction("讨论", async () => postDashboardAction("/api/discussions", buildFeatureDiscussionPayload(feature, type, title, body)));
+}
+
+function createCurrentPanelTopic(target) {
+  const note = byId("panel-topic-note")?.value?.trim() || "";
+  try {
+    const page = currentPage();
+    const feature = featureById(target?.featureId);
+    const topic = createPanelTopic({
+      note,
+      target,
+      page,
+      feature,
+      discussions: state.data?.discussions || [],
+      issueTasks: issueTasks(),
+      now: new Date().toISOString()
+    });
+    updatePanelTopic(topic);
+    setAiMiddlewareMessage("success", "Panel Topic 已生成，AI 已补全 issue 草稿和风险门槛。");
+  } catch (error) {
+    setAiMiddlewareMessage("error", error.message || "Panel Topic 生成失败。");
+  }
+  renderAll();
+}
+
+async function publishPanelTopic(topicId) {
+  if (state.aiMiddleware.busy) return;
+  const topic = topicById(topicId);
+  if (!topic) return;
+  state.aiMiddleware.busy = true;
+  setAiMiddlewareMessage("pending", "正在静默发布 Final Implementation Issue...");
+  renderAll();
+  try {
+    const result = await postDashboardAction("/api/final-issues", buildFinalIssueRequest(topic));
+    const issue = result.issue || result;
+    updatePanelTopic(markTopicPublished(topic, {
+      repo: issue.repo || topic.issueDraft.repo,
+      number: issue.number,
+      url: issue.url || issue.html_url,
+      title: issue.title || topic.issueDraft.title
+    }));
+    setAiMiddlewareMessage("success", "Final Implementation Issue 已发布并进入任务分发。");
+  } catch (error) {
+    updatePanelTopic(markIssuePublishingFailed(topic, error));
+    setAiMiddlewareMessage("error", "静默发布失败，已生成手动发布包。绑定 GitHub Issue URL 后才会进入任务分发。");
+  } finally {
+    state.aiMiddleware.busy = false;
+    renderAll();
+  }
+}
+
+async function bindPanelTopicIssueUrl(topicId) {
+  const topic = topicById(topicId);
+  if (!topic) return;
+  const url = byId(`manual-issue-url-${topic.id}`)?.value?.trim() || "";
+  if (!url) {
+    setAiMiddlewareMessage("error", "请粘贴手动发布后的 GitHub Issue URL。");
+    renderAll();
+    return;
+  }
+  state.aiMiddleware.busy = true;
+  setAiMiddlewareMessage("pending", "正在校验并绑定 GitHub Issue URL...");
+  renderAll();
+  try {
+    let issue = {};
+    if (actionApiBase() && state.operator.actionKey) {
+      const result = await postDashboardAction("/api/final-issues/bind", {
+        topicId: topic.id,
+        expectedRepo: topic.issueDraft.repo,
+        expectedTitle: topic.issueDraft.title,
+        url
+      });
+      issue = result.issue || {};
+    }
+    updatePanelTopic(bindManualIssueUrl(topic, url, issue));
+    setAiMiddlewareMessage("success", "手动 Issue 已绑定，任务已进入任务分发。");
+  } catch (error) {
+    setAiMiddlewareMessage("error", error.message || "Issue URL 绑定失败。");
+  } finally {
+    state.aiMiddleware.busy = false;
+    renderAll();
+  }
+}
+
+async function bindPanelTopicCandidate(topicId, candidateUrl) {
+  const topic = topicById(topicId);
+  if (!topic) return;
+  try {
+    const candidate = findIssueBackfillCandidates(topic, issueTasks()).find((item) => item.url === candidateUrl);
+    if (!candidate) throw new Error("候选 Issue 不在当前可绑定列表中。");
+    updatePanelTopic(bindManualIssueUrl(topic, candidate.url, { title: candidate.title }));
+    setAiMiddlewareMessage("success", "已绑定候选 Issue，任务已进入任务分发。");
+  } catch (error) {
+    setAiMiddlewareMessage("error", error.message || "候选 Issue 绑定失败。");
+  }
+  renderAll();
+}
+
+async function copyTopicIssuePackage(topicId) {
+  const topic = topicById(topicId);
+  if (!topic) return;
+  const payload = topic.manualFallback || {
+    title: topic.issueDraft.title,
+    body: topic.issueDraft.body,
+    repo: topic.issueDraft.repo,
+    context: {
+      topicId: topic.id,
+      module: topic.module,
+      evidence: topic.simulatorEvidence,
+      riskGate: topic.riskGate
+    }
+  };
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+    setAiMiddlewareMessage("success", "Issue 处理包已复制。");
+  } catch {
+    setAiMiddlewareMessage("error", "浏览器不允许写入剪贴板，请手动选择标题和正文。");
+  }
+  renderAll();
+}
+
+async function continueTopicDiscussion(topicId) {
+  const topic = topicById(topicId);
+  if (!topic) return;
+  const target = currentTarget();
+  await submitTargetDiscussion(
+    target,
+    topic.topicType,
+    topic.issueDraft.title.replace(/^\[[^\]]+\]\[[^\]]+\]\s*/, ""),
+    [
+      topic.note,
+      "",
+      "AI 生成草稿:",
+      topic.issueDraft.body,
+      "",
+      "风险门槛:",
+      topic.riskGate.reasons.length ? topic.riskGate.reasons.map((reason) => `- ${reason}`).join("\n") : "- small clear issue"
+    ].join("\n")
+  );
 }
 
 function renderMetrics() {
   const metrics = state.data?.metrics || {};
+  const healthCount = healthItems().length;
   byId("metrics").innerHTML = [
     ["待接单", metrics.openIssueTasks || 0],
     ["已接单", metrics.claimedIssueTasks || 0],
     ["等待 PR", metrics.waitingPrIssueTasks || 0],
-    ["开放讨论", metrics.openDiscussions || 0]
+    ["开放讨论", metrics.openDiscussions || 0],
+    ["中台恢复", healthCount]
   ]
     .map(([label, value]) => `
       <article class="metric">
@@ -283,6 +933,43 @@ function renderMetrics() {
       </article>
     `)
     .join("");
+}
+
+function renderOperatorPanel() {
+  const root = byId("operator-panel");
+  if (!root) return;
+  const message = state.actionMessage
+    ? `<div class="operator-message message-${escapeHtml(state.actionMessage.type)}">${escapeHtml(state.actionMessage.text)}</div>`
+    : "";
+  root.innerHTML = `
+    <div class="operator-copy">
+      <strong>面板内接单和评价</strong>
+      <span>填写一次身份后，评价、接单、转交和状态更新都会直接在面板内提交。</span>
+    </div>
+    <div class="operator-form">
+      <label>
+        <span>GitHub 用户名</span>
+        <input id="operator-login" type="text" autocomplete="username" value="${escapeHtml(state.operator.login)}" placeholder="例如 sexymonk">
+      </label>
+      <label>
+        <span>团队操作口令</span>
+        <input id="operator-key" type="password" autocomplete="current-password" value="${escapeHtml(state.operator.actionKey)}" placeholder="由团队负责人提供">
+      </label>
+      <label>
+        <span>动作接口</span>
+        <input id="operator-api" type="url" value="${escapeHtml(state.actionApiBase)}" placeholder="https://...workers.dev">
+      </label>
+      <button type="button" id="save-operator">保存</button>
+    </div>
+    ${message}
+  `;
+  byId("save-operator")?.addEventListener("click", () => {
+    saveOperatorIdentity(
+      byId("operator-login")?.value || "",
+      byId("operator-key")?.value || "",
+      byId("operator-api")?.value || ""
+    );
+  });
 }
 
 function renderStudioNav(pages, activePage) {
@@ -719,6 +1406,40 @@ function renderHandoffs() {
     : `<div class="empty-state">当前快照里没有开放协作交接。</div>`;
 }
 
+function renderHealth() {
+  const root = byId("health-list");
+  if (!root) return;
+  const items = healthItems();
+  root.innerHTML = items.length
+    ? items.map((item) => `
+      <article class="health-item">
+        <div>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.message)}</p>
+        </div>
+        <div class="meta-row">
+          <span class="meta-chip">${escapeHtml(item.type)}</span>
+          <span class="meta-chip">${escapeHtml(item.module || "module")}</span>
+          <span class="meta-chip">${escapeHtml(formatDateTime(item.createdAt))}</span>
+        </div>
+        <button type="button" data-health-topic="${escapeHtml(item.topicId)}">打开 Topic</button>
+      </article>
+    `).join("")
+    : `<div class="empty-state">当前没有需要恢复的中台事项。</div>`;
+  root.querySelectorAll("[data-health-topic]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.aiMiddleware.selectedTopicId = button.dataset.healthTopic;
+      const topic = topicById(button.dataset.healthTopic);
+      if (topic?.simulatorEvidence?.pageId) {
+        state.selectedPageId = topic.simulatorEvidence.pageId;
+        state.selectedTargetId = topic.simulatorEvidence.targetId;
+      }
+      state.activeTab = "studio";
+      renderAll();
+    });
+  });
+}
+
 function renderDiscussions() {
   const discussions = state.data?.discussions || [];
   byId("discussion-list").innerHTML = discussions.length
@@ -736,9 +1457,10 @@ function renderDiscussions() {
               <span class="meta-chip">${escapeHtml(discussion.featureId || "未映射")}</span>
               <span class="meta-chip">${discussion.commentCount || 0} 条评论</span>
             </div>
-            <div class="detail-links">
-              <a href="${escapeHtml(discussion.url)}">打开讨论</a>
-              ${discussion.dispatch?.targetUrl ? `<a href="${escapeHtml(discussion.dispatch.targetUrl)}">打开目标任务</a>` : ""}
+            <div class="detail-links muted-links">
+              <span>源记录：#${escapeHtml(discussion.number || "")}</span>
+              ${discussion.dispatch?.targetRepo ? `<span>目标仓库：${escapeHtml(discussion.dispatch.targetRepo)}</span>` : ""}
+              ${discussion.dispatch?.targetUrl ? `<span>目标任务已生成</span>` : ""}
             </div>
           </article>
         `)
@@ -746,73 +1468,168 @@ function renderDiscussions() {
     : `<div class="empty-state">还没有看板讨论。可以在仿真界面里选中操作点后提交想法或评价。</div>`;
 }
 
-function buildDiscussionUrl(feature) {
-  const type = byId("discussion-type")?.value || "idea";
-  const titleInput = byId("discussion-title")?.value?.trim();
-  const bodyInput = byId("discussion-body")?.value?.trim();
-  const typeLabel = discussionLabels[type] || "想法";
-  const title = `[${typeLabel}][${feature.id}] ${titleInput || feature.title}`;
-  const surfaces = (feature.uiSurfaces || [])
-    .map((surface) => `- ${surface.name} (${surface.repo}${surface.route ? ` ${surface.route}` : ""})`)
-    .join("\n") || "- TBD";
-  const body = [
-    `功能编号: ${feature.id}`,
-    `功能: ${feature.title}`,
-    `讨论类型: ${type}`,
-    "",
-    "目标界面页面:",
-    surfaces,
-    "",
-    "建议或评价:",
-    bodyInput || "",
-    "",
-    "希望智能助手处理:",
-    "- [ ] 汇总这条讨论",
-    "- [ ] 判断是否影响功能状态",
-    "- [ ] 若已采纳则拆成实现议题",
-    "- [ ] 若替代旧讨论则标记旧评论过期"
-  ].join("\n");
-  const labels = ["dashboard-discussion", "dispatch:pending", `feature:${feature.id}`, `discussion:${type}`].join(",");
-  const params = new URLSearchParams({ title, body, labels });
-  return `https://github.com/shichai-dev/feature-dashboard/issues/new?${params.toString()}`;
-}
-
 function attachDiscussionComposer(feature) {
   const button = byId("open-discussion-issue");
   if (!button) return;
-  button.addEventListener("click", () => {
-    window.open(buildDiscussionUrl(feature), "_blank", "noopener,noreferrer");
+  button.addEventListener("click", async () => {
+    await submitFeatureDiscussion(
+      feature,
+      byId("discussion-type")?.value || "idea",
+      byId("discussion-title")?.value?.trim() || "",
+      byId("discussion-body")?.value?.trim() || ""
+    );
   });
 }
 
 function renderCommentWidget(feature) {
   const container = byId("comment-widget");
   if (!container) return;
-  container.innerHTML = "";
-  const script = document.createElement("script");
-  script.src = "https://utteranc.es/client.js";
-  script.async = true;
-  script.setAttribute("repo", "shichai-dev/feature-dashboard");
-  script.setAttribute("issue-term", feature.discussion?.issueTerm || `功能讨论：${feature.id}`);
-  script.setAttribute("label", "dashboard-discussion");
-  script.setAttribute("theme", "github-light");
-  script.setAttribute("crossorigin", "anonymous");
-  container.appendChild(script);
+  container.innerHTML = `
+    <div class="inline-action-note">
+      快速评论已经合并到上方表单。提交后会进入公开源讨论，并由系统自动分发到目标仓库。
+    </div>
+  `;
 }
 
 function renderTargetCommentWidget(target) {
   const container = byId("comment-widget");
   if (!container) return;
-  container.innerHTML = "";
-  const script = document.createElement("script");
-  script.src = "https://utteranc.es/client.js";
-  script.async = true;
-  script.setAttribute("repo", "shichai-dev/feature-dashboard");
-  script.setAttribute("issue-term", `功能讨论：${target.featureId} ${target.stepId || target.id}`);
-  script.setAttribute("label", "dashboard-discussion");
-  script.setAttribute("theme", "github-light");
-  script.setAttribute("crossorigin", "anonymous");
-  container.appendChild(script);
+  container.innerHTML = `
+    <div class="inline-action-note">
+      当前操作点：${escapeHtml(target.label || target.id)}。请使用上方表单直接提交想法、评价或操作链建议。
+    </div>
+  `;
+}
+
+function renderPanelTopicMiddleware(target) {
+  const topics = topicsForTarget(target);
+  const selected = selectedTopicForTarget(target);
+  const message = state.aiMiddleware.message
+    ? `<div class="operator-message message-${escapeHtml(state.aiMiddleware.message.type)}">${escapeHtml(state.aiMiddleware.message.text)}</div>`
+    : "";
+  const topicList = topics.length
+    ? `<div class="topic-tabs">${topics.slice(0, 4).map((topic) => `
+        <button type="button" data-topic-select="${escapeHtml(topic.id)}" class="${topic.id === selected?.id ? "is-active" : ""}">
+          ${escapeHtml(topic.status === "published" ? "已发布" : topic.status === "publish-failed" ? "待绑定" : "Topic")}
+        </button>
+      `).join("")}</div>`
+    : "";
+  return `
+    <div class="detail-section ai-topic-panel">
+      <h3>Panel Topic</h3>
+      <p>选择当前位置后只写一句短说明；AI 会补全 issue 草稿、查重和风险门槛。</p>
+      <div class="topic-create-row">
+        <input id="panel-topic-note" type="text" placeholder="例如：首页发布入口文案太像普通按钮，需要更明确">
+        <button class="primary-button" type="button" id="create-panel-topic" ${state.aiMiddleware.busy ? "disabled" : ""}>生成 Topic</button>
+      </div>
+      ${message}
+      ${topicList}
+      ${selected ? renderPanelTopicDetail(selected) : ""}
+    </div>
+  `;
+}
+
+function renderPanelTopicDetail(topic) {
+  const gateClass = topic.riskGate.decision === "direct-publish" ? "gate-direct" : "gate-confirm";
+  const backfillCandidates = topic.manualFallback && !topic.finalIssue
+    ? findIssueBackfillCandidates(topic, issueTasks())
+    : [];
+  const duplicateItems = topic.duplicateCheck.candidates.length
+    ? topic.duplicateCheck.candidates.map((candidate) => `
+      <li>
+        <span>${escapeHtml(candidate.kind)} · ${Math.round(candidate.score * 100)}%</span>
+        ${candidate.url ? `<a href="${escapeHtml(candidate.url)}">${escapeHtml(candidate.title)}</a>` : `<strong>${escapeHtml(candidate.title)}</strong>`}
+      </li>
+    `).join("")
+    : "<li><span>duplicate</span><strong>当前快照未发现强重复候选</strong></li>";
+  const reasons = topic.riskGate.reasons.length
+    ? topic.riskGate.reasons.map((reason) => `<span class="meta-chip">${escapeHtml(reason)}</span>`).join("")
+    : "<span class=\"meta-chip\">small clear issue</span>";
+  const manualPackage = topic.manualFallback
+    ? `
+      <div class="manual-package">
+        <label>
+          <span>标题</span>
+          <textarea readonly rows="2">${escapeHtml(topic.manualFallback.title)}</textarea>
+        </label>
+        <label>
+          <span>正文和上下文</span>
+          <textarea readonly rows="7">${escapeHtml(topic.manualFallback.body)}</textarea>
+        </label>
+      </div>
+    `
+    : "";
+  const published = topic.finalIssue?.url
+    ? `<p class="backend-record">Final Issue：<a href="${escapeHtml(topic.finalIssue.url)}">${escapeHtml(topic.finalIssue.repo)}#${escapeHtml(topic.finalIssue.number)}</a></p>`
+    : "";
+  const backfillHtml = backfillCandidates.length
+    ? `
+      <div class="backfill-candidates">
+        <strong>可能是手动发布的 Issue</strong>
+        <ul class="signal-list">
+          ${backfillCandidates.map((candidate) => `
+            <li>
+              <span>${Math.round(candidate.score * 100)}% · ${escapeHtml(candidate.repo)}#${escapeHtml(candidate.number)}</span>
+              <a href="${escapeHtml(candidate.url)}">${escapeHtml(candidate.title)}</a>
+              <button type="button" data-topic-candidate="${escapeHtml(topic.id)}" data-candidate-url="${escapeHtml(candidate.url)}">绑定这个候选</button>
+            </li>
+          `).join("")}
+        </ul>
+      </div>
+    `
+    : "";
+  const publishLabel = topic.riskGate.decision === "direct-publish" ? "直接发布 Final Issue" : "确认发布 Final Issue";
+  return `
+    <article class="topic-detail">
+      <div class="topic-head">
+        <span class="topic-status ${escapeHtml(gateClass)}">${escapeHtml(topic.riskGate.label)}</span>
+        <span class="repo-chip">${escapeHtml(topic.recommendedRepo)} · ${escapeHtml(topic.module)}</span>
+      </div>
+      <strong>${escapeHtml(topic.issueDraft.title)}</strong>
+      <p>${escapeHtml(topic.note)}</p>
+      <div class="meta-row">${reasons}</div>
+      <ul class="signal-list">${duplicateItems}</ul>
+      <div class="topic-actions">
+        <button class="primary-button" type="button" data-topic-publish="${escapeHtml(topic.id)}" ${state.aiMiddleware.busy || topic.finalIssue ? "disabled" : ""}>${publishLabel}</button>
+        <button type="button" data-topic-copy="${escapeHtml(topic.id)}">导出 issue 处理包</button>
+        <button type="button" data-topic-discuss="${escapeHtml(topic.id)}" ${state.actionBusy ? "disabled" : ""}>继续讨论</button>
+      </div>
+      ${manualPackage}
+      ${backfillHtml}
+      <label class="manual-bind-row">
+        <span>手动发布后的 GitHub Issue URL</span>
+        <input id="manual-issue-url-${escapeHtml(topic.id)}" type="url" placeholder="https://github.com/shichai-dev/opc-bounty-client/issues/123">
+      </label>
+      <button type="button" data-topic-bind="${escapeHtml(topic.id)}" ${state.aiMiddleware.busy || topic.finalIssue ? "disabled" : ""}>绑定 URL 并进入任务分发</button>
+      ${published}
+    </article>
+  `;
+}
+
+function attachPanelTopicMiddleware(target) {
+  byId("create-panel-topic")?.addEventListener("click", () => createCurrentPanelTopic(target));
+  document.querySelectorAll("[data-topic-select]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.aiMiddleware.selectedTopicId = button.dataset.topicSelect;
+      saveAiMiddlewareState();
+      renderAll();
+    });
+  });
+  document.querySelectorAll("[data-topic-publish]").forEach((button) => {
+    button.addEventListener("click", () => publishPanelTopic(button.dataset.topicPublish));
+  });
+  document.querySelectorAll("[data-topic-copy]").forEach((button) => {
+    button.addEventListener("click", () => copyTopicIssuePackage(button.dataset.topicCopy));
+  });
+  document.querySelectorAll("[data-topic-bind]").forEach((button) => {
+    button.addEventListener("click", () => bindPanelTopicIssueUrl(button.dataset.topicBind));
+  });
+  document.querySelectorAll("[data-topic-candidate]").forEach((button) => {
+    button.addEventListener("click", () => bindPanelTopicCandidate(button.dataset.topicCandidate, button.dataset.candidateUrl));
+  });
+  document.querySelectorAll("[data-topic-discuss]").forEach((button) => {
+    button.addEventListener("click", () => continueTopicDiscussion(button.dataset.topicDiscuss));
+  });
 }
 
 function renderStudioInspector() {
@@ -880,6 +1697,7 @@ function renderStudioInspector() {
       </div>
       <ul class="signal-list">${discussionItems}</ul>
     </div>
+    ${renderPanelTopicMiddleware(target)}
     <div class="detail-section">
       <h3>添加评论或操作建议</h3>
       <div class="discussion-composer">
@@ -902,7 +1720,7 @@ function renderStudioInspector() {
           <textarea id="discussion-body" rows="5" placeholder="针对这个页面、图标或操作，描述想增加什么、为什么、后续接哪条操作链。"></textarea>
         </label>
         <div class="inspector-actions">
-          <button class="primary-button" type="button" id="open-discussion-issue">发送到公开讨论</button>
+          <button class="primary-button" type="button" id="open-discussion-issue" ${state.actionBusy ? "disabled" : ""}>提交到面板讨论</button>
           <button type="button" id="open-evaluation-modal">打开评价窗口</button>
         </div>
       </div>
@@ -914,11 +1732,11 @@ function renderStudioInspector() {
     ${state.evaluationOpen ? renderEvaluationModal(target) : ""}
   `;
 
-  byId("open-discussion-issue")?.addEventListener("click", () => {
+  byId("open-discussion-issue")?.addEventListener("click", async () => {
     const type = byId("discussion-type")?.value || "idea";
     const title = byId("discussion-title")?.value?.trim() || "";
     const body = byId("discussion-body")?.value?.trim() || "";
-    window.open(buildTargetDiscussionUrl(target, type, title, body), "_blank", "noopener,noreferrer");
+    await submitTargetDiscussion(target, type, title, body);
   });
   byId("open-evaluation-modal")?.addEventListener("click", () => {
     state.evaluationOpen = true;
@@ -928,11 +1746,12 @@ function renderStudioInspector() {
     state.evaluationOpen = false;
     renderAll();
   });
-  byId("send-evaluation")?.addEventListener("click", () => {
+  byId("send-evaluation")?.addEventListener("click", async () => {
     const rating = byId("evaluation-rating")?.value || "ok";
     const note = byId("evaluation-note")?.value?.trim() || "";
-    window.open(buildTargetDiscussionUrl(target, "evaluation", `评价：${target.label}`, `评价结果：${rating}\n\n${note}`), "_blank", "noopener,noreferrer");
+    await submitTargetDiscussion(target, "evaluation", `评价：${target.label}`, `评价结果：${rating}\n\n${note}`);
   });
+  attachPanelTopicMiddleware(target);
   renderTargetCommentWidget(target);
 }
 
@@ -956,9 +1775,163 @@ function renderEvaluationModal(target) {
         <span>评价内容</span>
         <textarea id="evaluation-note" rows="4" placeholder="评价 ${escapeHtml(target.label)} 的当前体验，或者说明希望接到哪条后续操作。"></textarea>
       </label>
-      <button class="primary-button" type="button" id="send-evaluation">提交评价</button>
+      <button class="primary-button" type="button" id="send-evaluation" ${state.actionBusy ? "disabled" : ""}>提交评价</button>
     </div>
   `;
+}
+
+function renderLocalAgentControl(task) {
+  const operator = state.operator.login?.trim();
+  const message = state.localBridge.message?.taskId === task.id || !state.localBridge.message?.taskId
+    ? state.localBridge.message
+    : null;
+  const run = localBridgeRun(task);
+  const status = localAgentDisplayStatus(task, run);
+  const messageHtml = message
+    ? `<div class="operator-message message-${escapeHtml(message.type)}">${escapeHtml(message.text)}</div>`
+    : "";
+
+  if (!operator) {
+    return `
+      <div class="detail-section local-agent-panel">
+        <h3>本地 Agent</h3>
+        <p>先在页面顶部填写 GitHub 用户名。只有任务认领者本人会看到本地 Agent 启动控件。</p>
+      </div>
+    `;
+  }
+
+  if (!task.claimant) {
+    return `
+      <div class="detail-section local-agent-panel">
+        <h3>本地 Agent</h3>
+        <p>这个任务还未认领。先接单后，个人页才允许启动本地 Agent。</p>
+      </div>
+    `;
+  }
+
+  if (!isTaskClaimedByOperator(task)) {
+    return `
+      <div class="detail-section local-agent-panel">
+        <h3>本地 Agent</h3>
+        <p>这个任务由 @${escapeHtml(task.claimant)} 认领。本地 Agent 控件只对认领者本人可见和可操作。</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="detail-section local-agent-panel">
+      <div class="local-agent-head">
+        <h3>本地 Agent</h3>
+        <span class="local-agent-status ${escapeHtml(status.className)}">${escapeHtml(status.label)}</span>
+      </div>
+      <p>只控制你本机的 Bridge 和 Codex 线程。停止不会释放任务认领，释放请使用“放弃接单”。</p>
+      <div class="local-agent-settings">
+        <label>
+          <span>Bridge 地址</span>
+          <input id="local-bridge-url" type="url" value="${escapeHtml(state.localBridge.baseUrl)}" placeholder="http://127.0.0.1:17653">
+        </label>
+        <label>
+          <span>Bridge Token</span>
+          <input id="local-bridge-token" type="password" value="${escapeHtml(state.localBridge.token)}" placeholder="OPC_BRIDGE_TOKEN">
+        </label>
+        <button type="button" id="save-local-bridge">保存</button>
+      </div>
+      <div class="local-agent-actions">
+        <button type="button" id="check-local-bridge" ${state.localBridge.busy ? "disabled" : ""}>检测 Bridge</button>
+        <button class="primary-button" type="button" id="launch-local-agent" ${state.localBridge.busy ? "disabled" : ""}>启动 / 续写</button>
+        <button type="button" id="stop-local-agent" ${state.localBridge.busy ? "disabled" : ""}>停止 Agent</button>
+        <button type="button" id="copy-bridge-package" ${state.localBridge.busy ? "disabled" : ""}>复制处理包</button>
+      </div>
+      <div class="local-agent-meta">
+        ${run?.threadId ? `<span>threadId: ${escapeHtml(run.threadId)}</span>` : "<span>还没有本地 threadId</span>"}
+        ${run?.cwd ? `<span>cwd: ${escapeHtml(run.cwd)}</span>` : ""}
+        ${run?.updatedAt ? `<span>更新时间: ${escapeHtml(formatDateTime(run.updatedAt))}</span>` : ""}
+      </div>
+      ${messageHtml}
+    </div>
+  `;
+}
+
+function localAgentDisplayStatus(task, run) {
+  if (run?.status === "executed") return { label: "已执行", className: "agent-executed" };
+  if (run?.status === "failed") return { label: "启动失败", className: "agent-failed" };
+  if (state.localBridge.health?.reachable === false) return { label: "Bridge 未在线", className: "agent-offline" };
+  return { label: "未启动", className: "agent-idle" };
+}
+
+function attachLocalAgentControl(task) {
+  byId("save-local-bridge")?.addEventListener("click", () => {
+    saveLocalBridgeSettings(byId("local-bridge-url")?.value || "", byId("local-bridge-token")?.value || "");
+    renderAll();
+  });
+  byId("check-local-bridge")?.addEventListener("click", checkLocalBridgeHealth);
+  byId("launch-local-agent")?.addEventListener("click", () => launchLocalAgent(task));
+  byId("stop-local-agent")?.addEventListener("click", () => stopLocalAgent(task));
+  byId("copy-bridge-package")?.addEventListener("click", () => copyBridgeLaunchPackage(task));
+}
+
+function renderTaskHandoffPackage(task) {
+  const topic = task.panelTopicId ? topicById(task.panelTopicId) : null;
+  if (!topic) return "";
+  const handoff = buildAgentHandoffPackageFromTopicTask(task, topic);
+  return `
+    <div class="detail-section handoff-package-panel">
+      <h3>Agent Handoff Package</h3>
+      <p>${escapeHtml(handoff.panelTopic.note)}</p>
+      <div class="meta-row">
+        <span class="meta-chip">${escapeHtml(handoff.task.module)}</span>
+        <span class="meta-chip">${escapeHtml(handoff.simulatorEvidence.triggerLocation)}</span>
+        <span class="meta-chip">${escapeHtml(handoff.panelTopic.riskGate.label)}</span>
+      </div>
+      <ul class="signal-list">
+        ${handoff.acceptance.slice(0, 3).map((item) => `<li><span>acceptance</span><strong>${escapeHtml(item)}</strong></li>`).join("")}
+      </ul>
+    </div>
+  `;
+}
+
+async function submitIssueCommand(task, command, argument = "") {
+  if (task.source === "development-ai-middleware" && task.panelTopicId) {
+    try {
+      const topic = topicById(task.panelTopicId);
+      if (!topic) throw new Error("找不到对应 Panel Topic。");
+      let nextTopic = topic;
+      if (command === "claim") {
+        nextTopic = claimFormalTaskTopic(topic, state.operator.login);
+        setActionMessage("success", "已在面板内认领任务，GitHub 映射会由后台同步。");
+      } else if (command === "unclaim") {
+        nextTopic = releaseFormalTaskTopic(topic, state.operator.login);
+        setActionMessage("success", "已释放面板任务认领。");
+      } else if (command === "ready-pr") {
+        setActionMessage("success", "本地中台任务已标记等待 PR；正式状态以后以 GitHub 刷新为准。");
+      } else if (command === "blocked") {
+        nextTopic = {
+          ...topic,
+          health: {
+            type: "claim-mapping-recovery",
+            module: topic.module,
+            message: argument || "本地中台任务被标记为阻塞。",
+            createdAt: new Date().toISOString()
+          }
+        };
+        setActionMessage("success", "已记录阻塞恢复项。");
+      } else if (command === "handoff") {
+        setActionMessage("success", "转交需等待正式 GitHub issue 同步后处理；当前任务认领未改变。");
+      }
+      updatePanelTopic(nextTopic);
+      renderAll();
+    } catch (error) {
+      setActionMessage("error", error.message || "接单操作失败。");
+      renderAll();
+    }
+    return;
+  }
+  await runPanelAction("接单操作", async () => postDashboardAction("/api/issue-command", {
+    repo: task.repo,
+    number: task.number,
+    command,
+    argument
+  }));
 }
 
 function renderIssueInspector() {
@@ -996,19 +1969,27 @@ function renderIssueInspector() {
       <p>父级：${parent}</p>
       <p>总问题：${escapeHtml(task.totalProblem || "未归属父问题")}</p>
     </div>
+    ${renderTaskHandoffPackage(task)}
     <div class="detail-section">
       <h3>接单操作</h3>
-      <p>${escapeHtml(task.commandHelp || "在 GitHub Issue 评论区发送接单命令。")}</p>
-      <div class="claim-command-box">
-        <code id="claim-command-text">${escapeHtml(task.claimCommand || "/claim")}</code>
-        <button type="button" id="copy-claim-command">复制命令</button>
+      <p>直接在面板内接单或更新状态。系统会在后台写入对应仓库 Issue，并触发看板刷新。</p>
+      <div class="claim-action-grid">
+        <button class="primary-button" type="button" data-issue-command="claim" ${state.actionBusy ? "disabled" : ""}>我来接单</button>
+        <button type="button" data-issue-command="ready-pr" ${state.actionBusy ? "disabled" : ""}>等待 PR</button>
+        <button type="button" data-issue-command="unclaim" ${state.actionBusy ? "disabled" : ""}>放弃接单</button>
       </div>
-      <div class="inspector-actions claim-actions">
-        <button class="primary-button" type="button" id="open-claim-issue">打开 Issue 接单</button>
-        <a class="ghost-link" href="${escapeHtml(task.url)}">查看问题详情</a>
+      <label class="command-input">
+        <span>转交对象或阻塞原因</span>
+        <input id="issue-command-argument" type="text" placeholder="转交填写 @用户名；阻塞填写原因">
+      </label>
+      <div class="claim-action-grid secondary">
+        <button type="button" data-issue-command="handoff" ${state.actionBusy ? "disabled" : ""}>转交</button>
+        <button type="button" data-issue-command="blocked" ${state.actionBusy ? "disabled" : ""}>标记阻塞</button>
       </div>
+      <p class="backend-record">后台记录：${escapeHtml(task.repo)}#${escapeHtml(task.number)}</p>
       <p class="claim-note">竞发锁以 GitHub assignee 为准。一个 Issue 已有负责人后，后续接单会被拒绝或需要转交。</p>
     </div>
+    ${renderLocalAgentControl(task)}
     <div class="detail-section">
       <h3>接单命令</h3>
       <ul class="signal-list">
@@ -1025,13 +2006,12 @@ function renderIssueInspector() {
     </div>
   `;
 
-  byId("open-claim-issue")?.addEventListener("click", () => {
-    window.open(`${task.url}#issuecomment-new`, "_blank", "noopener,noreferrer");
+  detail.querySelectorAll("[data-issue-command]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      await submitIssueCommand(task, button.dataset.issueCommand, byId("issue-command-argument")?.value?.trim() || "");
+    });
   });
-  byId("copy-claim-command")?.addEventListener("click", async () => {
-    const ok = await copyClaimCommand(task.claimCommand || "/claim");
-    byId("copy-claim-command").textContent = ok ? "已复制" : "请手动复制";
-  });
+  attachLocalAgentControl(task);
 }
 
 function renderDetail() {
@@ -1140,7 +2120,7 @@ function renderDetail() {
           <span>评论</span>
           <textarea id="discussion-body" rows="5" placeholder="描述想法、评价、预期行为或需要修改的内容。"></textarea>
         </label>
-        <button class="primary-button" type="button" id="open-discussion-issue">发送到公开讨论</button>
+        <button class="primary-button" type="button" id="open-discussion-issue" ${state.actionBusy ? "disabled" : ""}>提交到面板讨论</button>
       </div>
     </div>
     <div class="detail-section">
@@ -1172,6 +2152,7 @@ function renderSync() {
 
 function renderAll() {
   renderTabs();
+  renderOperatorPanel();
   renderMetrics();
   renderStudio();
   renderIssueTasks();
@@ -1180,6 +2161,7 @@ function renderAll() {
   renderChains();
   renderDiscussions();
   renderHandoffs();
+  renderHealth();
   renderDetail();
   renderSync();
 }
@@ -1200,6 +2182,13 @@ async function loadData() {
 document.querySelectorAll(".nav-tab").forEach((tab) => {
   tab.addEventListener("click", () => {
     state.activeTab = tab.dataset.tab;
+    renderAll();
+  });
+});
+
+document.querySelectorAll("[data-jump-tab]").forEach((button) => {
+  button.addEventListener("click", () => {
+    state.activeTab = button.dataset.jumpTab;
     renderAll();
   });
 });

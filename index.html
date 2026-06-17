@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>拾柴功能讨论看板</title>
     <meta name="description" content="拾柴公开功能状态、仿真界面、操作链和异步讨论看板。">
+    <meta name="dashboard-action-api" content="https://shichai-dashboard-actions.liou782324.workers.dev">
+    <meta name="opc-bridge-url" content="http://127.0.0.1:17653">
     <link rel="stylesheet" href="./assets/styles.css">
   </head>
   <body>
@@ -25,13 +27,14 @@
           <button class="nav-tab" type="button" data-tab="features">功能地图</button>
           <button class="nav-tab" type="button" data-tab="surfaces">界面页面</button>
           <button class="nav-tab" type="button" data-tab="handoffs">协作交接</button>
+          <button class="nav-tab" type="button" data-tab="health">中台恢复</button>
         </nav>
         <div class="sidebar-note">
-          <span class="note-label">异步输入</span>
-          <a href="https://github.com/shichai-dev/feature-dashboard/issues/new?labels=dashboard-discussion,discussion:idea&title=%5B%E6%83%B3%E6%B3%95%5D%20">新建公开想法</a>
-          <a href="https://github.com/shichai-dev/feature-dashboard/issues">公开讨论记录</a>
-          <a href="https://github.com/shichai-dev/planning/issues/new/choose">团队规划议题</a>
-          <a href="https://github.com/orgs/shichai-dev/projects/1">内部项目看板</a>
+          <span class="note-label">面板内操作</span>
+          <button class="side-action" type="button" data-jump-tab="studio">提交想法或评价</button>
+          <button class="side-action" type="button" data-jump-tab="tasks">查看并接单</button>
+          <button class="side-action" type="button" data-jump-tab="discussions">查看异步讨论</button>
+          <button class="side-action" type="button" data-jump-tab="chains">查看操作链</button>
         </div>
       </aside>
 
@@ -42,8 +45,8 @@
             <p>在仿真实平台页面、图标和操作链上直接评论、评价、追加需求，并查看所有团队议题的分发和接单状态。</p>
           </div>
           <div class="topbar-actions">
-            <a class="ghost-link" href="https://github.com/shichai-dev/feature-dashboard/issues">讨论记录</a>
-            <a class="primary-link" href="https://github.com/shichai-dev/feature-dashboard/issues/new?labels=dashboard-discussion,discussion:idea&title=%5B%E6%83%B3%E6%B3%95%5D%20">提出想法</a>
+            <button class="ghost-link" type="button" data-jump-tab="discussions">讨论记录</button>
+            <button class="primary-link" type="button" data-jump-tab="studio">提出想法</button>
           </div>
         </header>
 
@@ -51,6 +54,8 @@
           <span id="sync-state">正在加载看板数据...</span>
           <span id="sync-source"></span>
         </section>
+
+        <section class="operator-strip" id="operator-panel" aria-label="面板操作者身份"></section>
 
         <section class="metrics-grid" id="metrics" aria-label="状态摘要"></section>
 
@@ -141,6 +146,14 @@
                 <p>需要其他成员或智能分工继续处理的开放依赖。</p>
               </div>
               <div class="handoff-list" id="handoff-list"></div>
+            </section>
+
+            <section class="tab-panel" data-panel="health">
+              <div class="section-heading">
+                <h2>中台恢复</h2>
+                <p>只显示会阻断 AI 中台薄闭环的恢复事项，例如 GitHub 发布失败、手动绑定和包生成异常。</p>
+              </div>
+              <div class="health-list" id="health-list"></div>
             </section>
           </div>
 

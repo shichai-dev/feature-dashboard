@@ -150,6 +150,21 @@ textarea {
   color: var(--text);
 }
 
+.side-action {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.side-action:hover,
+.side-action:focus-visible {
+  color: var(--blue);
+  outline: none;
+}
+
 .main {
   padding: 24px;
   min-width: 0;
@@ -187,11 +202,13 @@ textarea {
 
 .primary-link,
 .ghost-link {
+  border: 0;
   border-radius: var(--radius);
   padding: 10px 13px;
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .primary-link {
@@ -216,6 +233,86 @@ textarea {
   background: var(--panel);
   color: var(--muted);
   font-size: 13px;
+}
+
+.operator-strip {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.7fr) minmax(0, 1.8fr);
+  gap: 12px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: var(--panel);
+}
+
+.operator-copy {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+}
+
+.operator-copy strong {
+  font-size: 14px;
+}
+
+.operator-copy span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.operator-form {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(130px, 0.9fr) minmax(180px, 1.2fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.operator-form label,
+.command-input {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.operator-form input {
+  min-height: 38px;
+}
+
+.operator-form button {
+  min-height: 38px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.operator-message {
+  grid-column: 1 / -1;
+  border-radius: var(--radius);
+  padding: 9px 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.message-success {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.message-error {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.message-pending {
+  background: var(--amber-soft);
+  color: var(--amber);
 }
 
 .metrics-grid {
@@ -478,7 +575,8 @@ textarea {
 .surface-item,
 .chain-item,
 .handoff-item,
-.discussion-item {
+.discussion-item,
+.health-item {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px;
@@ -489,6 +587,7 @@ textarea {
 .chain-item h3,
 .handoff-item h3,
 .discussion-item h3,
+.health-item h3,
 .detail-panel h2,
 .detail-panel h3 {
   margin: 0;
@@ -499,6 +598,7 @@ textarea {
 .chain-item p,
 .handoff-item p,
 .discussion-item p,
+.health-item p,
 .detail-panel p {
   color: var(--muted);
   font-size: 13px;
@@ -524,7 +624,8 @@ textarea {
 
 .chain-list,
 .handoff-list,
-.discussion-list {
+.discussion-list,
+.health-list {
   display: grid;
   gap: 12px;
 }
@@ -685,6 +786,12 @@ textarea {
   overflow-wrap: anywhere;
 }
 
+.muted-links {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .signal-list {
   display: grid;
   gap: 8px;
@@ -748,8 +855,138 @@ textarea {
 }
 
 .comment-widget {
-  min-height: 190px;
+  min-height: 0;
   overflow: hidden;
+}
+
+.inline-action-note {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: #fbfcfc;
+  color: var(--muted);
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ai-topic-panel,
+.handoff-package-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.topic-create-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.topic-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topic-tabs button,
+.topic-actions button,
+.manual-bind-row + button,
+.health-item button {
+  min-height: 36px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.topic-tabs button {
+  padding: 0 10px;
+}
+
+.topic-tabs button.is-active {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.topic-detail {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-soft);
+  padding: 12px;
+}
+
+.topic-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.topic-status {
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.gate-direct {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.gate-confirm {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.topic-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.topic-actions .primary-button {
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.manual-package,
+.manual-bind-row,
+.backfill-candidates {
+  display: grid;
+  gap: 8px;
+}
+
+.manual-package label,
+.manual-bind-row {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.manual-package textarea {
+  min-height: 0;
+  font-size: 12px;
+}
+
+.backfill-candidates .signal-list li {
+  align-items: start;
+}
+
+.backfill-candidates button {
+  justify-self: start;
+  min-height: 30px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .studio-panel {
@@ -1332,6 +1569,129 @@ textarea {
   padding-left: 10px;
 }
 
+.claim-action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.claim-action-grid.secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.claim-action-grid button {
+  min-height: 40px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.claim-action-grid button.primary-button {
+  border-color: transparent;
+  color: #ffffff;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.command-input {
+  margin-top: 10px;
+}
+
+.backend-record {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-soft);
+  padding: 8px 9px;
+  overflow-wrap: anywhere;
+}
+
+.local-agent-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.local-agent-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.local-agent-status {
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.agent-idle {
+  background: var(--panel-soft);
+  color: var(--muted);
+}
+
+.agent-offline,
+.agent-failed {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.agent-executed {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.local-agent-settings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.local-agent-settings label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.local-agent-settings button,
+.local-agent-actions button {
+  min-height: 38px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.local-agent-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.local-agent-actions .primary-button {
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.local-agent-meta {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
 .inspector-actions button:not(.primary-button) {
   min-height: 40px;
   white-space: nowrap;
@@ -1415,6 +1775,7 @@ textarea {
   }
 
   .topbar,
+  .operator-strip,
   .toolbar,
   .section-heading,
   .sync-strip {
@@ -1425,6 +1786,7 @@ textarea {
   .metrics-grid,
   .surface-grid,
   .issue-task-board,
+  .operator-form,
   .sim-action-grid,
   .sim-action-grid.compact,
   .sim-segment-grid {
@@ -1459,6 +1821,13 @@ textarea {
   }
 
   .inspector-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .claim-action-grid,
+  .claim-action-grid.secondary,
+  .local-agent-actions,
+  .topic-create-row {
     grid-template-columns: 1fr;
   }
 }

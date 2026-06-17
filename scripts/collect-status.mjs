@@ -610,7 +610,7 @@ function buildIssueTasks(issues, features) {
         parentFeature: feature,
         totalProblem: parentIssue?.label || feature?.title || "未归属父问题",
         claimCommand: buildClaimCommand(status),
-        commandHelp: "在 GitHub Issue 评论区发送接单命令，系统会以 assignee 作为唯一接单锁。"
+        commandHelp: "优先在 Dashboard 面板内接单；Issue 评论命令保留为兼容兜底。系统会以 assignee 作为唯一接单锁。"
       };
     })
     .sort((a, b) => {

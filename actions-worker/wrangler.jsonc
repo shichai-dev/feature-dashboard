@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "shichai-dashboard-actions",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-16",
+  "workers_dev": true,
+  "preview_urls": true,
+  "vars": {
+    "ALLOWED_ORIGINS": "https://shichai-dev.github.io,http://localhost:4173,http://127.0.0.1:4173,http://localhost:4174,http://127.0.0.1:4174,http://localhost:8787,http://127.0.0.1:8787",
+    "ALLOWED_ACTORS": "sexymonk,longxi102,Kairan-Peng",
+    "GITHUB_OWNER": "shichai-dev",
+    "DASHBOARD_REPO": "feature-dashboard",
+    "DASHBOARD_REF": "main"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

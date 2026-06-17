@@ -19,15 +19,20 @@
 
 1. 打开线上看板，进入“仿真平台”。
 2. 在仿真实页面里点击某个按钮、图标、页面区域或操作步骤。
-3. 在右侧讨论栏提交想法、评价、修改请求、问题风险或追加操作链。
-4. Dashboard 会先生成一个公开源讨论，并带上 `dispatch:pending`。
-5. `discussion-dispatch.yml` 会根据功能编号、界面页面、关键词和分工规则推断目标仓库，并创建目标 Issue。
-6. 分发成功后，源讨论下面会写回“已分发目标”，并标记为 `dispatch:sent`。
-7. 刷新任务会读取源讨论和目标仓 Issue，并标记为“待智能处理”“已采纳”“已实现”“已过期”或“受阻”。
-8. 协调智能体读取 `data/status.json`，重点查看讨论、分发状态和待处理队列，再决定是否进一步拆分实现议题或标记旧评论过期。
-9. 代码、议题或评论变化后，下一次刷新会同步更新功能状态、界面页面、操作链、协作交接、讨论数量和接单状态。
+3. 在页面顶部填写 GitHub 用户名、团队操作口令和动作接口。
+4. 在右侧讨论栏直接提交想法、评价、修改请求、问题风险或追加操作链，不需要跳转 GitHub。
+5. Dashboard 动作接口会先生成一个公开源讨论，并带上 `dispatch:pending`。
+6. `discussion-dispatch.yml` 会根据功能编号、界面页面、关键词和分工规则推断目标仓库，并创建目标 Issue。
+7. 分发成功后，源讨论下面会写回“已分发目标”，并标记为 `dispatch:sent`。
+8. 刷新任务会读取源讨论和目标仓 Issue，并标记为“待智能处理”“已采纳”“已实现”“已过期”或“受阻”。
+9. 协调智能体读取 `data/status.json`，重点查看讨论、分发状态和待处理队列，再决定是否进一步拆分实现议题或标记旧评论过期。
+10. 代码、议题或评论变化后，下一次刷新会同步更新功能状态、界面页面、操作链、协作交接、讨论数量和接单状态。
 
-页面内嵌快速评论使用代码托管平台的议题评论。正式依赖它之前，需要给 `shichai-dev/feature-dashboard` 安装 `utterances` 应用。结构化公开讨论议题不依赖这个组件。
+页面内直接提交依赖 `actions-worker/`。前端不会保存 GitHub 写权限；GitHub token 只放在 Worker Secret 中。
+
+旧的 GitHub 跳转式流程已经降级为后台记录，不再作为默认操作路径。
+
+页面内嵌快速评论已经并入结构化提交表单，不再依赖 `utterances` 或 GitHub 页面跳转。
 
 ## 分发流程
 
@@ -56,25 +61,89 @@ Dashboard 是讨论收集入口，不是所有任务的最终归属仓库。
 
 1. 打开线上看板，进入“任务接单”。
 2. 点击某个 Issue 卡片，在右侧查看父级归属、总问题、负责人、接单时间和已耗时。
-3. 如果任务处于“待接单”，点击“打开 Issue 接单”，在 GitHub Issue 评论区发送：
-
-```txt
-/claim
-```
-
-4. 接单成功后，系统会把评论人设置为唯一 assignee，并写入接单人、接单时间和初始耗时。
-5. 后续可继续在 Issue 评论区发送命令：
-
-```txt
-/unclaim
-/handoff @用户名
-/blocked 原因
-/ready-pr
-```
-
+3. 在页面顶部确认 GitHub 用户名、团队操作口令和动作接口已经填写。
+4. 直接点击右侧的“我来接单”“等待 PR”“放弃接单”“转交”“标记阻塞”。
+5. 动作接口会在后台设置 assignee、标签和评论，并触发 Dashboard 自动刷新。
 6. 下一次 Dashboard 刷新后，页面会同步显示新的负责人、接单状态和已耗时。
 
-当前任务接单面板会汇总 `planning`、`opc-bounty-client`、`opc-bounty-admin`、`opc-bounty-server` 和 `feature-dashboard` 的 Issue。当前仓库已经包含 `.github/workflows/issue-claim.yml`，可处理本仓库 Issue 的 `/claim` 等命令。若要让其他仓库的 Issue 也自动执行接单锁，需要在对应仓库安装同一套工作流，或改为统一 GitHub App / Coordinator 服务集中处理。
+面板按钮和旧命令的对应关系：
+
+```txt
+我来接单 -> /claim
+放弃接单 -> /unclaim
+转交 -> /handoff @用户名
+标记阻塞 -> /blocked 原因
+等待 PR -> /ready-pr
+```
+
+当前任务接单面板会汇总 `planning`、`opc-bounty-client`、`opc-bounty-admin`、`opc-bounty-server` 和 `feature-dashboard` 的 Issue。当前推荐路径是通过 `actions-worker/` 集中处理面板内动作；各仓库里的 `.github/workflows/issue-claim.yml` 继续作为 Issue 评论命令的兼容兜底。
+
+## 本地 Agent 接力
+
+认领者本人在“任务接单”详情里会看到“本地 Agent”私有控件。其他开发者只能看到团队可见的认领关系，不会看到认领者本机 Bridge 状态。
+
+本地 Agent 控件支持：
+
+- 检测 `OPC Codex Bridge` 是否在线，并读取 `ready/codex` 预检状态。
+- 生成并复制 `Bridge Launch Package`。
+- 启动或续写本地 Codex thread。
+- 向 Bridge 发送停止指令。
+
+边界：
+
+- 停止本地 Agent 不释放任务认领；释放仍使用“放弃接单”。
+- `threadId` 和本地执行状态只存在浏览器本地存储中。
+- Bridge token 只存在当前浏览器会话中，不写入 Dashboard 数据或 Worker。
+- 如果 `/health` 不可达，个人页显示 `Bridge 未在线`；如果 `/v1/launch` 返回错误，个人页显示 `启动失败`；启动成功后显示 `已执行`。
+
+## AI 中台薄闭环
+
+“仿真平台”详情栏现在提供第一版最小 AI 中台闭环：
+
+1. 选择一个 UI 模拟器位置。
+2. 只填写一句短说明，生成 `Panel Topic`。
+3. 本地 AI 逻辑补全类型、模块、推荐仓库、模拟器证据、issue 草稿、验收标准、查重候选和风险门槛。
+4. `small clear issue` 可直接尝试静默发布；疑似重复、低置信、跨模块或大修改会停在确认发布。
+5. 静默发布失败时生成手动 issue 处理包，不进入任务分发。
+6. 粘贴手动发布后的 GitHub Issue URL 并校验仓库后，才生成 Formal Task。
+7. Formal Task 在“任务接单”中可认领/释放；认领后才显示本地 Agent 启动和处理包导出入口。
+
+边界：
+
+- 面板不显示 AI job、队列、token、模型日志或执行日志。
+- 面板不做远程代码执行、测试、PR、合并或部署。
+- 本地 Agent 执行仍发生在开发者自己的 Codex 项目线程中。
+- 中台 AI 只负责判断、生成、查重和草拟；GitHub 写入必须经过受控动作接口执行。
+- “中台恢复”只列发布失败、绑定或包生成这类阻断闭环的恢复事项，不是运维台。
+
+## 面板动作接口
+
+`actions-worker/` 是“不要跳转 GitHub”的关键组件。
+
+当前 MVP 使用 Cloudflare Worker 作为受控动作接口：浏览器和中台 AI 都不保存 GitHub 写权限，Worker 按团队口令、actor、允许仓库和动作类型执行有限写入。后续可以替换为自有后台或 GitHub App，但不能退回到浏览器持 token 或 AI 持无限制 token。
+
+它提供：
+
+- `POST /api/discussions`：面板内提交想法、评价、修改请求、问题风险、追加操作链。
+- `POST /api/final-issues`：从 Panel Topic 静默创建 Final Implementation Issue。
+- `POST /api/final-issues/bind`：校验并绑定手动发布后的 GitHub Issue URL。
+- `POST /api/issue-command`：面板内接单、放弃、转交、阻塞、等待 PR。
+- `GET /api/health`：动作接口健康检查。
+
+需要配置的 Worker Secret：
+
+```powershell
+wrangler secret put GITHUB_TOKEN
+wrangler secret put DASHBOARD_ACTION_KEY
+```
+
+部署后，把 Worker 地址填入 `index.html`：
+
+```html
+<meta name="dashboard-action-api" content="https://你的-worker.workers.dev">
+```
+
+也可以先在页面顶部“动作接口”输入框手动填写，用于测试。
 
 ## 刷新
 
