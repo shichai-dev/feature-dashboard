@@ -144,7 +144,8 @@ export function evaluateRiskGate({ note, topicType, module, duplicateCandidates 
   };
 }
 
-export function buildIssueDraft({ note, target, page, feature, topicType, module, repo, duplicateCandidates = [] }) {
+export function buildIssueDraft({ note, target, page, feature, visualContext, topicType, module, repo, duplicateCandidates = [] }) {
+  const visualDraft = normalizeVisualContextForDraft({ target, page, feature, visualContext });
   const titlePrefix = topicType === "bug" ? "Bug" : topicType === "change-request" ? "Change" : topicType === "evaluation" ? "Review" : "Idea";
   const title = `[${titlePrefix}][${target?.featureId || feature?.id || module}] ${target?.label || page?.title || "UI simulator finding"}: ${compactText(note).slice(0, 60)}`;
   const body = [
@@ -164,6 +165,7 @@ export function buildIssueDraft({ note, target, page, feature, topicType, module
     `- Recommended repo: ${repo}`,
     `- Current behavior: ${target?.summary || page?.summary || "needs confirmation"}`,
     "- Expected behavior: make the selected simulator operation clearer, safer, or consistent with the product flow.",
+    visualDraft.summary ? `- Visual context: ${visualDraft.summary}` : "",
     "",
     "Acceptance criteria:",
     "- The selected simulator/page behavior is updated or the reason not to change is documented.",
@@ -174,7 +176,7 @@ export function buildIssueDraft({ note, target, page, feature, topicType, module
     duplicateCandidates.length
       ? duplicateCandidates.map((candidate) => `- ${candidate.kind}: ${candidate.title} (${Math.round(candidate.score * 100)}%) ${candidate.url || ""}`).join("\n")
       : "- No strong duplicate candidate found in the current dashboard snapshot."
-  ].join("\n");
+  ].join("\n").replace(/\n{3,}/g, "\n\n");
   return { title, body, repo, labels: ["from:development-panel", `module:${module}`, `topic:${topicType}`] };
 }
 
@@ -207,7 +209,7 @@ export function createPanelTopic(input) {
       operationStepId: target.stepId || "",
       triggerLocation: `${page.title || "unknown"} / ${target.label || "unknown"}`,
       currentBehavior: target.summary || page.summary || "",
-      screenshotRef: ""
+      screenshotRef: input.visualContext?.screenshotRef || ""
     },
     duplicateCheck: {
       candidates: duplicateCandidates,
@@ -219,6 +221,21 @@ export function createPanelTopic(input) {
     manualFallback: null,
     health: null
   };
+}
+
+function normalizeVisualContextForDraft({ target, page, feature, visualContext }) {
+  const summary = compactText([
+    visualContext?.domText,
+    visualContext?.selectedElement?.label,
+    visualContext?.selectedElement?.text,
+    page?.title,
+    page?.summary,
+    target?.label,
+    target?.summary,
+    feature?.title,
+    feature?.summary
+  ].filter(Boolean).join(" / "));
+  return { summary };
 }
 
 export function buildFinalIssueRequest(topic) {

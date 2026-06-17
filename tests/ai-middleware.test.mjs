@@ -45,6 +45,10 @@ test("creates a small clear panel topic with issue draft fields", () => {
     page,
     target,
     feature,
+    visualContext: {
+      screenshotRef: "simulator://client-home/home-publish-requirement.png",
+      domText: "首页按钮：发布需求"
+    },
     discussions: [],
     issueTasks: [],
     now: "2026-06-17T00:00:00.000Z"
@@ -56,6 +60,8 @@ test("creates a small clear panel topic with issue draft fields", () => {
   assert.equal(topic.issueDraft.repo, "shichai-dev/opc-bounty-client");
   assert.match(topic.issueDraft.title, /发布需求/);
   assert.equal(topic.simulatorEvidence.targetId, "home-publish-requirement");
+  assert.equal(topic.simulatorEvidence.screenshotRef, "simulator://client-home/home-publish-requirement.png");
+  assert.match(topic.issueDraft.body, /Visual context/);
 });
 
 test("gates suspected duplicate or cross-module topics for confirmation", () => {

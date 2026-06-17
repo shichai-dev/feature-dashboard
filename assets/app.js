@@ -858,9 +858,42 @@ function buildPanelTopicInput(note, target) {
     target,
     page,
     feature,
+    visualContext: buildPanelTopicVisualContext(target, page, feature),
     discussions: state.data?.discussions || [],
     issueTasks: issueTasks(),
     now: new Date().toISOString()
+  };
+}
+
+function buildPanelTopicVisualContext(target = {}, page = {}, feature = {}) {
+  const viewport = typeof window !== "undefined"
+    ? {
+        width: window.innerWidth || 0,
+        height: window.innerHeight || 0,
+        deviceScaleFactor: window.devicePixelRatio || 1
+      }
+    : { width: 0, height: 0, deviceScaleFactor: 1 };
+  const domText = [
+    page.title,
+    page.summary,
+    target.label,
+    target.summary,
+    feature.title,
+    feature.summary
+  ].filter(Boolean).join(" / ");
+  return {
+    screenshotRef: "",
+    domText,
+    pageState: state.currentPageId ? `dashboard page=${state.currentPageId}` : "",
+    viewport,
+    selectedElement: {
+      tag: "simulator-hotspot",
+      role: "button",
+      label: target.label || target.id || "",
+      text: target.summary || target.label || "",
+      testId: target.id || "",
+      bbox: { x: 0, y: 0, width: 0, height: 0 }
+    }
   };
 }
 
