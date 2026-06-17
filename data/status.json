@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-17T10:02:34.006Z",
-  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 22 个项目项、21 个团队议题、2 条看板讨论、21 个接单任务。",
+  "generatedAt": "2026-06-17T10:04:12.542Z",
+  "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 22 个项目项、22 个团队议题、2 条看板讨论、22 个接单任务。",
   "repositories": [
     "shichai-dev/planning",
     "shichai-dev/opc-bounty-client",
@@ -24,8 +24,8 @@
     "openDiscussions": 2,
     "needsAiReview": 0,
     "staleDiscussions": 1,
-    "issueTasks": 21,
-    "openIssueTasks": 19,
+    "issueTasks": 22,
+    "openIssueTasks": 20,
     "claimedIssueTasks": 1,
     "waitingPrIssueTasks": 0,
     "blockedIssueTasks": 0
@@ -1703,6 +1703,35 @@
   ],
   "issueTasks": [
     {
+      "id": "shichai-dev/opc-bounty-client#6",
+      "repo": "shichai-dev/opc-bounty-client",
+      "repoName": "opc-bounty-client",
+      "number": 6,
+      "title": "[Idea][requirement-publishing] 发布需求: [Smoke] 发布需求按钮文案测试 2026-06-17T10:03:38.774Z",
+      "url": "https://github.com/shichai-dev/opc-bounty-client/issues/6",
+      "state": "OPEN",
+      "labels": [
+        "接单:待接单",
+        "from:development-panel",
+        "module:client frontend",
+        "topic:idea"
+      ],
+      "lane": null,
+      "status": "open",
+      "statusLabel": "待接单",
+      "claimant": null,
+      "claimedAt": null,
+      "elapsedHours": null,
+      "createdAt": "2026-06-17T10:03:40Z",
+      "updatedAt": "2026-06-17T10:03:54Z",
+      "closedAt": null,
+      "parentIssue": null,
+      "parentFeature": null,
+      "totalProblem": "未归属父问题",
+      "claimCommand": "/claim",
+      "commandHelp": "优先在 Dashboard 面板内接单；Issue 评论命令保留为兼容兜底。系统会以 assignee 作为唯一接单锁。"
+    },
+    {
       "id": "shichai-dev/opc-bounty-client#5",
       "repo": "shichai-dev/opc-bounty-client",
       "repoName": "opc-bounty-client",
@@ -2087,7 +2116,7 @@
       "statusLabel": "待接单",
       "claimant": null,
       "claimedAt": "2026-06-16T01:06:49.641Z",
-      "elapsedHours": 32.9,
+      "elapsedHours": 33,
       "createdAt": "2026-06-15T16:09:26Z",
       "updatedAt": "2026-06-16T01:09:44Z",
       "closedAt": null,
@@ -2362,7 +2391,7 @@
       "statusLabel": "开发中",
       "claimant": "sexymonk",
       "claimedAt": "2026-06-16T01:06:36Z",
-      "elapsedHours": 32.9,
+      "elapsedHours": 33,
       "createdAt": "2026-06-16T00:43:58Z",
       "updatedAt": "2026-06-16T01:09:22Z",
       "closedAt": null,
