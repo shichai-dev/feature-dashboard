@@ -1635,6 +1635,7 @@ function renderTargetCommentWidget(target) {
 }
 
 function coordinatorSourceLabel(coordinator = {}) {
+  if (coordinator.source === "server-deepseek") return "服务器 DeepSeek";
   if (coordinator.source === "server-codex") return "服务器 Codex";
   if (coordinator.source === "server-mock") return "服务器 mock";
   if (coordinator.source === "browser-fallback") return "浏览器兜底";
