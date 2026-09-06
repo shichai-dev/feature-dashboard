@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T09:59:24.870Z",
+  "generatedAt": "2026-09-06T13:27:37.524Z",
   "sourceSummary": "11 个功能，24 个界面页面，11 条操作链。已读取 22 个项目项、25 个团队议题、2 条看板讨论、25 个接单任务。",
   "repositories": [
     "shichai-dev/planning",
@@ -719,7 +719,7 @@
             "type": "evaluation",
             "lifecycle": "stale",
             "needsAiReview": false,
-            "commentCount": 0,
+            "commentCount": 6,
             "labels": [
               "dashboard-discussion",
               "discussion:evaluation",
@@ -729,8 +729,8 @@
             "dispatch": {
               "status": "sent",
               "statusLabel": "已分发",
-              "targetUrl": null,
-              "targetRepo": null
+              "targetUrl": "https://github.com/shichai-dev/opc-bounty-client/issues/2",
+              "targetRepo": "shichai-dev/opc-bounty-client"
             },
             "createdAt": "2026-06-15T16:09:26Z",
             "updatedAt": "2026-06-16T01:09:44Z",
@@ -2058,7 +2058,7 @@
       "statusLabel": "待接单",
       "claimant": null,
       "claimedAt": "2026-06-16T01:06:49.641Z",
-      "elapsedHours": 1976.9,
+      "elapsedHours": 1980.3,
       "createdAt": "2026-06-15T16:09:26Z",
       "updatedAt": "2026-06-16T01:09:44Z",
       "closedAt": null,
@@ -2333,7 +2333,7 @@
       "statusLabel": "开发中",
       "claimant": "sexymonk",
       "claimedAt": "2026-06-16T01:06:36Z",
-      "elapsedHours": 1976.9,
+      "elapsedHours": 1980.4,
       "createdAt": "2026-06-16T00:43:58Z",
       "updatedAt": "2026-06-16T01:09:22Z",
       "closedAt": null,
@@ -2537,7 +2537,7 @@
       "type": "evaluation",
       "lifecycle": "stale",
       "needsAiReview": false,
-      "commentCount": 0,
+      "commentCount": 6,
       "labels": [
         "dashboard-discussion",
         "discussion:evaluation",
@@ -2547,8 +2547,8 @@
       "dispatch": {
         "status": "sent",
         "statusLabel": "已分发",
-        "targetUrl": null,
-        "targetRepo": null
+        "targetUrl": "https://github.com/shichai-dev/opc-bounty-client/issues/2",
+        "targetRepo": "shichai-dev/opc-bounty-client"
       },
       "createdAt": "2026-06-15T16:09:26Z",
       "updatedAt": "2026-06-16T01:09:44Z",
